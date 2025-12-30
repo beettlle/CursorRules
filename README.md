@@ -36,7 +36,38 @@ To use these rules in your project:
     ```bash
     cp -r /path/to/CursorRules/.cursor /path/to/your/project/
     ```
-2.  **Restart Cursor** or reload the window to ensure the rules are indexed.
+2.  **Create a project-specific rules file** (see Project-Specific Rules below).
+3.  **Restart Cursor** or reload the window to ensure the rules are indexed.
+
+## Project-Specific Rules
+
+In addition to the universal and language-specific rules, each project should maintain a **project-specific rules file** (e.g., `project-specific-standards.mdc` or `myproject-conventions.mdc`) in `.cursor/rules/` to capture:
+
+- **Project-specific development standards** that may deviate slightly from general rules
+- **Team conventions and cultural preferences** (naming patterns, architectural decisions)
+- **Tool-specific configurations** (linters, formatters, build tools used in the project)
+- **Domain-specific patterns** (business logic conventions, data handling approaches)
+- **Legacy code considerations** (patterns to maintain for compatibility)
+
+This file allows teams to customize the rules for their specific context while still benefiting from the universal anti-patterns and language standards. The project-specific file should reference and build upon the general rules, not duplicate them.
+
+Example structure:
+```markdown
+---
+description: "Project-specific development standards and conventions"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Project-Specific Standards
+
+**For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
+**For Python standards:** See `python-development-standards.mdc`
+
+## Project Conventions
+
+[Your project-specific rules here]
+```
 
 ## Core Principles (Universal)
 
