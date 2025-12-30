@@ -1,5 +1,5 @@
 ---
-globs: *.swift
+globs: *.swift,["**/*.swift"]
 alwaysApply: false
 ---
 # iOS Development Standards

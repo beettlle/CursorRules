@@ -1,8 +1,8 @@
 ---
-globs: ["**/*.py"]
 description: "Python-specific development standards following PEP 8, PEP 20 (Zen of Python), and Pythonic best practices"
+globs: ["**/*.py"],*.py
+alwaysApply: false
 ---
-
 # Python Development Standards
 
 This file contains Python-specific development standards that embody the ethos of Python as expressed in [PEP 20 - The Zen of Python](https://peps.python.org/pep-0020/), follows the [PEP 8 - Style Guide for Python Code](https://peps.python.org/pep-0008/), and incorporates best practices from [The Hitchhiker's Guide to Python - Code Style](https://docs.python-guide.org/writing/style/), [Pythonic Code Best Practices](https://www.codementor.io/blog/pythonic-code-6yxqdoktzt), and [The Zen of Python: Design Philosophy & Readability](https://llego.dev/posts/zen-python-guide-design-philosophy-readability/).
