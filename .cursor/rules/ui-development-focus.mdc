@@ -1,0 +1,249 @@
+---
+description: This rule is helpful to any UI change or for work with SwiftUI
+alwaysApply: false
+---
+# UI Development Standards
+
+**CRITICAL: All UI and UX development must follow these standards**
+
+## 🛑 ZERO TOLERANCE: UI Anti-Patterns
+
+1. **Custom Sheets/Overlays:** 
+   - ❌ NEVER build custom `ZStack` overlays for modals.
+   - ✅ ALWAYS use `.sheet(item:)` with `.presentationDetents()`.
+   - *Reason:* Custom overlays break keyboard handling and accessibility.
+
+2. **"Sleep" Logic:**
+   - ❌ NEVER use `Task.sleep` to wait for data/player readiness.
+   - ✅ ALWAYS use `await`, `AsyncStream`, or Combine publishers.
+
+## UI Development Guidelines
+
+**CRITICAL: All UI and UX features MUST follow Apple's Human Interface Guidelines (HIG) and Liquid Glass design system**
+
+- **Always reference Apple Human Interface Guidelines** - The HIG is locally indexed and should be consulted for:
+  - Component usage and customization
+  - Design patterns and best practices
+  - Accessibility requirements (VoiceOver, Dynamic Type, etc.)
+  - Platform conventions and consistency
+  - Input methods and user interactions
+  - Technology integration guidelines
+  - **Liquid Glass design patterns and implementation guidelines**
+- SwiftUI first, UIKit when needed
+- SF Symbols for icons
+- Support dark mode, dynamic type
+- SafeArea and GeometryReader for layout
+- Handle all screen sizes and orientations
+- Implement proper keyboard handling
+- Follow HIG principles: Hierarchy, Harmony, and Consistency
+- **Integrate Liquid Glass materials throughout the UI for a cohesive, modern experience**
+
+## Liquid Glass Design System (iOS 26+)
+
+**CRITICAL: All new UI development must use Apple's Liquid Glass design system**
+
+### Overview
+
+Liquid Glass is Apple's translucent material design system introduced in iOS 26. It creates materials that reflect and refract their surroundings, bringing greater focus to content and delivering a new level of vitality across controls, navigation, app icons, widgets, and more.
+
+### Implementation Requirements
+
+1. **Mandatory Usage:**
+   - All new UI components must use Liquid Glass materials
+   - Replace existing custom translucent materials with Liquid Glass
+   - Apply Liquid Glass to buttons, switches, sliders, and media controls
+   - Use Liquid Glass in navigation components (tab bars, sidebars)
+   - Design app icons and widgets with Liquid Glass layers
+
+2. **Liquid Glass Materials:**
+   - Use Apple's provided Liquid Glass APIs and materials
+   - Leverage customization options: clear, tinted, and dark appearances
+   - Ensure materials dynamically reflect and refract their surroundings
+   - Apply appropriate opacity and blur effects
+
+3. **Design Principles:**
+   - Liquid Glass should enhance content focus, not distract from it
+   - Maintain visual hierarchy with proper use of translucency
+   - Ensure readability and contrast with underlying content
+   - Create cohesive visual experience across all UI elements
+
+4. **Accessibility & Testing:**
+   - Test Liquid Glass implementations for readability
+   - Verify accessibility with VoiceOver and Dynamic Type
+   - Consider user comfort (eye strain, vertigo concerns)
+   - Test in various lighting conditions and backgrounds
+   - Ensure sufficient contrast ratios for text and controls
+
+5. **Documentation Reference:**
+   - Always consult: https://developer.apple.com/documentation/technologyoverviews/liquid-glass
+   - Review Apple's implementation examples and best practices
+   - Follow Apple's guidelines for Liquid Glass customization
+
+### Liquid Glass Implementation Signature
+
+Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
+- **Modifier:** `.liquidGlass(material: .thick, refraction: 0.8)`
+- **Background:** `.background(.liquidMaterial(.sidebar))`
+- **Do not invent new modifiers.** Use only the wrappers defined in `Core/UI/DesignSystem/LiquidGlass.swift`.
+
+### When to Use Liquid Glass
+
+- ✅ **DO use Liquid Glass for:**
+  - All buttons and interactive controls
+  - Navigation bars, tab bars, and sidebars
+  - Cards and containers that overlay content
+  - Media controls and playback interfaces
+  - App icons and widget backgrounds
+  - Modal presentations and sheets
+  - Any translucent UI element
+
+- ❌ **DON'T use Liquid Glass for:**
+  - Solid backgrounds that need full opacity
+  - Text content (use appropriate text styles instead)
+  - When it compromises readability or accessibility
+  - When it conflicts with specific design requirements
+
+## Apple Human Interface Guidelines Compliance
+
+**MANDATORY: All UI/UX work must comply with Apple HIG and Liquid Glass design system**
+
+### Before Implementing Any UI Feature:
+
+1. **Consult Apple HIG** (locally indexed - fast access):
+   - Search HIG for relevant component or pattern
+   - Review design guidelines for the specific UI element
+   - Check accessibility requirements
+   - Verify platform conventions
+
+2. **HIG Compliance Checklist:**
+   - ✅ Uses Liquid Glass materials and design patterns (iOS 26+)
+   - ✅ Uses standard iOS components appropriately
+   - ✅ Follows platform conventions (navigation, gestures, etc.)
+   - ✅ Implements proper accessibility (VoiceOver labels, Dynamic Type, etc.)
+   - ✅ Supports all required device sizes and orientations
+   - ✅ Uses appropriate SF Symbols or custom icons that match HIG style
+   - ✅ Implements proper color schemes (light/dark mode)
+   - ✅ Follows typography guidelines (system fonts, sizing, hierarchy)
+   - ✅ Implements proper spacing and layout (safe areas, margins)
+   - ✅ Uses appropriate animations and transitions
+   - ✅ Handles user input correctly (keyboard, gestures, haptics)
+   - ✅ Tests Liquid Glass implementations for readability and user comfort
+
+3. **HIG Principles to Follow:**
+   - **Clarity**: Text is legible, icons are clear, decorum is appropriate
+   - **Deference**: UI defers to content, never competes with it
+   - **Depth**: Visual layers and realistic motion provide hierarchy and vitality
+
+4. **Common HIG Violations to Avoid:**
+   - ❌ Custom components that duplicate system functionality
+   - ❌ Non-standard navigation patterns
+   - ❌ Ignoring safe areas and layout margins
+   - ❌ Inconsistent spacing or typography
+   - ❌ Missing accessibility labels
+   - ❌ Not supporting Dynamic Type
+   - ❌ Poor dark mode support
+   - ❌ Non-standard gestures or interactions
+
+5. **When in Doubt:**
+   - Reference Apple HIG documentation (locally indexed)
+   - Use system components over custom implementations
+   - Follow Apple's design patterns and conventions
+   - Test on multiple device sizes and in both light/dark modes
+   - Verify accessibility with VoiceOver and Dynamic Type
+
+## SwiftUI Best Practices
+
+- Use `@State`, `@Binding`, `@StateObject`, `@ObservedObject`, `@EnvironmentObject` for state management
+- Use built-in layout containers (VStack, HStack, ZStack, LazyVStack, etc.)
+- Use system modifiers and view modifiers before custom ones
+- Use `@Query` for SwiftData integration
+- Use `NavigationStack` and `NavigationPath` for navigation
+- Use native SwiftUI presentation APIs: `.sheet()`, `.alert()`, `.popover()`, `.fullScreenCover()`
+- See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for sheet requirements
+- **Integrate Liquid Glass materials into SwiftUI views and components**
+- Use @Observable macro (iOS 17+) for modern SwiftUI state management
+- Prefer NavigationStack over NavigationView (iOS 16+)
+- Use LazyVStack, LazyHStack, LazyGrid for large lists
+- Minimize view hierarchy depth for performance
+- Use @MainActor annotation for UI-related code
+- Handle loading states, errors, and empty states gracefully
+- Provide meaningful user feedback for actions
+- Optimize for 60fps UI rendering
+
+## UI Component Organization
+
+- Organize UI components in logical folders: Views/, ViewModels/, Components/, Helpers/
+- Keep views focused and composable
+- Extract reusable components into separate files
+- Use clear, descriptive naming following Apple style
+- Group related UI components together
+
+## UI Testing Guidelines
+
+- **UI/UX Testing**: Verify all UI components and interactions follow Apple HIG guidelines
+- **Liquid Glass Testing**: Test Liquid Glass implementations for readability, visual comfort, and accessibility
+- Test UI components for behavior, not implementation details
+- Use XCUITest for UI tests and user interaction testing
+- Utilize UI Recording feature in Xcode to generate test code
+- Test accessibility with VoiceOver and Dynamic Type
+- Test in various device sizes and orientations
+- Test in both light and dark modes
+
+## UI Performance Guidelines
+
+- Lazy load views and images
+- Minimize view hierarchy depth
+- Use LazyVStack, LazyHStack, LazyGrid for large lists
+- Optimize for 60fps UI rendering
+- Profile UI performance with Instruments
+- Handle state management efficiently
+
+## Apple Framework Usage for UI
+
+**CRITICAL: Always prefer built-in Apple frameworks and APIs over custom implementations**
+
+### Framework Priority for UI:
+
+1. **Liquid Glass (iOS 26+):**
+   - **CRITICAL: Use Liquid Glass as the primary design language for all new UI components**
+   - Use Liquid Glass materials for buttons, switches, sliders, and media controls
+   - Implement Liquid Glass in navigation components (tab bars, sidebars)
+   - Apply Liquid Glass to app icons and widgets with appropriate customization options
+   - Use Apple's provided Liquid Glass APIs and materials
+   - Ensure Liquid Glass elements dynamically reflect and refract their surroundings
+   - Test for readability and accessibility with Liquid Glass materials
+   - Consider user comfort (eye strain, vertigo) when implementing Liquid Glass effects
+   - Reference: https://developer.apple.com/documentation/technologyoverviews/liquid-glass
+
+2. **SwiftUI:**
+   - Use built-in views, modifiers, and components before creating custom ones
+   - Use system components that match platform conventions
+   - Leverage framework-provided functionality for better integration
+   - Take advantage of automatic updates and improvements from Apple
+   - Ensure compatibility with system features (Siri, Control Center, etc.)
+
+3. **When Custom UI Implementation is Acceptable:**
+   - ✅ Apple framework doesn't provide the specific functionality needed
+   - ✅ Custom implementation is required for unique business logic
+   - ✅ Framework limitations prevent desired behavior
+   - ✅ Performance requirements cannot be met with built-in solutions
+   - ❌ **NOT acceptable**: Reimplementing functionality that Apple already provides
+   - ❌ **NOT acceptable**: Creating custom components that duplicate system functionality
+   - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for sheet/overlay requirements
+
+4. **Before Creating Custom UI Implementation:**
+   - Search Apple documentation (locally indexed) for existing solutions
+   - Check WWDC sessions and sample code for patterns
+   - Review framework release notes for new features
+   - Consider if a combination of built-in features can achieve the goal
+   - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for UI presentation requirements
+   - Document why custom implementation is necessary
+
+## Remember
+
+- **All UI must follow Apple HIG and Liquid Glass design system** - Consult locally indexed HIG and Liquid Glass documentation for every UI feature
+- **Always use Apple frameworks first** - Check SwiftUI and Liquid Glass APIs before implementing custom solutions
+- **Target iOS 26+** - Leverage Liquid Glass and other iOS 26+ exclusive features
+- **See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section** - For native SwiftUI presentation API requirements
+
+Follow Apple's documentation for detailed implementation guidance.

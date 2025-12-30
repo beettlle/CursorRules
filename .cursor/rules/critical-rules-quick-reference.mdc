@@ -1,0 +1,89 @@
+---
+alwaysApply: true
+description: "Critical anti-patterns quick reference - condensed rules for fast context loading"
+---
+
+# Critical Rules Quick Reference
+
+## Top 11 Universal Anti-Patterns
+
+### 1. Ghost Layer Prevention
+
+❌ Bad: `class Service { func get() { return repo.get() } }` (>80% delegation)
+✅ Good: Service coordinates multiple repos OR adds logic OR delete layer
+⚠️ Why: Adds complexity without value, violates SRP
+📍 Details: `general-llm-anti-patterns.mdc` section 1.1
+
+### 2. Fake Abstraction Patterns
+
+❌ Bad: `actor Repo { func process() async { await MainActor.run { } } }` (defeats isolation)
+✅ Good: `actor Repo { func process() async { /* actual async work */ } }`
+⚠️ Why: Creates illusion of concurrency without benefits, adds overhead
+📍 Details: `general-llm-anti-patterns.mdc` section 1.2
+
+### 3. Placeholder & Dead Code Ban
+
+❌ Bad: `func method() { throw NotImplementedError() }` or `_ = expensiveOperation()`
+✅ Good: Implement, remove, or mark unavailable with explanation
+⚠️ Why: Broken functionality, wasted resources, technical debt
+📍 Details: `general-llm-anti-patterns.mdc` section 1.3
+
+### 4. Business Logic Location
+
+❌ Bad: Repository contains switch statements, state transitions, business calculations
+✅ Good: Repository is pure CRUD, business logic in Domain layer
+⚠️ Why: Creates God Objects, untestable code, tight coupling
+📍 Details: `general-llm-anti-patterns.mdc` section 1.4
+
+### 5. Performance-First Collection Handling
+
+❌ Bad: `for item in items { await processItem(item) }` (I/O in loop = O(N²))
+✅ Good: Batch operations - fetch once, modify in-memory, save once
+⚠️ Why: UI freezes at scale, database exhaustion, poor UX
+📍 Details: `general-llm-anti-patterns.mdc` section 2.1
+
+### 6. Zero-Hallucination Policy
+
+❌ Bad: Multi-step search workaround when direct lookup API exists
+✅ Good: Verify framework documentation, use official APIs
+⚠️ Why: Fragile code, security risk (slopsquatting), build failures
+📍 Details: `general-llm-anti-patterns.mdc` section 4.1
+
+### 7. Hardcoded Secrets
+
+❌ Bad: `apiKey = "sk-live-1234567890abcdef"` in source code
+✅ Good: `apiKey = process.env.API_KEY` (environment variables)
+⚠️ Why: Security vulnerability, credential exposure, compliance violations
+📍 Details: `general-llm-anti-patterns.mdc` section 5.1
+
+### 8. Missing Input Validation
+
+❌ Bad: `database.query("SELECT * FROM users WHERE id = " + userInput)`
+✅ Good: Validate input, use parameterized queries
+⚠️ Why: SQL injection, XSS, command injection, system compromise
+📍 Details: `general-llm-anti-patterns.mdc` section 5.2
+
+### 9. Silent Failures
+
+❌ Bad: `try { op() } catch { pass }` (swallows errors)
+✅ Good: Handle specific errors or explicitly propagate with context
+⚠️ Why: Hidden bugs, difficult debugging, silent data loss
+📍 Details: `general-llm-anti-patterns.mdc` section 5.3
+
+### 10. Test-Implementation Mismatch
+
+❌ Bad: Mock returns different types/behavior than real implementation
+✅ Good: Mocks match real API signatures and behavior exactly
+⚠️ Why: False confidence, integration failures, production bugs
+📍 Details: `general-llm-anti-patterns.mdc` section 6.1
+
+### 11. Warning Dismissal Anti-Pattern
+
+❌ Bad: Comments dismissing warnings as "false positives" or "won't affect runtime"
+✅ Good: Fix all warnings; if truly unfixable, document technical reason and escalate
+⚠️ Why: Warnings indicate real issues; dismissing them creates technical debt
+📍 Details: `general-llm-anti-patterns.mdc` section 3.7
+
+---
+
+*This is a condensed quick reference. See main rules files for detailed examples, detection criteria, and solutions.*

@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+---
+# Documentation Files Policy
+
+**CRITICAL: Never create markdown files (`.md`) unless explicitly requested by the user.**
+
+## Rules
+
+1. **Do NOT create markdown files for:**
+   - Explaining code changes or fixes
+   - Documenting what was implemented
+   - Creating README files
+   - Writing documentation or guides
+   - Summarizing work done
+   - Any other automatic documentation
+
+2. **Only create markdown files when:**
+   - The user explicitly requests a markdown file (e.g., "create a README", "write documentation in a .md file", "create a markdown file for X")
+   - The user specifically asks for documentation to be written to a file
+
+3. **Communication:**
+   - Explain changes and fixes directly in your response to the user
+   - Use code comments when code documentation is needed
+   - Do not create separate markdown files to explain work
+
+4. **Existing markdown files:**
+   - You may read and reference existing markdown files
+   - Do not modify existing markdown files unless explicitly asked
+
+## Examples
+
+❌ **DON'T do this:**
+- After fixing a bug, creating `BUGFIX_SUMMARY.md`
+- After implementing a feature, creating `FEATURE_DOCUMENTATION.md`
+- Creating `CHANGELOG.md` or `UPDATE_NOTES.md` automatically
+
+✅ **DO this instead:**
+- Explain changes directly in your response
+- Add code comments if inline documentation is needed
+- Only create markdown files when the user explicitly asks for them
