@@ -17,67 +17,29 @@ alwaysApply: false
    - ❌ NEVER use `Task.sleep` to wait for data/player readiness.
    - ✅ ALWAYS use `await`, `AsyncStream`, or Combine publishers.
 
+3. **Text Blend Modes on Materials:**
+   - ❌ NEVER use `.blendMode(.overlay)` or other blend modes for text on translucent materials
+   - ✅ ALWAYS use semantic foreground styles: `.foregroundStyle(.primary)` or `.foregroundStyle(.secondary)`
+   - ✅ ALWAYS use `.liquidText()` modifier which implements semantic vibrancy correctly
+   - *Reason:* HIG requires semantic vibrancy for text on materials. Blend modes create unpredictable contrast and violate WCAG accessibility standards.
+
 ## UI Development Guidelines
 
 **CRITICAL: All UI and UX features MUST follow Apple's Human Interface Guidelines (HIG) and Liquid Glass design system**
 
-- **Always reference Apple Human Interface Guidelines** - The HIG is locally indexed and should be consulted for:
-  - Component usage and customization
-  - Design patterns and best practices
-  - Accessibility requirements (VoiceOver, Dynamic Type, etc.)
-  - Platform conventions and consistency
-  - Input methods and user interactions
-  - Technology integration guidelines
-  - **Liquid Glass design patterns and implementation guidelines**
-- SwiftUI first, UIKit when needed
-- SF Symbols for icons
-- Support dark mode, dynamic type
-- SafeArea and GeometryReader for layout
-- Handle all screen sizes and orientations
-- Implement proper keyboard handling
-- Follow HIG principles: Hierarchy, Harmony, and Consistency
-- **Integrate Liquid Glass materials throughout the UI for a cohesive, modern experience**
+- Always consult Apple HIG documentation (locally indexed) for component usage, design patterns, and accessibility requirements
+- Integrate Liquid Glass materials throughout the UI for all new components (iOS 26+)
 
 ## Liquid Glass Design System (iOS 26+)
 
 **CRITICAL: All new UI development must use Apple's Liquid Glass design system**
 
-### Overview
-
-Liquid Glass is Apple's translucent material design system introduced in iOS 26. It creates materials that reflect and refract their surroundings, bringing greater focus to content and delivering a new level of vitality across controls, navigation, app icons, widgets, and more.
-
 ### Implementation Requirements
 
-1. **Mandatory Usage:**
-   - All new UI components must use Liquid Glass materials
-   - Replace existing custom translucent materials with Liquid Glass
-   - Apply Liquid Glass to buttons, switches, sliders, and media controls
-   - Use Liquid Glass in navigation components (tab bars, sidebars)
-   - Design app icons and widgets with Liquid Glass layers
-
-2. **Liquid Glass Materials:**
-   - Use Apple's provided Liquid Glass APIs and materials
-   - Leverage customization options: clear, tinted, and dark appearances
-   - Ensure materials dynamically reflect and refract their surroundings
-   - Apply appropriate opacity and blur effects
-
-3. **Design Principles:**
-   - Liquid Glass should enhance content focus, not distract from it
-   - Maintain visual hierarchy with proper use of translucency
-   - Ensure readability and contrast with underlying content
-   - Create cohesive visual experience across all UI elements
-
-4. **Accessibility & Testing:**
-   - Test Liquid Glass implementations for readability
-   - Verify accessibility with VoiceOver and Dynamic Type
-   - Consider user comfort (eye strain, vertigo concerns)
-   - Test in various lighting conditions and backgrounds
-   - Ensure sufficient contrast ratios for text and controls
-
-5. **Documentation Reference:**
-   - Always consult: https://developer.apple.com/documentation/technologyoverviews/liquid-glass
-   - Review Apple's implementation examples and best practices
-   - Follow Apple's guidelines for Liquid Glass customization
+- **Mandatory Usage:** All new UI components must use Liquid Glass materials (buttons, switches, sliders, media controls, navigation, app icons, widgets)
+- **Materials:** Use Apple's provided Liquid Glass APIs; leverage customization options (clear, tinted, dark appearances)
+- **Accessibility:** Test for readability, verify VoiceOver/Dynamic Type support, ensure WCAG contrast ratios
+- **Reference:** Always consult https://developer.apple.com/documentation/technologyoverviews/liquid-glass
 
 ### Liquid Glass Implementation Signature
 
@@ -103,147 +65,118 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
   - When it compromises readability or accessibility
   - When it conflicts with specific design requirements
 
+### Text Legibility on Liquid Glass Materials
+
+**CRITICAL HIG Requirement:** Text on translucent materials must use semantic foreground styles, not blend modes.
+
+- ✅ **REQUIRED:** Use `.foregroundStyle(.primary)` or `.foregroundStyle(.secondary)` - uses Apple's vibrancy system optimized for materials
+- ✅ **REQUIRED:** The `.liquidText()` modifier must implement semantic vibrancy (not blend modes)
+- ❌ **FORBIDDEN:** `.blendMode(.overlay)` on text (causes unpredictable contrast), hardcoded colors like `.foregroundColor(.white)` on materials
+- **Testing:** Verify text readability in both light/dark modes on all backgrounds, ensure WCAG AA contrast ratios
+
 ## Apple Human Interface Guidelines Compliance
 
 **MANDATORY: All UI/UX work must comply with Apple HIG and Liquid Glass design system**
 
-### Before Implementing Any UI Feature:
+### HIG Compliance Checklist (Project-Specific Requirements):
 
-1. **Consult Apple HIG** (locally indexed - fast access):
-   - Search HIG for relevant component or pattern
-   - Review design guidelines for the specific UI element
-   - Check accessibility requirements
-   - Verify platform conventions
+- ✅ Uses Liquid Glass materials and design patterns (iOS 26+)
+- ✅ **Text on materials uses semantic foreground styles (not blend modes)**
+- ✅ **ScrollViews use `.safeAreaInset(edge: .top)` to prevent content from scrolling under Dynamic Island/notch**
+- ✅ **ScrollViews use `.safeAreaInset(edge: .bottom)` for pinned footers (preferred over ZStack pattern)**
+- ✅ **Fixed controls separated from scrollable content (media screens)**
 
-2. **HIG Compliance Checklist:**
-   - ✅ Uses Liquid Glass materials and design patterns (iOS 26+)
-   - ✅ Uses standard iOS components appropriately
-   - ✅ Follows platform conventions (navigation, gestures, etc.)
-   - ✅ Implements proper accessibility (VoiceOver labels, Dynamic Type, etc.)
-   - ✅ Supports all required device sizes and orientations
-   - ✅ Uses appropriate SF Symbols or custom icons that match HIG style
-   - ✅ Implements proper color schemes (light/dark mode)
-   - ✅ Follows typography guidelines (system fonts, sizing, hierarchy)
-   - ✅ Implements proper spacing and layout (safe areas, margins)
-   - ✅ Uses appropriate animations and transitions
-   - ✅ Handles user input correctly (keyboard, gestures, haptics)
-   - ✅ Tests Liquid Glass implementations for readability and user comfort
+### Common HIG Violations to Avoid:
 
-3. **HIG Principles to Follow:**
-   - **Clarity**: Text is legible, icons are clear, decorum is appropriate
-   - **Deference**: UI defers to content, never competes with it
-   - **Depth**: Visual layers and realistic motion provide hierarchy and vitality
+- ❌ **Text blend modes (`.blendMode(.overlay)`) on materials instead of semantic vibrancy**
+- ❌ **Hardcoded text colors on translucent backgrounds**
+- ❌ **Primary controls inside ScrollView (should be fixed/pinned)**
+- ❌ **ScrollViews that allow content to scroll under Dynamic Island/notch when bouncing back**
+- ❌ Custom components that duplicate system functionality
+- ❌ Non-standard navigation patterns
 
-4. **Common HIG Violations to Avoid:**
-   - ❌ Custom components that duplicate system functionality
-   - ❌ Non-standard navigation patterns
-   - ❌ Ignoring safe areas and layout margins
-   - ❌ Inconsistent spacing or typography
-   - ❌ Missing accessibility labels
-   - ❌ Not supporting Dynamic Type
-   - ❌ Poor dark mode support
-   - ❌ Non-standard gestures or interactions
-
-5. **When in Doubt:**
-   - Reference Apple HIG documentation (locally indexed)
-   - Use system components over custom implementations
-   - Follow Apple's design patterns and conventions
-   - Test on multiple device sizes and in both light/dark modes
-   - Verify accessibility with VoiceOver and Dynamic Type
+*For comprehensive HIG guidelines, see `ios-development-standards.mdc`*
 
 ## SwiftUI Best Practices
 
-- Use `@State`, `@Binding`, `@StateObject`, `@ObservedObject`, `@EnvironmentObject` for state management
-- Use built-in layout containers (VStack, HStack, ZStack, LazyVStack, etc.)
-- Use system modifiers and view modifiers before custom ones
-- Use `@Query` for SwiftData integration
-- Use `NavigationStack` and `NavigationPath` for navigation
 - Use native SwiftUI presentation APIs: `.sheet()`, `.alert()`, `.popover()`, `.fullScreenCover()`
 - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for sheet requirements
 - **Integrate Liquid Glass materials into SwiftUI views and components**
-- Use @Observable macro (iOS 17+) for modern SwiftUI state management
-- Prefer NavigationStack over NavigationView (iOS 16+)
-- Use LazyVStack, LazyHStack, LazyGrid for large lists
-- Minimize view hierarchy depth for performance
-- Use @MainActor annotation for UI-related code
-- Handle loading states, errors, and empty states gracefully
-- Provide meaningful user feedback for actions
-- Optimize for 60fps UI rendering
 
-## UI Component Organization
+*For comprehensive SwiftUI guidelines, see `ios-development-standards.mdc`*
 
-- Organize UI components in logical folders: Views/, ViewModels/, Components/, Helpers/
-- Keep views focused and composable
-- Extract reusable components into separate files
-- Use clear, descriptive naming following Apple style
-- Group related UI components together
+## Layout Patterns for Media/Playback Screens
 
-## UI Testing Guidelines
+**CRITICAL HIG:** Media playback screens require fixed controls that never scroll.
 
-- **UI/UX Testing**: Verify all UI components and interactions follow Apple HIG guidelines
-- **Liquid Glass Testing**: Test Liquid Glass implementations for readability, visual comfort, and accessibility
-- Test UI components for behavior, not implementation details
-- Use XCUITest for UI tests and user interaction testing
-- Utilize UI Recording feature in Xcode to generate test code
-- Test accessibility with VoiceOver and Dynamic Type
-- Test in various device sizes and orientations
-- Test in both light and dark modes
+- ✅ Primary controls (play/pause, skip, navigation) must be FIXED (outside `ScrollView`)
+- ✅ **PREFERRED:** Use `.safeAreaInset(edge: .bottom)` on ScrollView for pinned footers (iOS 15+)
+- ✅ **FALLBACK:** Use `ZStack(alignment: .bottom)` with pinned footer pattern for older iOS versions
+- ❌ NEVER place primary playback controls inside `ScrollView`
+- ❌ NEVER use manual spacers (e.g., `Color.clear.frame(height: 200)`) - unreliable across device sizes
+- *Why:* HIG requires primary actions to be always accessible. Scrolling controls away violates this principle.
 
-## UI Performance Guidelines
+**Preferred Pattern (iOS 15+):**
+```swift
+ScrollView {
+    VStack {
+        // Scrollable content
+    }
+    .padding()
+}
+.safeAreaInset(edge: .bottom, spacing: 0) {
+    // Fixed footer with playback controls
+    BottomBarView(...)
+        .padding(.horizontal)
+        .background(.liquidMaterial(.regular))
+}
+```
 
-- Lazy load views and images
-- Minimize view hierarchy depth
-- Use LazyVStack, LazyHStack, LazyGrid for large lists
-- Optimize for 60fps UI rendering
-- Profile UI performance with Instruments
-- Handle state management efficiently
+**Fallback Pattern (Legacy):**
+```swift
+ZStack(alignment: .bottom) {
+    ScrollView {
+        VStack {
+            // Scrollable content
+            Color.clear.frame(height: 200) // Manual spacer (not recommended)
+        }
+    }
+    // Fixed footer (pinned outside ScrollView)
+    BottomBarView(...)
+}
+```
 
-## Apple Framework Usage for UI
+## Safe Area Handling for ScrollViews
 
-**CRITICAL: Always prefer built-in Apple frameworks and APIs over custom implementations**
+**CRITICAL:** ScrollViews must respect safe areas to prevent content from being obscured by Dynamic Island, notch, or other system UI elements.
 
-### Framework Priority for UI:
+- ✅ **REQUIRED:** Use `.safeAreaInset(edge: .top)` on ScrollViews to ensure content never scrolls under Dynamic Island/notch
+- ✅ **REQUIRED:** When content bounces back after scrolling, it must respect safe area boundaries
+- ✅ **REQUIRED:** Reduce fixed top padding on content (e.g., from 40 to 20) when using `.safeAreaInset`, as it automatically adds safe area padding
+- ❌ **FORBIDDEN:** Fixed top padding that doesn't account for Dynamic Island/notch variations across devices
+- ❌ **FORBIDDEN:** Content that can scroll under system UI elements when ScrollView bounces back
 
-1. **Liquid Glass (iOS 26+):**
-   - **CRITICAL: Use Liquid Glass as the primary design language for all new UI components**
-   - Use Liquid Glass materials for buttons, switches, sliders, and media controls
-   - Implement Liquid Glass in navigation components (tab bars, sidebars)
-   - Apply Liquid Glass to app icons and widgets with appropriate customization options
-   - Use Apple's provided Liquid Glass APIs and materials
-   - Ensure Liquid Glass elements dynamically reflect and refract their surroundings
-   - Test for readability and accessibility with Liquid Glass materials
-   - Consider user comfort (eye strain, vertigo) when implementing Liquid Glass effects
-   - Reference: https://developer.apple.com/documentation/technologyoverviews/liquid-glass
+**Pattern for ScrollViews:**
+```swift
+ScrollView {
+    VStack {
+        // Content with reduced top padding (e.g., 20 instead of 40)
+        AlbumArtworkView(...)
+            .padding(.top, 20)
+        // ... rest of content
+    }
+    .padding()
+}
+.safeAreaInset(edge: .top, spacing: 0) {
+    // Ensures content never scrolls under Dynamic Island
+    Color.clear.frame(height: 0)
+}
+```
 
-2. **SwiftUI:**
-   - Use built-in views, modifiers, and components before creating custom ones
-   - Use system components that match platform conventions
-   - Leverage framework-provided functionality for better integration
-   - Take advantage of automatic updates and improvements from Apple
-   - Ensure compatibility with system features (Siri, Control Center, etc.)
-
-3. **When Custom UI Implementation is Acceptable:**
-   - ✅ Apple framework doesn't provide the specific functionality needed
-   - ✅ Custom implementation is required for unique business logic
-   - ✅ Framework limitations prevent desired behavior
-   - ✅ Performance requirements cannot be met with built-in solutions
-   - ❌ **NOT acceptable**: Reimplementing functionality that Apple already provides
-   - ❌ **NOT acceptable**: Creating custom components that duplicate system functionality
-   - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for sheet/overlay requirements
-
-4. **Before Creating Custom UI Implementation:**
-   - Search Apple documentation (locally indexed) for existing solutions
-   - Check WWDC sessions and sample code for patterns
-   - Review framework release notes for new features
-   - Consider if a combination of built-in features can achieve the goal
-   - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for UI presentation requirements
-   - Document why custom implementation is necessary
+**Why:** Dynamic Island and notch heights vary by device. Using `.safeAreaInset` ensures automatic adaptation across all devices while preventing content from being obscured when ScrollView bounces back after being "thrown" upwards.
 
 ## Remember
 
 - **All UI must follow Apple HIG and Liquid Glass design system** - Consult locally indexed HIG and Liquid Glass documentation for every UI feature
-- **Always use Apple frameworks first** - Check SwiftUI and Liquid Glass APIs before implementing custom solutions
 - **Target iOS 26+** - Leverage Liquid Glass and other iOS 26+ exclusive features
 - **See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section** - For native SwiftUI presentation API requirements
-
-Follow Apple's documentation for detailed implementation guidance.
