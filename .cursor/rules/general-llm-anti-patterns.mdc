@@ -15,6 +15,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 |-----|------|------|
 |"Shut Up, Compiler"|Code silences warnings vs fixes root cause, OR dismisses warnings as "false positives"|Refactor to address root cause; never dismiss warnings without fixing|
 |"False Positive Fallacy"|Claims warnings are false positives without fixing|Investigate and fix; never dismiss warnings without solution|
+|"False Compilation Claims"|Claims code compiles or has zero warnings without actually running a build|NEVER claim compilation success without verification; if build can't be run, explicitly state that verification is pending|
 |"Complexity Without Benefit"|Removing layer changes nothing functionally|Delete unnecessary layers|
 |"Comment Length"|More lines of explanation than code|Refactor to be self-documenting|
 |"Works Once, Breaks at Scale"|Works for N=1, fails for N=1000|Test with realistic data volumes|
@@ -266,6 +267,28 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 **Detect:** Comments claiming warnings are "false positives", "don't affect runtime", or "won't matter in current version"; warnings left unfixed with justification comments; build succeeds with warnings and code is marked "complete"
 
 **Key Principle:** If you can't fix a warning, you haven't finished the task. The only acceptable outcome is zero warnings or explicit user acknowledgment that a specific warning is acceptable.
+
+---
+
+### 3.8 False Compilation Claims (CRIT)
+
+**CRITICAL:** Never claim code compiles or has zero warnings without actually running a build.
+
+❌ Bad: "All code compiles with zero warnings" (without running build), "Build succeeded" (without evidence), "Code changes complete and verified" (without build output)
+✅ Good: "Code changes complete. Build verification pending." OR "✅ Build succeeded with 0 warnings" (after actual build with output shown)
+⚠️ Why: Creates false confidence, wastes user time debugging, violates trust, leads to broken code in repository, causes frustration when user discovers errors
+🔧 Fix: Only claim compilation success after running actual build command; if in plan mode or can't build, explicitly state verification is pending; show build output when claiming success
+📍 See: Examples in `ios-build-automation.mdc` for build verification workflow
+
+**Detect:** Claims like "compiles successfully", "zero warnings", "builds clean", "all code compiles" without evidence of actual build execution; no build output shown; claims made in plan mode where builds can't run; statements about compilation status without running compiler
+
+**Key Principle:** If you can't run a build, you can't claim it compiles. Always be honest about verification status. Only claim compilation success when you have actual build output showing success.
+
+**Verification Requirements:**
+- In agent mode: Always run build before claiming success
+- In plan mode: Explicitly state "Build verification pending" or "Not yet verified"
+- When claiming success: Show build output or command that was run
+- If build fails: Fix errors before claiming completion
 
 ---
 
