@@ -5,7 +5,10 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 
 # Critical Rules Quick Reference
 
-## Top 12 Universal Anti-Patterns
+## 🚫 FORBIDDEN PHRASES (without proof)
+"compiles", "builds", "zero warnings", "build succeeded" → Must show build output or say "verification pending"
+
+## Top 13 Universal Anti-Patterns
 
 ### 1. Ghost Layer Prevention
 
@@ -88,8 +91,16 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 
 ❌ Bad: "All code compiles with zero warnings" (without running build)
 ✅ Good: "Code changes complete. Build verification pending." OR show actual build output
+⚠️ **STOP:** If typing "compiles"/"builds"/"zero warnings" → Verify: Did I run a build? If no → Use "Build verification pending"
 ⚠️ Why: Creates false confidence, wastes user time, violates trust, leads to broken code
 📍 Details: `general-llm-anti-patterns.mdc` section 3.8
+
+### 13. False Test Verification Claims
+
+❌ Bad: "All tests pass" (without running tests)
+✅ Good: "Code changes complete. Test verification pending." OR show actual test output
+⚠️ Why: Creates false confidence, wastes user time, violates trust, leads to broken code
+📍 Details: `general-llm-anti-patterns.mdc` section 3.9
 
 ---
 
