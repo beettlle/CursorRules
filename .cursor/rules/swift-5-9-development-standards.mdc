@@ -971,4 +971,10 @@ func testUserLoginFlow() {
 - **Remember: Always use Apple frameworks first** - Check SwiftUI, SwiftData, MusicKit, Apple Music API before implementing custom solutions
 - **Remember: Target iOS 26+** - Leverage iOS 26+ exclusive features
 
+## Final Phase Verification
+
+Before closing a task or phase, the agent must perform a self-audit using the instructions in `swift-5-9-brutal-audit.mdc`. This is a non-negotiable step for production-ready code.
+
+**See also:** `swift-5-9-brutal-audit.mdc` for comprehensive phase review checklist
+
 Follow Apple's documentation for detailed implementation guidance.

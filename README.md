@@ -20,13 +20,16 @@ The core rules live in `.cursor/rules/`.
 
 ```text
 .cursor/rules/
-├── critical-rules-quick-reference.mdc  # Top 11 universal rules for fast context loading
+├── critical-rules-quick-reference.mdc  # Top 13 universal rules for fast context loading
 ├── general-llm-anti-patterns.mdc       # Comprehensive guide to LLM behavioral smells
-├── python-development-standards.mdc    # Python-specific standards (PEP 8, Zen of Python)
-├── ios-development-standards.mdc       # iOS/Swift 5 development standards
-├── ui-development-focus.mdc            # UI/UX best practices
+├── python-3-development-standards.mdc # Python-specific standards (PEP 8, Zen of Python)
+├── swift-5-9-development-standards.mdc # iOS/Swift 5.9 development standards
+├── ios-ui-development-focus.mdc        # UI/UX best practices
 ├── ios-build-automation.mdc            # CI/CD and build automation rules
-└── documentation-policy.mdc            # Rules for creating/editing documentation
+├── documentation-policy.mdc            # Rules for creating/editing documentation
+├── audit-workflow.mdc                  # Phase completion verification workflow
+├── swift-5-9-brutal-audit.mdc          # Swift/iOS comprehensive phase audit
+└── python-3-brutal-audit.mdc          # Python comprehensive phase audit
 ```
 
 ## Installation
@@ -116,6 +119,19 @@ To add support for a new language (e.g., TypeScript/React):
     ```
 
 3. Define your specific rules, following the structure of existing files.
+
+## Phase-Based Audit Workflows
+
+The repository includes on-demand brutal audit workflows for comprehensive architectural reviews:
+
+- **Swift/iOS**: `.cursor/rules/swift-5-9-brutal-audit.mdc` - Comprehensive audit for Swift 5.9/iOS 26 projects
+- **Python**: `.cursor/rules/python-3-brutal-audit.mdc` - Comprehensive audit for Python 3.13 projects
+
+These audits are designed to run after phase completion to ensure code quality and architectural compliance. They complement the always-on rules by providing deep, milestone-based validation.
+
+**Usage:** Mention "run the audit", "check for anti-patterns", or "verify phase completion" to invoke the appropriate audit workflow.
+
+The audits use tools (`grep`, `codebase_search`) to verify checks rather than just reading files, ensuring thorough validation of codebase quality.
 
 ## Contributing
 
