@@ -147,6 +147,56 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 🔧 Fix: Design types usable at zero value; avoid mandatory Init() methods; use zero values meaningfully
 **Detect:** Mandatory Init() methods, zero value causes panics, types unusable without setup
 
+### 1.14 Named Return Values (CRIT)
+**CRITICAL:** Use named return values only when they improve readability or enable deferred modifications.
+
+❌ Bad: `func divide(a, b int) (int, error)` with unclear return meaning
+✅ Good: `func divide(a, b int) (result int, err error)` OR `func divide(a, b int) (int, error)` (if clear)
+⚠️ Why: Named returns can improve clarity but add verbosity; use when deferred functions modify them
+🔧 Fix: Use named returns for clarity or when deferred functions need to modify them
+📍 See: [Effective Go - Named Results](https://go.dev/doc/effective_go#named-results)
+**Detect:** Named returns that don't improve clarity, unnamed returns that are unclear
+
+### 1.15 Multiple Return Values (CRIT)
+**CRITICAL:** Use multiple return values for operations that can fail; error is always last.
+
+❌ Bad: `func parse() string`, `func parse() (string, bool)` (bool for error)
+✅ Good: `func parse() (string, error)`, `func read() ([]byte, error)`
+⚠️ Why: Multiple returns enable explicit error handling; error last is Go convention
+🔧 Fix: Return `(result, error)` for operations that can fail; error is always last
+📍 See: [Effective Go - Multiple Returns](https://go.dev/doc/effective_go#multiple-returns)
+**Detect:** Single return for operations that can fail, error not last, bool instead of error
+
+### 1.16 Embedding (CRIT)
+**CRITICAL:** Use embedding to compose types; prefer composition over inheritance.
+
+❌ Bad: Wrapper methods that only delegate, unnecessary indirection
+✅ Good: `type Reader struct { io.Reader }`, `type Server struct { *http.Server }`
+⚠️ Why: Embedding promotes methods; enables composition; cleaner than delegation
+🔧 Fix: Embed interfaces/types directly; use embedding instead of wrapper methods
+📍 See: [Effective Go - Embedding](https://go.dev/doc/effective_go#embedding)
+**Detect:** Wrapper methods that only call embedded type, types that should embed instead
+
+### 1.17 Control Structures (CRIT)
+**CRITICAL:** Use Go's control structures idiomatically; no parentheses needed.
+
+❌ Bad: `if (condition) { }`, `for (i := 0; i < 10; i++) { }` (parentheses)
+✅ Good: `if condition { }`, `for i := 0; i < 10; i++ { }`
+⚠️ Why: Go doesn't require parentheses; cleaner syntax; idiomatic Go
+🔧 Fix: Remove parentheses from if/for/switch; use Go's syntax
+📍 See: [Effective Go - Control Structures](https://go.dev/doc/effective_go#control-structures)
+**Detect:** Parentheses in if/for/switch, C/Java-style control structures
+
+### 1.18 Initialization (CRIT)
+**CRITICAL:** Use initialization patterns idiomatically; prefer constants for immutable values.
+
+❌ Bad: `var timeout = 10 * time.Second` (should be const), redundant initialization
+✅ Good: `const timeout = 10 * time.Second`, `var cache = make(map[string]int)`
+⚠️ Why: Constants enable compile-time evaluation; proper initialization reduces errors
+🔧 Fix: Use `const` for immutable values; initialize variables properly
+📍 See: [Effective Go - Constants](https://go.dev/doc/effective_go#constants), [Effective Go - Variables](https://go.dev/doc/effective_go#variables)
+**Detect:** Variables that should be constants, redundant initialization, uninitialized variables
+
 ## Uber Style & Idioms
 
 ### 2.1 Prefix Unexported Globals (Style)
