@@ -1,0 +1,172 @@
+---
+description: "Go-specific development standards following Effective Go, Go Code Review Comments, and Uber Go Style Guide"
+globs: ["**/*.go"]
+alwaysApply: false
+---
+# Go Development Standards
+
+You are an expert Go developer. Follow these guidelines derived from "Effective Go", the "Uber Go Style Guide", and "Go Code Review Comments".
+
+## Philosophy
+- **Simplicity:** Clear is better than clever.
+- **Readability:** Write code for the reader, not the writer.
+- **Standard Library:** Prefer standard lib over external deps whenever possible.
+- **Idiomatic:** Follow community conventions (fmt, naming, structure).
+
+## Critical Go Rules
+
+### 1.1 Error Handling (CRIT)
+**CRITICAL:** Handle errors explicitly. Never ignore them. Wrap errors for context.
+
+❌ Bad: `func f() { _ = doSomething() }` OR `if err != nil { return err }` (no context)
+✅ Good: `if err := do(); err != nil { return fmt.Errorf("do failed: %w", err) }`
+⚠️ Why: Silent failures hide bugs; unwrapped errors lose trace/context
+🔧 Fix: Handle every error; use `%w` to wrap; check `errors.Is/As`
+📍 See: `general-llm-anti-patterns.mdc` Rule 5.3
+**Detect:** `_ = func()`, `return err` without wrapping in high-level func, `panic(err)`
+
+### 1.2 Concurrency Safety (CRIT)
+**CRITICAL:** Never fire-and-forget goroutines. Manage lifecycles with `sync.WaitGroup` or `errgroup`.
+
+❌ Bad: `go func() { process() }()` (no tracking/shutdown)
+✅ Good: `wg.Add(1); go func() { defer wg.Done(); process() }()`
+⚠️ Why: Leaks goroutines, impossible to shut down gracefully, undefined behavior on exit
+🔧 Fix: Use `errgroup` for error propagation or `WaitGroup`; strict context cancellation
+**Detect:** `go func` without WaitGroup/channel, sleeping in goroutines
+
+### 1.3 Context Propagation (CRIT)
+**CRITICAL:** `context.Context` must be the first argument of blocking functions.
+
+❌ Bad: `func fetch(id int) { http.Get(...) }`
+✅ Good: `func fetch(ctx context.Context, id int) { http.NewRequestWithContext(ctx, ...) }`
+⚠️ Why: Enables cancellation/timeouts; prevents orphaned operations
+🔧 Fix: Pass `ctx` through call chain; use `context.Background()` only at root
+**Detect:** Blocking IO without context, `context.TODO()` in prod, `ctx` struct field
+
+### 1.4 Interface Pollution (CRIT)
+**CRITICAL:** Define interfaces where they are used (consumer), not where implemented (producer).
+
+❌ Bad: `package producer; type UserStore interface { ... }`
+✅ Good: `package consumer; type UserStore interface { Get(id int) ... }`
+⚠️ Why: Tight coupling, "return concrete types, accept interfaces" (Postel's Law)
+🔧 Fix: Remove big interfaces; define small interfaces at call site
+**Detect:** Exported interfaces in implementation packages, interfaces with >5 methods
+
+### 1.5 Pointer vs Value Receivers
+**CRITICAL:** Be consistent. Use pointers for mutability or large structs (>64 bytes).
+
+❌ Bad: Mixed receiver types, copying large structs, locking by value (`sync.Mutex` in struct)
+✅ Good: `func (s *Service) Mutate()`, `func (s Service) Read()` (if small/immutable)
+⚠️ Why: Value receivers copy data (slow for large structs); value mutexes break locking
+🔧 Fix: Use pointer `*T` if mutating or large; never copy `sync.Mutex`
+**Detect:** `func (s Service)` where Service contains `sync.Mutex`, mixed `(s Service)` and `(s *Service)`
+
+### 1.6 Slice & Map Preallocation
+**CRITICAL:** Preallocate memory when size is known to avoid re-allocations.
+
+❌ Bad: `var dest []int; for _, v := range src { dest = append(dest, v) }`
+✅ Good: `dest := make([]int, 0, len(src)); ...`
+⚠️ Why: Repeated `append` triggers O(n) allocations/copies; prealloc is O(1)
+🔧 Fix: Use `make([]T, 0, cap)` or `make(map[K]V, cap)`
+**Detect:** `append` inside loop on empty slice, `make` without capacity arg
+
+### 1.7 Functional Options Pattern
+**CRITICAL:** Use Functional Options for complex constructors with optional parameters.
+
+❌ Bad: `func NewServer(addr string, timeout int, logger *Log, cache *Cache) *Server`
+✅ Good: `func NewServer(addr string, opts ...Option) *Server`
+⚠️ Why: Constructor breakage on new fields; `nil` checks; unreadable calls
+🔧 Fix: Implement `type Option func(*T)`; `WithTimeout(...)` helpers
+**Detect:** Constructors with >3 args, many `nil` args in calls
+
+### 1.8 Table-Driven Tests
+**CRITICAL:** Use table-driven tests for all logic.
+
+❌ Bad: Repeated test logic, copy-pasted test functions
+✅ Good: `tests := []struct{name string; in T; want T}{...}; for _, tt := range tests { ... }`
+⚠️ Why: Easy to add cases; cleaner diffs; strict separation of logic/data
+🔧 Fix: Refactor into `struct` slice; run loop with `t.Run(tt.name, ...)`
+**Detect:** Multiple `t.Run` with duplicated setup logic, loose assertions
+
+## Uber Style & Idioms
+
+### 2.1 Prefix Unexported Globals (Style)
+**CRITICAL:** Top-level unexported variables must have a `_` prefix to avoid scope confusion.
+
+❌ Bad: `var defaultTimeout = 10 * time.Second`
+✅ Good: `var _defaultTimeout = 10 * time.Second`
+⚠️ Why: Clearly distinguishes global scope from local scope; avoids collisions
+🔧 Fix: Rename unexported globals with leading underscore
+**Detect:** Top-level unexported vars without `_` prefix
+
+### 2.2 Mutex Grouping (Style)
+**CRITICAL:** Place `sync.Mutex` directly above the fields it protects.
+
+❌ Bad: Mutex field far from the fields it protects
+✅ Good: `mu sync.Mutex; // protects:; balance int`
+⚠️ Why: Documentation/clarity on what the lock covers; prevents locking errors
+🔧 Fix: Move mutex field; add comment indicating guarded fields
+**Detect:** `sync.Mutex` field at top of struct with no comments
+
+### 2.3 Import Grouping (Style)
+**CRITICAL:** Group imports: stdlib first, then 3rd party, then local, separated by blank lines.
+
+❌ Bad: Mixed imports or no separation
+✅ Good: `import ("fmt"; "os" \n "github.com/pkg/errors" \n "myproj/api")`
+⚠️ Why: Clear dependency structure; standard convention enforced by linters
+🔧 Fix: Regroup imports manually or use `goimports -local`
+**Detect:** Imports not separated by blank lines, stdlib mixed with 3rd party
+
+## Anti-Patterns
+
+### 3.1 Init() Abuse
+**CRITICAL:** Avoid `init()` functions for logic or I/O. Use explicit constructors.
+
+❌ Bad: `func init() { db = connect() }`
+✅ Good: `func NewDatabase() (*DB, error)`
+⚠️ Why: Global state side effects; hard to test; error handling impossible in init
+🔧 Fix: Move initialization logic to explicit `New*` functions returning error
+**Detect:** `func init()` doing I/O or setting globals
+
+### 3.2 Panic Misuse
+**CRITICAL:** Do not use `panic()` for control flow or recoverable errors.
+
+❌ Bad: `if err != nil { panic(err) }` (in libraries/handlers)
+✅ Good: Return error
+⚠️ Why: Panics crash the app; only use for unrecoverable startup errors (Must*)
+🔧 Fix: Replace `panic` with error return
+**Detect:** `panic()` outside of `main` or `Must*` functions
+
+### 3.3 Interface{} (Any) Abuse
+**CRITICAL:** Use strong types or Generics instead of `interface{}`/`any`.
+
+❌ Bad: `func process(data interface{})`
+✅ Good: `func process(data ConcreteType)` OR `func process[T any](data T)`
+⚠️ Why: Loses type safety; requires runtime assertions; harder to read
+🔧 Fix: Use specific type or generic constraint
+**Detect:** `interface{}` as function arg (unless generic/reflection needed)
+
+## Testing Guidelines
+
+### 4.1 Parallel Tests
+**CRITICAL:** Use `t.Parallel()` for all independent unit tests.
+
+❌ Bad: Tests running sequentially (default)
+✅ Good: `func TestX(t *testing.T) { t.Parallel(); ... }`
+⚠️ Why: Speeds up test suite execution; detects race conditions
+🔧 Fix: Add `t.Parallel()` to top of test functions; capture loop vars
+**Detect:** Tests without `t.Parallel()` (unless integration/stateful)
+
+### 4.2 Test Main Usage
+**CRITICAL:** Avoid `TestMain` for simple setup; use helper functions/defer.
+
+❌ Bad: Using `TestMain` for simple db connection setup
+✅ Good: Helper `setupTest(t)` that returns teardown closure
+⚠️ Why: Global state in tests makes them brittle and hard to parallelize
+🔧 Fix: Move global setup to per-test helper functions
+**Detect:** `func TestMain` doing simple setup logic
+
+## References
+- [Effective Go](https://go.dev/doc/effective_go)
+- [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments)
+- [Uber Go Style Guide](https://github.com/uber-go/guide/blob/master/style.md)
