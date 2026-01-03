@@ -288,6 +288,41 @@ import (
 🔧 Fix: Split large packages; move private code to `internal/`; minimize exported surface
 **Detect:** Packages with >10 files, exported types only used internally, no `internal/` usage
 
+### 2.6 Documentation (CRIT)
+**CRITICAL:** Public APIs must have `godoc` comments; use examples for complex APIs.
+
+❌ Bad: `func Process()`, no examples, missing package doc
+✅ Good: `// Process handles data transformation.`, `// Example:`, package-level doc
+⚠️ Why: Undocumented APIs are hard to use; examples show usage; package docs explain purpose
+🔧 Fix: Add `godoc` comments to all exported symbols; include examples; document packages
+**Detect:** Exported funcs/types without comments, no examples, missing package doc
+
+### 2.7 Doc Comments (CRIT)
+**CRITICAL:** Comments before top-level declarations are doc comments; they document the package or exported symbol.
+
+❌ Bad: `func Process()`, no doc comment, missing package doc
+✅ Good: `// Process handles data transformation.`, `// Package api provides HTTP handlers.`
+⚠️ Why: Doc comments are the primary documentation; godoc generates docs from them
+🔧 Fix: Add doc comments to all exported symbols; document packages with package comment
+📍 See: [Effective Go - Commentary](https://go.dev/doc/effective_go#commentary), [Go Doc Comments](https://go.dev/doc/comment)
+**Detect:** Exported funcs/types without doc comments, missing package doc, doc comments not before declaration
+
+### 2.8 Tooling (CRIT)
+**CRITICAL:** Use Go's built-in tooling for formatting, imports, and dependency management.
+
+**gofmt:**
+❌ Bad: Manual formatting, inconsistent indentation
+✅ Good: Run `gofmt -w .` or `go fmt ./...` before committing
+⚠️ Why: Enforces standard formatting; all Go code uses gofmt
+🔧 Fix: Use `gofmt` or configure editor to format on save
+
+**go mod:**
+❌ Bad: Manual dependency management, vendor directory without go.mod
+✅ Good: `go mod init`, `go mod tidy`, `go mod download`
+⚠️ Why: Ensures reproducible builds, clear dependency tracking, version management
+🔧 Fix: Use `go mod` commands; commit go.mod and go.sum
+**Detect:** Missing go.mod, manual dependency management, uncommitted go.sum
+
 ## Anti-Patterns
 
 ### 3.1 Init() Abuse
