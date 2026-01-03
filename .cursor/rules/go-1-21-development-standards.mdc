@@ -236,7 +236,7 @@ for _, tt := range tests {
 ## Uber Style & Idioms
 
 ### 2.1 Prefix Unexported Globals (Style)
-**CRITICAL:** Top-level unexported variables must have a `_` prefix to avoid scope confusion.
+**CRITICAL:** Top-level unexported variables must have a `_` prefix to avoid scope confusion. *Note: This is Uber-specific style; Effective Go doesn't require this.*
 
 ❌ Bad: `var defaultTimeout = 10 * time.Second`
 ✅ Good: `var _defaultTimeout = 10 * time.Second`
@@ -436,6 +436,39 @@ import (
 ⚠️ Why: Better organization, parallel execution, clearer output
 🔧 Fix: Group related tests using `t.Run()` subtests
 **Detect:** Related tests not using subtests, multiple test functions for same feature
+
+## Summary: Critical Go Rules
+
+These patterns represent the most critical Go best practices:
+
+1. **Error Handling** - Handle errors explicitly, wrap with context
+2. **Concurrency Safety** - Manage goroutines, use WaitGroup/errgroup
+3. **Context Propagation** - Context as first parameter
+4. **Interface Design** - Define interfaces at use site
+5. **Receiver Types** - Pointers for mutability/large structs
+6. **Memory Preallocation** - Preallocate slices/maps when size known
+7. **Functional Options** - Use for complex constructors
+8. **Table-Driven Tests** - Use for all logic tests
+9. **Defer Usage** - Always use defer for cleanup
+10. **Range Loop Capture** - Capture loop variables explicitly
+11. **Generics** - Use for type-safe reusable code
+12. **Channel Patterns** - Close channels, use range/context
+13. **Zero Values** - Design types usable at zero value
+14. **Named Returns** - Use when improving clarity or enabling deferred modifications
+15. **Multiple Returns** - Error is always last
+16. **Embedding** - Prefer composition over inheritance
+17. **Control Structures** - No parentheses needed
+18. **Initialization** - Use constants for immutable values
+19. **Formatting** - Always use gofmt
+20. **Naming Conventions** - Exported vs unexported, package names, getters
+21. **Package Design** - Single responsibility, use internal/
+22. **Documentation** - godoc comments for public APIs
+23. **Doc Comments** - Comments before declarations document symbols
+24. **Tooling** - Use gofmt, go mod, goimports
+25. **Test Helpers** - Use t.Helper() in helpers
+26. **Subtests** - Use t.Run() for organization
+
+---
 
 ## References
 - [Effective Go](https://go.dev/doc/effective_go)
