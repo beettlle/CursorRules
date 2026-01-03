@@ -371,6 +371,34 @@ import (
 🔧 Fix: Use specific type or generic constraint
 **Detect:** `interface{}` as function arg (unless generic/reflection needed)
 
+### 3.4 Nil Interface Checks (CRIT)
+**CRITICAL:** Check for nil interfaces properly; `== nil` may not work as expected.
+
+❌ Bad: `if err == nil { return }` (may fail with typed nil)
+✅ Good: `if err != nil { return err }` OR check concrete type
+⚠️ Why: Typed nil interfaces are not equal to nil; causes subtle bugs
+🔧 Fix: Always check `err != nil`; use type assertions for typed nil checks
+**Detect:** Direct nil comparison on interfaces, typed nil not caught
+
+### 3.5 Variable Shadowing (CRIT)
+**CRITICAL:** Avoid variable shadowing; use `:=` carefully.
+
+❌ Bad: `err := do(); if err := do2(); err != nil { }` (shadows outer err)
+✅ Good: `err := do(); if err2 := do2(); err2 != nil { }`
+⚠️ Why: Shadowing hides bugs, makes debugging harder, loses error context
+🔧 Fix: Use different variable names in inner scopes; be explicit with `:=` vs `=`
+**Detect:** Variable redeclared in inner scope with same name, shadowed errors
+
+### 3.6 Recover Usage (CRIT)
+**CRITICAL:** Use `recover` only in deferred functions to handle panics gracefully; keep panic/recover within package.
+
+❌ Bad: `recover()` outside deferred function, exposing panics to callers
+✅ Good: `defer func() { if err := recover(); err != nil { log.Println(err) } }()`
+⚠️ Why: Recover only works in deferred functions; panics should be converted to errors at package boundary
+🔧 Fix: Use recover in deferred functions; convert panics to errors before returning to caller
+📍 See: [Effective Go - Recover](https://go.dev/doc/effective_go#recover)
+**Detect:** Recover outside deferred function, panics exposed to callers, recover not converting to error
+
 ## Testing Guidelines
 
 ### 4.1 Parallel Tests
@@ -390,6 +418,24 @@ import (
 ⚠️ Why: Global state in tests makes them brittle and hard to parallelize
 🔧 Fix: Move global setup to per-test helper functions
 **Detect:** `func TestMain` doing simple setup logic
+
+### 4.3 Test Helpers (CRIT)
+**CRITICAL:** Use `t.Helper()` in test helper functions.
+
+❌ Bad: Helper function without `t.Helper()`
+✅ Good: `func helper(t *testing.T) { t.Helper(); ... }`
+⚠️ Why: Marks function as helper; improves error reporting (shows actual test line)
+🔧 Fix: Add `t.Helper()` to top of all helper functions
+**Detect:** Helper functions without `t.Helper()`, unclear error locations in test output
+
+### 4.4 Subtests (CRIT)
+**CRITICAL:** Use `t.Run()` for subtests; enables better test organization.
+
+❌ Bad: Multiple test functions for related cases
+✅ Good: `t.Run("case1", func(t *testing.T) { ... })`
+⚠️ Why: Better organization, parallel execution, clearer output
+🔧 Fix: Group related tests using `t.Run()` subtests
+**Detect:** Related tests not using subtests, multiple test functions for same feature
 
 ## References
 - [Effective Go](https://go.dev/doc/effective_go)
