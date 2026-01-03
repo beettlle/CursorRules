@@ -8,10 +8,22 @@ alwaysApply: false
 You are an expert Go developer. Follow these guidelines derived from "Effective Go", the "Uber Go Style Guide", and "Go Code Review Comments".
 
 ## Philosophy
-- **Simplicity:** Clear is better than clever.
-- **Readability:** Write code for the reader, not the writer.
+
+Go's design philosophy centers on simplicity, reliability, and concurrency:
+
+- **Simplicity:** Clear is better than clever. Go intentionally omits complex features to reduce cognitive load.
+- **Minimalism:** "Less is more" - Go focuses on essential features, avoiding unnecessary complexity.
+- **Readability:** Write code for the reader, not the writer. Code should be self-documenting.
+- **Explicit over Implicit:** Errors are explicit, behavior is predictable. No hidden magic.
+- **Principle of Least Surprise:** Code should behave in the most obvious way possible.
 - **Standard Library:** Prefer standard lib over external deps whenever possible.
-- **Idiomatic:** Follow community conventions (fmt, naming, structure).
+- **Idiomatic:** Follow community conventions (fmt, naming, structure). Use `gofmt` for formatting.
+- **Compiled Performance:** Go compiles to machine code for fast execution and static type checking.
+- **Concurrency-First:** Built-in goroutines and channels enable efficient concurrent programming.
+
+**For universal anti-patterns:** See `general-llm-anti-patterns.mdc`.
+
+---
 
 ## Critical Go Rules
 
