@@ -197,6 +197,23 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 📍 See: [Effective Go - Constants](https://go.dev/doc/effective_go#constants), [Effective Go - Variables](https://go.dev/doc/effective_go#variables)
 **Detect:** Variables that should be constants, redundant initialization, uninitialized variables
 
+## Style & Formatting
+
+### 2.0 Formatting (CRIT)
+**CRITICAL:** Always use `gofmt` for formatting; it enforces Go's standard style.
+
+❌ Bad: Manual formatting, inconsistent indentation, spaces instead of tabs
+✅ Good: Run `gofmt -w .` or `go fmt ./...` before committing
+⚠️ Why: Consistent formatting improves readability; gofmt is the standard; all Go code uses it
+🔧 Fix: Use `gofmt` or configure editor to format on save; never manually format
+📍 See: [Effective Go - Formatting](https://go.dev/doc/effective_go#formatting)
+**Detect:** Inconsistent indentation, spaces for indentation, manual alignment
+
+**Formatting Rules:**
+- **Indentation:** Use tabs (gofmt emits tabs by default)
+- **Line Length:** No limit; wrap if too long and indent with extra tab
+- **Parentheses:** Go needs fewer parentheses; control structures don't use them
+
 ## Uber Style & Idioms
 
 ### 2.1 Prefix Unexported Globals (Style)
@@ -221,10 +238,55 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **CRITICAL:** Group imports: stdlib first, then 3rd party, then local, separated by blank lines.
 
 ❌ Bad: Mixed imports or no separation
-✅ Good: `import ("fmt"; "os" \n "github.com/pkg/errors" \n "myproj/api")`
+✅ Good:
+```go
+import (
+    "fmt"
+    "os"
+    
+    "github.com/pkg/errors"
+    
+    "myproj/api"
+)
+```
 ⚠️ Why: Clear dependency structure; standard convention enforced by linters
 🔧 Fix: Regroup imports manually or use `goimports -local`
 **Detect:** Imports not separated by blank lines, stdlib mixed with 3rd party
+
+### 2.4 Naming Conventions (CRIT)
+**CRITICAL:** Follow Go naming conventions: exported (capitalized) vs unexported, package names, acronyms.
+
+❌ Bad: `func getData()`, `type jsonParser struct`, `package myPackage`
+✅ Good: `func GetData()`, `type JSONParser struct`, `package mypackage`
+⚠️ Why: Exported vs unexported controls API surface; package names should be lowercase
+🔧 Fix: Capitalize exported identifiers; lowercase package names; acronyms all caps (JSON, XML)
+**Detect:** Mixed case package names, lowercase exported funcs, inconsistent acronym casing
+
+**Package Naming:**
+- Lowercase, single-word names (no underscores, no mixedCaps)
+- Package name is base name of source directory (`src/encoding/base64` → `base64`)
+- Short, concise, evocative
+- Exported names can avoid repetition (e.g., `bufio.Reader`, not `bufio.BufReader`)
+
+**Getters:**
+❌ Bad: `func GetName() string`, `func GetBalance() int`
+✅ Good: `func Name() string`, `func Balance() int`
+⚠️ Why: Go convention; package name provides context (`obj.Name()`, not `obj.GetName()`)
+🔧 Fix: Remove "Get" prefix from getter methods
+**Detect:** Methods named `Get*` that only return values
+
+**Interface Naming:**
+- Single-method interfaces: use "-er" suffix (`Reader`, `Writer`, `Closer`)
+- Multiple methods: descriptive names (`ReadWriter`, `ReadWriteCloser`)
+
+### 2.5 Package Design (CRIT)
+**CRITICAL:** Packages should have single responsibility; use `internal/` for private APIs.
+
+❌ Bad: Package with 20+ files doing everything, exported types that should be internal
+✅ Good: Focused packages, `internal/` for project-private code, clear package boundaries
+⚠️ Why: Large packages violate SRP; exported types create API surface; internal prevents external use
+🔧 Fix: Split large packages; move private code to `internal/`; minimize exported surface
+**Detect:** Packages with >10 files, exported types only used internally, no `internal/` usage
 
 ## Anti-Patterns
 
