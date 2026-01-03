@@ -64,22 +64,22 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 🔧 Fix: Remove big interfaces; define small interfaces at call site
 **Detect:** Exported interfaces in implementation packages, interfaces with >5 methods
 
-### 1.5 Pointer vs Value Receivers
-**CRITICAL:** Be consistent. Use pointers for mutability or large structs (>64 bytes).
+### 1.5 Pointer vs Value Receivers (CRIT)
+**CRITICAL:** Be consistent. Use pointers for mutability or large structs (>64 bytes). Use value receivers for small, immutable structs.
 
 ❌ Bad: Mixed receiver types, copying large structs, locking by value (`sync.Mutex` in struct)
-✅ Good: `func (s *Service) Mutate()`, `func (s Service) Read()` (if small/immutable)
-⚠️ Why: Value receivers copy data (slow for large structs); value mutexes break locking
-🔧 Fix: Use pointer `*T` if mutating or large; never copy `sync.Mutex`
-**Detect:** `func (s Service)` where Service contains `sync.Mutex`, mixed `(s Service)` and `(s *Service)`
+✅ Good: `func (s *Service) Mutate()`, `func (s Service) Read()` (if small/immutable, <64 bytes)
+⚠️ Why: Value receivers copy data (slow for large structs); value mutexes break locking; value receivers enable immutability
+🔧 Fix: Use pointer `*T` if mutating or large; use value `T` if small and immutable; never copy `sync.Mutex`
+**Detect:** `func (s Service)` where Service contains `sync.Mutex`, mixed `(s Service)` and `(s *Service)`, large structs with value receivers
 
-### 1.6 Slice & Map Preallocation
+### 1.6 Slice & Map Preallocation (CRIT)
 **CRITICAL:** Preallocate memory when size is known to avoid re-allocations.
 
 ❌ Bad: `var dest []int; for _, v := range src { dest = append(dest, v) }`
-✅ Good: `dest := make([]int, 0, len(src)); ...`
+✅ Good: `dest := make([]int, 0, len(src)); ...` OR `dest := make([]int, len(src)); copy(dest, src)`
 ⚠️ Why: Repeated `append` triggers O(n) allocations/copies; prealloc is O(1)
-🔧 Fix: Use `make([]T, 0, cap)` or `make(map[K]V, cap)`
+🔧 Fix: Use `make([]T, 0, cap)` or `make(map[K]V, cap)`; use `copy()` for slice copying
 **Detect:** `append` inside loop on empty slice, `make` without capacity arg
 
 ### 1.7 Functional Options Pattern
@@ -91,11 +91,30 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 🔧 Fix: Implement `type Option func(*T)`; `WithTimeout(...)` helpers
 **Detect:** Constructors with >3 args, many `nil` args in calls
 
-### 1.8 Table-Driven Tests
+### 1.8 Table-Driven Tests (CRIT)
 **CRITICAL:** Use table-driven tests for all logic.
 
 ❌ Bad: Repeated test logic, copy-pasted test functions
-✅ Good: `tests := []struct{name string; in T; want T}{...}; for _, tt := range tests { ... }`
+✅ Good:
+```go
+tests := []struct {
+    name string
+    in   int
+    want int
+}{
+    {"positive", 5, 25},
+    {"zero", 0, 0},
+    {"negative", -3, 9},
+}
+for _, tt := range tests {
+    t.Run(tt.name, func(t *testing.T) {
+        got := square(tt.in)
+        if got != tt.want {
+            t.Errorf("square(%d) = %d, want %d", tt.in, got, tt.want)
+        }
+    })
+}
+```
 ⚠️ Why: Easy to add cases; cleaner diffs; strict separation of logic/data
 🔧 Fix: Refactor into `struct` slice; run loop with `t.Run(tt.name, ...)`
 **Detect:** Multiple `t.Run` with duplicated setup logic, loose assertions
