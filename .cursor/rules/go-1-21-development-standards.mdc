@@ -100,6 +100,53 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 🔧 Fix: Refactor into `struct` slice; run loop with `t.Run(tt.name, ...)`
 **Detect:** Multiple `t.Run` with duplicated setup logic, loose assertions
 
+### 1.9 Defer Usage (CRIT)
+**CRITICAL:** Always use `defer` for cleanup operations (files, mutexes, connections).
+
+❌ Bad: `f := os.Open(...); ...; f.Close()` (manual cleanup)
+✅ Good: `defer f.Close()` OR `defer mu.Unlock()`
+⚠️ Why: Ensures cleanup even on early returns/panics; prevents resource leaks
+🔧 Fix: Use `defer` immediately after acquiring resource
+📍 See: `general-llm-anti-patterns.mdc` Rule 5.4
+**Detect:** Manual cleanup without defer, mutex unlock without defer, file close without defer
+
+### 1.10 Range Loop Variable Capture (CRIT)
+**CRITICAL:** Capture loop variables explicitly in goroutines/closures.
+
+❌ Bad: `for _, v := range items { go func() { use(v) }() }` (all use last value)
+✅ Good: `for _, v := range items { v := v; go func() { use(v) }() }`
+⚠️ Why: Loop variables reused; closures capture by reference; causes race conditions
+🔧 Fix: Explicitly capture loop variable: `v := v` before closure
+**Detect:** Goroutines/closures in range loops without explicit capture, all iterations use same value
+
+### 1.11 Generics Usage (CRIT)
+**CRITICAL:** Use generics for type-safe reusable code; prefer generics over `interface{}`.
+
+❌ Bad: `func Max(a, b interface{}) interface{}` (type assertions needed)
+✅ Good: `func Max[T comparable](a, b T) T` (type-safe)
+⚠️ Why: Generics provide type safety; reduce runtime assertions; clearer APIs
+🔧 Fix: Use generics for reusable logic; use constraints (`comparable`, `any`, custom); avoid `interface{}`
+📍 See: Section 3.3 for `interface{}` abuse
+**Detect:** `interface{}` when generics would work, excessive type assertions, no generic constraints
+
+### 1.12 Channel Patterns (CRIT)
+**CRITICAL:** Use channels for communication, not just synchronization; always close channels properly.
+
+❌ Bad: `for { select { case <-done: return } }` (busy wait, channel never closed)
+✅ Good: `for v := range ch { process(v) }` OR `select { case <-ctx.Done(): return }`
+⚠️ Why: Prevents goroutine leaks, enables proper shutdown, avoids resource exhaustion
+🔧 Fix: Close channels when done; use `range` over channels; prefer context-based cancellation
+**Detect:** Channels never closed, select without default causing blocking, busy-wait patterns
+
+### 1.13 Zero Values (CRIT)
+**CRITICAL:** Leverage Go's zero values; design types to be useful at zero value.
+
+❌ Bad: `var s Service; s.Init()` required, zero value unusable
+✅ Good: `var s Service; s.Do()` works, zero value is valid state
+⚠️ Why: Zero values reduce boilerplate; idiomatic Go; better ergonomics
+🔧 Fix: Design types usable at zero value; avoid mandatory Init() methods; use zero values meaningfully
+**Detect:** Mandatory Init() methods, zero value causes panics, types unusable without setup
+
 ## Uber Style & Idioms
 
 ### 2.1 Prefix Unexported Globals (Style)
