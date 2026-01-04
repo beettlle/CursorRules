@@ -33,7 +33,9 @@ We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't sl
 ## 🔴 SECTION A: Critical LLM Anti-Pattern Detection
 
 ### A1. "Fake Async" Pattern (Audit Report #1 Issue)
+
 Search for this exact anti-pattern in async functions:
+
 - `async def` functions that use `asyncio.run()` inside
 - `async def` functions that call blocking I/O (`time.sleep()`, `requests.get()`, blocking database operations)
 - Methods that wrap >80% of their body in synchronous work
@@ -42,14 +44,18 @@ Search for this exact anti-pattern in async functions:
 **Fix:** Use proper async I/O (`await asyncio.sleep()`, `tornado.httpclient.AsyncHTTPClient`), or make it synchronous.
 
 ### A2. Pass-Through "Ghost Layer" Services
+
 Check services in `searchaton/api/`, `searchaton/crawler/`, `searchaton/indexer/`:
+
 - If >80% of methods are single-line `return await repository.method()`, it's a ghost layer.
 - If a service wraps only ONE dependency with no coordination or logic, flag it.
 
 **Evidence to provide:** Count of pass-through methods vs. methods that add value.
 
 ### A3. Dead Code Detection
+
 Search for:
+
 - Methods that always raise `NotImplementedError` (placeholder implementations)
 - `_ = await` patterns (discarded results wasting CPU/network)
 - `# TODO:` or `# FIXME:` comments in production code
@@ -57,15 +63,20 @@ Search for:
 - Unused imports
 
 ### A4. O(N²) Collection Operations
+
 Flag any pattern like:
+
 ```python
 for item in items:
     await process_item(item)  # ❌ Each call fetches/saves
 ```
+
 **Check:** `add_posts()`, `index_posts()`, bulk import methods - are they batch optimized?
 
 ### A5. "Hallucination-Implementation" API Workarounds
+
 Search for:
+
 - Using custom implementations when Tornado/Whoosh/SQLite provides the feature
 - Multi-step searches to find something by ID when direct lookup exists
 - Comments saying "Tornado doesn't provide X" or "Whoosh doesn't support Y" (did anyone actually check the docs?)
@@ -73,7 +84,9 @@ Search for:
 - Using `requests` when `tornado.httpclient.AsyncHTTPClient` should be used
 
 ### A6. AI-Apologetic Defensive Comments
+
 Flag comments that:
+
 - Are 5+ lines explaining why "unsafe" code is "actually safe"
 - Repeat the same explanation in multiple files
 - Say "This pattern is recommended because..." for workarounds
@@ -86,21 +99,28 @@ Flag comments that:
 ## 🟠 SECTION B: Layer Boundary Enforcement
 
 ### B1. Model Layer Purity Check
+
 Scan `searchaton/models/`:
+
 ```bash
 grep -r "import tornado\|import whoosh\|import sqlite3" searchaton/models/
 ```
+
 **Result should be minimal** - only for type hints if needed. Any framework imports in models = immediate fix required.
 
 ### B2. Business Logic Location
+
 Flag any Repository/DAO method in `searchaton/models/database.py` that:
+
 - Contains business rules (validation beyond data integrity)
 - Calculates derived values (should be in domain/service layer)
 - Has >30 lines of logic (Repositories should be CRUD only)
 - Contains `if/elif/else` chains for business decisions
 
 ### B3. Data Boundary Verification
+
 In `searchaton/api/handlers.py` and `searchaton/search/`:
+
 - Are database models returned directly to templates?
 - Is every database object mapped to a clean DTO/dict before crossing boundaries?
 - Check method signatures: return types should be DTOs/dicts, not raw database objects.
@@ -110,7 +130,9 @@ In `searchaton/api/handlers.py` and `searchaton/search/`:
 ## 🟡 SECTION C: Concurrency & Performance Audit
 
 ### C1. Async/Await Correctness
+
 Check all async functions:
+
 - ✅ Using `await` for all I/O operations
 - ✅ Using `tornado.httpclient.AsyncHTTPClient` (not `requests`)
 - ✅ Using `await asyncio.sleep()` (not `time.sleep()`)
@@ -119,7 +141,9 @@ Check all async functions:
 - ❌ Using `asyncio.run()` inside async functions
 
 ### C2. Hot Path Performance
+
 For search, indexing, and crawling operations:
+
 - Does removing 1 item require fetching ALL items?
 - Does finding an item by ID convert EVERY item to DTO?
 - Are database queries using proper indexes?
@@ -127,6 +151,7 @@ For search, indexing, and crawling operations:
 - Are batch operations used instead of loops?
 
 ### C3. State Management Separation
+
 - Is state calculation happening in Repositories? (❌)
 - Is there a dedicated service layer for state management? (✅)
 - Are Repositories just save/load snapshots? (✅)
@@ -136,13 +161,16 @@ For search, indexing, and crawling operations:
 ## 🟢 SECTION D: Test Quality Audit
 
 ### D1. Async Test Patterns
+
 Check all test files:
+
 - Tests for async functions MUST use `@pytest.mark.asyncio`
 - ❌ Using `asyncio.run()` in tests (use pytest-asyncio)
 - ❌ Blocking operations in async tests
 - ❌ Assigning `None` return values to variables unnecessarily
 
 ### D2. Test Coverage Gaps
+
 - Handlers: 100% of public methods have tests?
 - Workers: All crawl operations tested?
 - Indexers: All indexing operations tested?
@@ -150,6 +178,7 @@ Check all test files:
 - Error paths: All error conditions tested?
 
 ### D3. Mock Quality
+
 - Do mocks match real implementation behavior?
 - Are tests passing with mocks but would fail with real code?
 - Are external API calls properly mocked?
@@ -160,7 +189,9 @@ Check all test files:
 ## 🔵 SECTION E: Python Type Safety & Compatibility
 
 ### E1. Type Hint Coverage Audit
+
 Check all code:
+
 - All public functions have type hints?
 - Async functions use `typing.Awaitable` or `typing.Coroutine`?
 - No `Any` types without justification?
@@ -170,7 +201,9 @@ Check all code:
 **Track count of missing type hints for each phase.**
 
 ### E2. Python 3.13 Feature Usage
+
 Check for proper Python 3.13 patterns:
+
 - ✅ Using modern async patterns correctly
 - ✅ Proper use of `asyncio` features
 - ✅ Type hints using modern syntax (no `from typing import List` for built-in generics)
@@ -181,12 +214,14 @@ Check for proper Python 3.13 patterns:
 ## 🟣 SECTION F: Web/Template Compliance
 
 ### F1. Tornado Template Best Practices
+
 - Are templates using base template inheritance?
 - Are static files properly configured with Tornado's `StaticFileHandler`?
 - Are template variables properly escaped to prevent XSS?
 - Are error templates (404, 500) implemented?
 
 ### F2. Web Anti-Patterns
+
 - ❌ Custom error handling when Tornado provides it (use `write_error()`)
 - ❌ `time.sleep()` for waiting on data (use async/await)
 - ❌ Custom routing when Tornado's routing works
@@ -198,6 +233,7 @@ Check for proper Python 3.13 patterns:
 ## 📊 SECTION G: Scoring & Prioritization
 
 ### G1. The "Cleanliness" Verdict
+
 On a scale of 1-10 (1 = Pure Architecture, 10 = Vibe Coding Mess):
 
 | Category | Score | Critical Issues |
@@ -212,6 +248,7 @@ On a scale of 1-10 (1 = Pure Architecture, 10 = Vibe Coding Mess):
 | **OVERALL** | /10 | |
 
 ### G2. TOP 10 Files Requiring Immediate Refactoring
+
 Rank by severity (blocking Phase [X+1]):
 
 | Rank | File | Primary Violation | Effort (S/M/L) |
@@ -228,6 +265,7 @@ Rank by severity (blocking Phase [X+1]):
 | 10 | | | |
 
 ### G3. Technical Debt Tracker
+
 | Debt Type | Count | Files |
 |-----------|-------|-------|
 | TODO/FIXME comments | | |
@@ -238,7 +276,9 @@ Rank by severity (blocking Phase [X+1]):
 | Blocking I/O in async functions | | |
 
 ### G4. Regression Check
+
 Compare to previous audit:
+
 - ❓ Did any previously fixed issues regress?
 - ❓ Are new files following the patterns we established?
 - ❓ Is code quality trending better or worse?
@@ -248,6 +288,7 @@ Compare to previous audit:
 ## 📝 Output Format
 
 For each violation found, provide:
+
 ```
 🚨 [CRITICAL/HIGH/MEDIUM/LOW] - Category A1: Fake Async Pattern
 📍 File: searchaton/crawler/worker.py

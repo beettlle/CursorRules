@@ -285,6 +285,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 **Key Principle:** If you can't run a build, you can't claim it compiles. Always be honest about verification status. Only claim compilation success when you have actual build output showing success.
 
 **Verification Requirements:**
+
 - In agent mode: Always run build before claiming success
 - In plan mode: Explicitly state "Build verification pending" or "Not yet verified"
 - When claiming success: Show build output or command that was run

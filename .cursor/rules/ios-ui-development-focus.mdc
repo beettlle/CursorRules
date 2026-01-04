@@ -8,7 +8,7 @@ alwaysApply: false
 
 ## 🛑 ZERO TOLERANCE: UI Anti-Patterns
 
-1. **Custom Sheets/Overlays:** 
+1. **Custom Sheets/Overlays:**
    - ❌ NEVER build custom `ZStack` overlays for modals.
    - ✅ ALWAYS use `.sheet(item:)` with `.presentationDetents()`.
    - *Reason:* Custom overlays break keyboard handling and accessibility.
@@ -39,11 +39,12 @@ alwaysApply: false
 - **Mandatory Usage:** All new UI components must use Liquid Glass materials (buttons, switches, sliders, media controls, navigation, app icons, widgets)
 - **Materials:** Use Apple's provided Liquid Glass APIs; leverage customization options (clear, tinted, dark appearances)
 - **Accessibility:** Test for readability, verify VoiceOver/Dynamic Type support, ensure WCAG contrast ratios
-- **Reference:** Always consult https://developer.apple.com/documentation/technologyoverviews/liquid-glass
+- **Reference:** Always consult <https://developer.apple.com/documentation/technologyoverviews/liquid-glass>
 
 ### Liquid Glass Implementation Signature
 
 Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
+
 - **Modifier:** `.liquidGlass(material: .thick, refraction: 0.8)`
 - **Background:** `.background(.liquidMaterial(.sidebar))`
 - **Do not invent new modifiers.** Use only the wrappers defined in `Core/UI/DesignSystem/LiquidGlass.swift`.
@@ -78,7 +79,7 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 
 **MANDATORY: All UI/UX work must comply with Apple HIG and Liquid Glass design system**
 
-### HIG Compliance Checklist (Project-Specific Requirements):
+### HIG Compliance Checklist (Project-Specific Requirements)
 
 - ✅ Uses Liquid Glass materials and design patterns (iOS 26+)
 - ✅ **Text on materials uses semantic foreground styles (not blend modes)**
@@ -86,7 +87,7 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 - ✅ **ScrollViews use `.safeAreaInset(edge: .bottom)` for pinned footers (preferred over ZStack pattern)**
 - ✅ **Fixed controls separated from scrollable content (media screens)**
 
-### Common HIG Violations to Avoid:
+### Common HIG Violations to Avoid
 
 - ❌ **Text blend modes (`.blendMode(.overlay)`) on materials instead of semantic vibrancy**
 - ❌ **Hardcoded text colors on translucent backgrounds**
@@ -117,6 +118,7 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 - *Why:* HIG requires primary actions to be always accessible. Scrolling controls away violates this principle.
 
 **Preferred Pattern (iOS 15+):**
+
 ```swift
 ScrollView {
     VStack {
@@ -133,6 +135,7 @@ ScrollView {
 ```
 
 **Fallback Pattern (Legacy):**
+
 ```swift
 ZStack(alignment: .bottom) {
     ScrollView {
@@ -157,6 +160,7 @@ ZStack(alignment: .bottom) {
 - ❌ **FORBIDDEN:** Content that can scroll under system UI elements when ScrollView bounces back
 
 **Pattern for ScrollViews:**
+
 ```swift
 ScrollView {
     VStack {

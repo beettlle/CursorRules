@@ -90,24 +90,28 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 **CRITICAL:** These are the most common Swift/iOS-specific anti-patterns that cause architectural violations and performance issues. For detailed explanations, see `harmoniaudio-anti-llm-traps.mdc`.
 
 ### Fake Actor Pattern (SwiftData)
+
 ❌ Bad: `actor Repo { nonisolated(unsafe) let ctx; func add() { await MainActor.run { } } }`
 ✅ Good: `@ModelActor actor Repo { func add() async { /* background */ } }` OR `@MainActor class Repo`
 ⚠️ Why: Defeats concurrency benefits, causes UI freezes at scale
 📍 Details: `harmoniaudio-anti-llm-traps.mdc` Rule 1
 
 ### SwiftData Models in Domain
+
 ❌ Bad: Passing `@Model` SwiftData objects to Use Cases or Domain layer
 ✅ Good: Convert to Sendable DTOs (e.g., `MediaItem`) in Repository before returning
 ⚠️ Why: Framework dependencies in Domain, breaks isolation, violates DTO pattern
 📍 Details: See DTO Pattern section above and `harmoniaudio-anti-llm-traps.mdc` Rule 4
 
 ### MainActor on Domain Types
+
 ❌ Bad: `@MainActor struct MediaID: Hashable { }` in `Core/Domain/`
 ✅ Good: `struct MediaID: Hashable, Sendable { }` (no actor isolation)
 ⚠️ Why: Domain types must be usable from any isolation context, breaks background actors
 📍 Details: `harmoniaudio-anti-llm-traps.mdc` Rule 4
 
 ### Actor Isolation in Tests
+
 ❌ Bad: `@Test func test() { let repo = MainActorRepo() }` (no isolation match)
 ✅ Good: `@Test @MainActor func test() { let repo = MainActorRepo() }`
 ⚠️ Why: Swift 6 error - test isolation must match type isolation

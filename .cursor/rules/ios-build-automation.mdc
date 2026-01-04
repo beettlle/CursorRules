@@ -9,6 +9,7 @@ alwaysApply: false
 ## Purpose
 
 When in agent mode, the LLM must automatically verify builds and tests after code changes. This ensures:
+
 - Zero-warning policy enforcement
 - Test verification before marking work complete
 - Immediate error detection and fixing
@@ -21,12 +22,14 @@ When in agent mode, the LLM must automatically verify builds and tests after cod
 ### Physical Device Build Command
 
 **Current Configuration:**
+
 - **Device ID:** `00008110-0006758C2683801E` (physical iOS device)
 - **Workspace:** `/Users/cdelgado/Documents/github.com/HarmoniAudio/HarmoniAudio.xcodeproj/project.xcworkspace`
 - **Scheme:** `HarmoniAudio`
 - **Configuration:** `Debug`
 
 **Build Command:**
+
 ```bash
 xcodebuild \
   -scheme HarmoniAudio \
@@ -39,6 +42,7 @@ xcodebuild \
 ```
 
 **Test Command:**
+
 ```bash
 xcodebuild \
   -scheme HarmoniAudio \
@@ -51,6 +55,7 @@ xcodebuild \
 ```
 
 **Notes:**
+
 - `-allowProvisioningUpdates` enables automatic code signing/provisioning
 - Result bundle path is SweetPad-specific and may change with workspace storage
 - Device ID can be obtained via: `xcrun xctrace list devices`
@@ -63,6 +68,7 @@ xcodebuild \
 If physical device is unavailable or for faster iteration, use iOS Simulator:
 
 **Simulator Build Command:**
+
 ```bash
 xcodebuild \
   -scheme HarmoniAudio \
@@ -73,6 +79,7 @@ xcodebuild \
 ```
 
 **Simulator Test Command:**
+
 ```bash
 xcodebuild test \
   -scheme HarmoniAudio \
@@ -83,6 +90,7 @@ xcodebuild test \
 ```
 
 **When to Use Simulator:**
+
 - Physical device not connected
 - Faster build iteration needed
 - Testing simulator-specific features
@@ -97,12 +105,14 @@ xcodebuild test \
 ### Error Patterns
 
 **Compilation Errors:**
+
 ```
 /path/to/file.swift:42:15: error: 'SomeType' is unavailable
 /path/to/file.swift:50:8: error: cannot find 'SomeFunction' in scope
 ```
 
 **Extract:**
+
 - File path: `/path/to/file.swift`
 - Line number: `42`
 - Column: `15` (optional, but useful)
@@ -112,12 +122,14 @@ xcodebuild test \
 ### Warning Patterns
 
 **Compilation Warnings:**
+
 ```
 /path/to/file.swift:30:5: warning: result of call to 'someMethod()' is unused
 /path/to/file.swift:45:12: warning: 'someVariable' was never mutated; consider changing to 'let'
 ```
 
 **Extract:**
+
 - File path: `/path/to/file.swift`
 - Line number: `30`
 - Warning message: `result of call to 'someMethod()' is unused`
@@ -126,11 +138,13 @@ xcodebuild test \
 ### Success Indicators
 
 **Build Success:**
+
 ```
 ** BUILD SUCCEEDED **
 ```
 
 **Build Failure:**
+
 ```
 ** BUILD FAILED **
 ```
@@ -138,18 +152,21 @@ xcodebuild test \
 ### Test Result Patterns
 
 **Test Success:**
+
 ```
 Test Suite 'HarmoniAudioTests' passed.
 Executed 45 tests, with 0 failures (0 unexpected) in 2.345 seconds
 ```
 
 **Test Failure:**
+
 ```
 Test Suite 'HarmoniAudioTests' failed.
 Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ```
 
 **Individual Test Failure:**
+
 ```
 /path/to/TestFile.swift:123: error: testMethodName() : XCTAssertEqual failed: ("expected") is not equal to ("actual")
 ```
@@ -169,6 +186,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ### Step 2: Handle Build Errors
 
 **If errors exist:**
+
 - ❌ **STOP** - Do not proceed until errors are fixed
 - Extract all error details (file, line, message)
 - Analyze each error
@@ -176,6 +194,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 - **Loop back to Step 1** until build succeeds
 
 **Error Fixing Priority:**
+
 1. Compilation errors (must fix immediately)
 2. Linker errors (missing symbols, frameworks)
 3. Code signing errors (provisioning issues)
@@ -183,12 +202,14 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ### Step 3: Handle Build Warnings
 
 **If warnings exist:**
+
 - ⚠️ **FIX** - Per zero-warning policy (see `ios-development-standards.mdc`)
 - Extract all warning details
 - Fix warnings in code
 - **Loop back to Step 1** until zero warnings
 
 **Warning Types to Fix:**
+
 - Unused variables/methods
 - Deprecated API usage
 - Concurrency warnings (Sendable, actor isolation)
@@ -198,6 +219,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ### Step 4: Execute Tests
 
 **Only after build succeeds with zero warnings:**
+
 1. Run test command
 2. Capture full output
 3. Parse test results
@@ -205,6 +227,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ### Step 5: Handle Test Failures
 
 **If test failures exist:**
+
 - ❌ **STOP** - Do not mark work complete
 - Extract failing test details
 - Analyze test failures
@@ -212,6 +235,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 - **Loop back to Step 4** until all tests pass
 
 **Test Failure Analysis:**
+
 - Is it a test bug? → Fix test
 - Is it a code bug? → Fix code, then re-build (Step 1)
 - Is it a flaky test? → Document, but still fix if possible
@@ -219,12 +243,14 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ### Step 6: Mark Work Complete
 
 **Only when ALL conditions met:**
+
 - ✅ Build succeeded
 - ✅ Zero warnings
 - ✅ All tests passed
 - ✅ Code changes are correct
 
 **Report to user:**
+
 ```
 ✅ Build succeeded with 0 warnings
 ✅ All 45 tests passed
@@ -240,6 +266,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 **Reference:** `ios-development-standards.mdc` - "Zero-Warning Policy"
 
 **Enforcement:**
+
 - Build automation workflow enforces zero warnings automatically
 - Warnings are treated as blocking issues
 - Work is not complete until zero warnings achieved
@@ -249,6 +276,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 **Reference:** `ios-development-standards.mdc` - "Code Completion Requires Passing Tests"
 
 **Enforcement:**
+
 - Tests must pass before marking work complete
 - Test failures block completion
 - All existing tests must pass (no regressions)
@@ -259,6 +287,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 **Reference:** `ios-development-standards.mdc` - "Development Process"
 
 **Enforcement:**
+
 - Build verification happens after every code change
 - Not just between phases, but continuously
 - Immediate feedback loop prevents accumulation of issues
@@ -270,11 +299,13 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ### Getting Device ID
 
 **List available devices:**
+
 ```bash
 xcrun xctrace list devices
 ```
 
 **Output format:**
+
 ```
 == Devices ==
 cdelgado's iPhone (00008110-0006758C2683801E) (Connected)
@@ -282,6 +313,7 @@ iPhone 16 Simulator (ABC12345-...) (Booted)
 ```
 
 **Update device ID in commands if:**
+
 - Physical device changes
 - Different device needed for testing
 - Device ID becomes invalid
@@ -307,6 +339,7 @@ iPhone 16 Simulator (ABC12345-...) (Booted)
 ### Build Command Failures
 
 **If xcodebuild command fails to execute:**
+
 - Check Xcode installation: `xcodebuild -version`
 - Check workspace path exists
 - Check scheme name is correct
@@ -315,6 +348,7 @@ iPhone 16 Simulator (ABC12345-...) (Booted)
 ### Provisioning Errors
 
 **If code signing fails:**
+
 - Verify `-allowProvisioningUpdates` is present
 - Check Apple Developer account access
 - Verify device is registered
@@ -323,6 +357,7 @@ iPhone 16 Simulator (ABC12345-...) (Booted)
 ### Timeout Handling
 
 **If build takes too long:**
+
 - Consider using simulator for faster builds
 - Check for infinite loops or hanging operations
 - Verify dependencies are available
@@ -378,6 +413,7 @@ LLM (Agent Mode):
 ## Summary
 
 **CRITICAL Rules:**
+
 1. ✅ Build after every code change
 2. ✅ Fix errors immediately (loop until clean)
 3. ✅ Fix warnings immediately (zero-warning policy)
@@ -386,11 +422,13 @@ LLM (Agent Mode):
 6. ✅ Only mark work complete when: Build ✅ + 0 Warnings ✅ + Tests ✅
 
 **Commands:**
+
 - Physical device: Use provided SweetPad commands
 - Simulator: Use alternative commands with `platform=iOS Simulator`
 - Device ID: Update if device changes (use `xcrun xctrace list devices`)
 
 **Integration:**
+
 - Enforces zero-warning policy automatically
 - Enforces test requirements automatically
 - Provides continuous feedback loop

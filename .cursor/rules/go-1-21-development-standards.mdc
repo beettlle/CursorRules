@@ -28,6 +28,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 ## Critical Go Rules
 
 ### 1.1 Error Handling (CRIT)
+
 **CRITICAL:** Handle errors explicitly. Never ignore them. Wrap errors for context.
 
 ❌ Bad: `func f() { _ = doSomething() }` OR `if err != nil { return err }` (no context)
@@ -38,6 +39,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** `_ = func()`, `return err` without wrapping in high-level func, `panic(err)`
 
 ### 1.2 Concurrency Safety (CRIT)
+
 **CRITICAL:** Never fire-and-forget goroutines. Manage lifecycles with `sync.WaitGroup` or `errgroup`.
 
 ❌ Bad: `go func() { process() }()` (no tracking/shutdown)
@@ -47,6 +49,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** `go func` without WaitGroup/channel, sleeping in goroutines
 
 ### 1.3 Context Propagation (CRIT)
+
 **CRITICAL:** `context.Context` must be the first argument of blocking functions.
 
 ❌ Bad: `func fetch(id int) { http.Get(...) }`
@@ -56,6 +59,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** Blocking IO without context, `context.TODO()` in prod, `ctx` struct field
 
 ### 1.4 Interface Pollution (CRIT)
+
 **CRITICAL:** Define interfaces where they are used (consumer), not where implemented (producer).
 
 ❌ Bad: `package producer; type UserStore interface { ... }`
@@ -65,6 +69,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** Exported interfaces in implementation packages, interfaces with >5 methods
 
 ### 1.5 Pointer vs Value Receivers (CRIT)
+
 **CRITICAL:** Be consistent. Use pointers for mutability or large structs (>64 bytes). Use value receivers for small, immutable structs.
 
 ❌ Bad: Mixed receiver types, copying large structs, locking by value (`sync.Mutex` in struct)
@@ -74,6 +79,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** `func (s Service)` where Service contains `sync.Mutex`, mixed `(s Service)` and `(s *Service)`, large structs with value receivers
 
 ### 1.6 Slice & Map Preallocation (CRIT)
+
 **CRITICAL:** Preallocate memory when size is known to avoid re-allocations.
 
 ❌ Bad: `var dest []int; for _, v := range src { dest = append(dest, v) }`
@@ -83,6 +89,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** `append` inside loop on empty slice, `make` without capacity arg
 
 ### 1.7 Functional Options Pattern
+
 **CRITICAL:** Use Functional Options for complex constructors with optional parameters.
 
 ❌ Bad: `func NewServer(addr string, timeout int, logger *Log, cache *Cache) *Server`
@@ -92,10 +99,12 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 **Detect:** Constructors with >3 args, many `nil` args in calls
 
 ### 1.8 Table-Driven Tests (CRIT)
+
 **CRITICAL:** Use table-driven tests for all logic.
 
 ❌ Bad: Repeated test logic, copy-pasted test functions
 ✅ Good:
+
 ```go
 tests := []struct {
     name string
@@ -115,11 +124,13 @@ for _, tt := range tests {
     })
 }
 ```
+
 ⚠️ Why: Easy to add cases; cleaner diffs; strict separation of logic/data
 🔧 Fix: Refactor into `struct` slice; run loop with `t.Run(tt.name, ...)`
 **Detect:** Multiple `t.Run` with duplicated setup logic, loose assertions
 
 ### 1.9 Defer Usage (CRIT)
+
 **CRITICAL:** Always use `defer` for cleanup operations (files, mutexes, connections).
 
 ❌ Bad: `f := os.Open(...); ...; f.Close()` (manual cleanup)
@@ -130,6 +141,7 @@ for _, tt := range tests {
 **Detect:** Manual cleanup without defer, mutex unlock without defer, file close without defer
 
 ### 1.10 Range Loop Variable Capture (CRIT)
+
 **CRITICAL:** Capture loop variables explicitly in goroutines/closures.
 
 ❌ Bad: `for _, v := range items { go func() { use(v) }() }` (all use last value)
@@ -139,6 +151,7 @@ for _, tt := range tests {
 **Detect:** Goroutines/closures in range loops without explicit capture, all iterations use same value
 
 ### 1.11 Generics Usage (CRIT)
+
 **CRITICAL:** Use generics for type-safe reusable code; prefer generics over `interface{}`.
 
 ❌ Bad: `func Max(a, b interface{}) interface{}` (type assertions needed)
@@ -149,6 +162,7 @@ for _, tt := range tests {
 **Detect:** `interface{}` when generics would work, excessive type assertions, no generic constraints
 
 ### 1.12 Channel Patterns (CRIT)
+
 **CRITICAL:** Use channels for communication, not just synchronization; always close channels properly.
 
 ❌ Bad: `for { select { case <-done: return } }` (busy wait, channel never closed)
@@ -158,6 +172,7 @@ for _, tt := range tests {
 **Detect:** Channels never closed, select without default causing blocking, busy-wait patterns
 
 ### 1.13 Zero Values (CRIT)
+
 **CRITICAL:** Leverage Go's zero values; design types to be useful at zero value.
 
 ❌ Bad: `var s Service; s.Init()` required, zero value unusable
@@ -167,6 +182,7 @@ for _, tt := range tests {
 **Detect:** Mandatory Init() methods, zero value causes panics, types unusable without setup
 
 ### 1.14 Named Return Values (CRIT)
+
 **CRITICAL:** Use named return values only when they improve readability or enable deferred modifications.
 
 ❌ Bad: `func divide(a, b int) (int, error)` with unclear return meaning
@@ -177,6 +193,7 @@ for _, tt := range tests {
 **Detect:** Named returns that don't improve clarity, unnamed returns that are unclear
 
 ### 1.15 Multiple Return Values (CRIT)
+
 **CRITICAL:** Use multiple return values for operations that can fail; error is always last.
 
 ❌ Bad: `func parse() string`, `func parse() (string, bool)` (bool for error)
@@ -187,6 +204,7 @@ for _, tt := range tests {
 **Detect:** Single return for operations that can fail, error not last, bool instead of error
 
 ### 1.16 Embedding (CRIT)
+
 **CRITICAL:** Use embedding to compose types; prefer composition over inheritance.
 
 ❌ Bad: Wrapper methods that only delegate, unnecessary indirection
@@ -197,6 +215,7 @@ for _, tt := range tests {
 **Detect:** Wrapper methods that only call embedded type, types that should embed instead
 
 ### 1.17 Control Structures (CRIT)
+
 **CRITICAL:** Use Go's control structures idiomatically; no parentheses needed.
 
 ❌ Bad: `if (condition) { }`, `for (i := 0; i < 10; i++) { }` (parentheses)
@@ -207,6 +226,7 @@ for _, tt := range tests {
 **Detect:** Parentheses in if/for/switch, C/Java-style control structures
 
 ### 1.18 Initialization (CRIT)
+
 **CRITICAL:** Use initialization patterns idiomatically; prefer constants for immutable values.
 
 ❌ Bad: `var timeout = 10 * time.Second` (should be const), redundant initialization
@@ -217,6 +237,7 @@ for _, tt := range tests {
 **Detect:** Variables that should be constants, redundant initialization, uninitialized variables
 
 ### 1.19 Sync Primitives (CRIT)
+
 **CRITICAL:** Use appropriate sync primitives for specific use cases.
 
 ❌ Bad: `var mu sync.Mutex; var once sync.Once` (using wrong primitive)
@@ -226,6 +247,7 @@ for _, tt := range tests {
 **Detect:** Mutex used for one-time init, manual pooling instead of sync.Pool, mutex for simple counters
 
 ### 1.20 File Embedding (CRIT)
+
 **CRITICAL:** Use `go:embed` for embedding static files instead of string literals.
 
 ❌ Bad: `const html = "<html>...</html>"` (large string literals)
@@ -237,6 +259,7 @@ for _, tt := range tests {
 ## Style & Formatting
 
 ### 2.0 Formatting (CRIT)
+
 **CRITICAL:** Always use `gofmt` for formatting; it enforces Go's standard style.
 
 ❌ Bad: Manual formatting, inconsistent indentation, spaces instead of tabs
@@ -247,6 +270,7 @@ for _, tt := range tests {
 **Detect:** Inconsistent indentation, spaces for indentation, manual alignment
 
 **Formatting Rules:**
+
 - **Indentation:** Use tabs (gofmt emits tabs by default)
 - **Line Length:** No limit; wrap if too long and indent with extra tab
 - **Parentheses:** Go needs fewer parentheses; control structures don't use them
@@ -254,6 +278,7 @@ for _, tt := range tests {
 ## Uber Style & Idioms
 
 ### 2.1 Prefix Unexported Globals (Style)
+
 **CRITICAL:** Top-level unexported variables must have a `_` prefix to avoid scope confusion. *Note: This is Uber-specific style; Effective Go doesn't require this.*
 
 ❌ Bad: `var defaultTimeout = 10 * time.Second`
@@ -263,6 +288,7 @@ for _, tt := range tests {
 **Detect:** Top-level unexported vars without `_` prefix
 
 ### 2.2 Mutex Grouping (Style)
+
 **CRITICAL:** Place `sync.Mutex` directly above the fields it protects.
 
 ❌ Bad: Mutex field far from the fields it protects
@@ -272,10 +298,12 @@ for _, tt := range tests {
 **Detect:** `sync.Mutex` field at top of struct with no comments
 
 ### 2.3 Import Grouping (Style)
+
 **CRITICAL:** Group imports: stdlib first, then 3rd party, then local, separated by blank lines.
 
 ❌ Bad: Mixed imports or no separation
 ✅ Good:
+
 ```go
 import (
     "fmt"
@@ -286,11 +314,13 @@ import (
     "myproj/api"
 )
 ```
+
 ⚠️ Why: Clear dependency structure; standard convention enforced by linters
 🔧 Fix: Regroup imports manually or use `goimports -local`
 **Detect:** Imports not separated by blank lines, stdlib mixed with 3rd party
 
 ### 2.4 Naming Conventions (CRIT)
+
 **CRITICAL:** Follow Go naming conventions: exported (capitalized) vs unexported, package names, acronyms.
 
 ❌ Bad: `func getData()`, `type jsonParser struct`, `package myPackage`
@@ -300,6 +330,7 @@ import (
 **Detect:** Mixed case package names, lowercase exported funcs, inconsistent acronym casing
 
 **Package Naming:**
+
 - Lowercase, single-word names (no underscores, no mixedCaps)
 - Package name is base name of source directory (`src/encoding/base64` → `base64`)
 - Short, concise, evocative
@@ -313,10 +344,12 @@ import (
 **Detect:** Methods named `Get*` that only return values
 
 **Interface Naming:**
+
 - Single-method interfaces: use "-er" suffix (`Reader`, `Writer`, `Closer`)
 - Multiple methods: descriptive names (`ReadWriter`, `ReadWriteCloser`)
 
 ### 2.5 Package Design (CRIT)
+
 **CRITICAL:** Packages should have single responsibility; use `internal/` for private APIs.
 
 ❌ Bad: Package with 20+ files doing everything, exported types that should be internal
@@ -326,6 +359,7 @@ import (
 **Detect:** Packages with >10 files, exported types only used internally, no `internal/` usage
 
 ### 2.6 Documentation (CRIT)
+
 **CRITICAL:** Public APIs must have `godoc` comments; use examples for complex APIs.
 
 ❌ Bad: `func Process()`, no examples, missing package doc
@@ -335,6 +369,7 @@ import (
 **Detect:** Exported funcs/types without comments, no examples, missing package doc
 
 ### 2.7 Doc Comments (CRIT)
+
 **CRITICAL:** Comments before top-level declarations are doc comments; they document the package or exported symbol.
 
 ❌ Bad: `func Process()`, no doc comment, missing package doc
@@ -345,6 +380,7 @@ import (
 **Detect:** Exported funcs/types without doc comments, missing package doc, doc comments not before declaration
 
 ### 2.8 Tooling (CRIT)
+
 **CRITICAL:** Use Go's built-in tooling for formatting and imports.
 
 **gofmt:**
@@ -355,6 +391,7 @@ import (
 **Detect:** Inconsistent indentation, spaces for indentation, manual alignment
 
 ### 2.9 Static Analysis Tools (CRIT)
+
 **CRITICAL:** Use `go vet` and `staticcheck` before committing.
 
 ❌ Bad: Committing without running `go vet ./...`
@@ -364,6 +401,7 @@ import (
 **Detect:** No static analysis in CI, unchecked code, common vet issues
 
 ### 2.10 Build Tags and Conditional Compilation (CRIT)
+
 **CRITICAL:** Use build tags for platform-specific code and feature flags.
 
 ❌ Bad: `if runtime.GOOS == "windows" { }` (runtime checks)
@@ -373,6 +411,7 @@ import (
 **Detect:** Runtime OS/arch checks, ifdef-style comments, platform-specific files without tags
 
 ### 2.11 Module Management (CRIT)
+
 **CRITICAL:** Properly manage dependencies and module versions.
 
 ❌ Bad: `go get` without version, uncommitted go.sum, replace directives without reason
@@ -382,6 +421,7 @@ import (
 **Detect:** Missing go.sum, replace without comment, unpinned dependencies
 
 ### 2.12 Code Generation (Style)
+
 **CRITICAL:** Use `go:generate` directive for code generation tasks.
 
 ❌ Bad: Manual code generation, generated code in version control without source
@@ -393,6 +433,7 @@ import (
 ## Anti-Patterns
 
 ### 3.1 Init() Abuse
+
 **CRITICAL:** Avoid `init()` functions for logic or I/O. Use explicit constructors.
 
 ❌ Bad: `func init() { db = connect() }`
@@ -402,6 +443,7 @@ import (
 **Detect:** `func init()` doing I/O or setting globals
 
 ### 3.2 Panic Misuse
+
 **CRITICAL:** Do not use `panic()` for control flow or recoverable errors.
 
 ❌ Bad: `if err != nil { panic(err) }` (in libraries/handlers)
@@ -411,6 +453,7 @@ import (
 **Detect:** `panic()` outside of `main` or `Must*` functions
 
 ### 3.3 Interface{} (Any) Abuse
+
 **CRITICAL:** Use strong types or Generics instead of `interface{}`/`any`.
 
 ❌ Bad: `func process(data interface{})`
@@ -420,6 +463,7 @@ import (
 **Detect:** `interface{}` as function arg (unless generic/reflection needed)
 
 ### 3.4 Nil Interface Checks (CRIT)
+
 **CRITICAL:** Check for nil interfaces properly; `== nil` may not work as expected.
 
 ❌ Bad: `if err == nil { return }` (may fail with typed nil)
@@ -429,6 +473,7 @@ import (
 **Detect:** Direct nil comparison on interfaces, typed nil not caught
 
 ### 3.5 Variable Shadowing (CRIT)
+
 **CRITICAL:** Avoid variable shadowing; use `:=` carefully.
 
 ❌ Bad: `err := do(); if err := do2(); err != nil { }` (shadows outer err)
@@ -438,6 +483,7 @@ import (
 **Detect:** Variable redeclared in inner scope with same name, shadowed errors
 
 ### 3.6 Recover Usage (CRIT)
+
 **CRITICAL:** Use `recover` only in deferred functions to handle panics gracefully; keep panic/recover within package.
 
 ❌ Bad: `recover()` outside deferred function, exposing panics to callers
@@ -450,6 +496,7 @@ import (
 ## Testing Guidelines
 
 ### 4.1 Parallel Tests
+
 **CRITICAL:** Use `t.Parallel()` for all independent unit tests.
 
 ❌ Bad: Tests running sequentially (default)
@@ -459,6 +506,7 @@ import (
 **Detect:** Tests without `t.Parallel()` (unless integration/stateful)
 
 ### 4.2 Test Main Usage
+
 **CRITICAL:** Avoid `TestMain` for simple setup; use helper functions/defer.
 
 ❌ Bad: Using `TestMain` for simple db connection setup
@@ -468,6 +516,7 @@ import (
 **Detect:** `func TestMain` doing simple setup logic
 
 ### 4.3 Test Helpers (CRIT)
+
 **CRITICAL:** Use `t.Helper()` in test helper functions.
 
 ❌ Bad: Helper function without `t.Helper()`
@@ -477,6 +526,7 @@ import (
 **Detect:** Helper functions without `t.Helper()`, unclear error locations in test output
 
 ### 4.4 Subtests (CRIT)
+
 **CRITICAL:** Use `t.Run()` for subtests; enables better test organization.
 
 ❌ Bad: Multiple test functions for related cases
@@ -486,6 +536,7 @@ import (
 **Detect:** Related tests not using subtests, multiple test functions for same feature
 
 ### 4.5 Benchmarking (CRIT)
+
 **CRITICAL:** Write benchmarks for performance-critical code.
 
 ❌ Bad: No benchmarks for hot paths, guessing at performance
@@ -495,6 +546,7 @@ import (
 **Detect:** No benchmarks for performance-critical code, performance claims without data
 
 ### 4.6 Test Coverage (CRIT)
+
 **CRITICAL:** Use test coverage to ensure critical code is tested.
 
 ❌ Bad: No coverage metrics, untested critical paths
@@ -504,6 +556,7 @@ import (
 **Detect:** No coverage reports, critical paths with low coverage, coverage goals not met
 
 ### 4.7 Fuzz Testing (Style)
+
 **CRITICAL:** Use fuzz testing for functions that process untrusted input.
 
 ❌ Bad: Only testing known inputs, missing edge cases
@@ -555,6 +608,7 @@ These patterns represent the most critical Go best practices:
 ---
 
 ## References
+
 - [Effective Go](https://go.dev/doc/effective_go)
 - [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments)
 - [Uber Go Style Guide](https://github.com/uber-go/guide/blob/master/style.md)

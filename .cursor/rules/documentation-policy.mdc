@@ -31,11 +31,13 @@ alwaysApply: true
 ## Examples
 
 ❌ **DON'T do this:**
+
 - After fixing a bug, creating `BUGFIX_SUMMARY.md`
 - After implementing a feature, creating `FEATURE_DOCUMENTATION.md`
 - Creating `CHANGELOG.md` or `UPDATE_NOTES.md` automatically
 
 ✅ **DO this instead:**
+
 - Explain changes directly in your response
 - Add code comments if inline documentation is needed
 - Only create markdown files when the user explicitly asks for them

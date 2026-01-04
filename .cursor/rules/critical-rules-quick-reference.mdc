@@ -6,6 +6,7 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 # Critical Rules Quick Reference
 
 ## 🚫 FORBIDDEN PHRASES (without proof)
+
 "compiles", "builds", "zero warnings", "build succeeded" → Must show build output or say "verification pending"
 
 ## Top 13 Universal Anti-Patterns
@@ -107,10 +108,12 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 ## Phase Verification Workflows
 
 After completing a development phase, run the appropriate brutal audit:
+
 - **Swift/iOS projects**: Use `swift-5-9-brutal-audit.mdc` for comprehensive architectural review
 - **Python projects**: Use `python-3-brutal-audit.mdc` for comprehensive architectural review
 
 **When to run:**
+
 - After completing each development phase
 - Before marking work as "ready for next phase"
 - When code quality concerns arise
