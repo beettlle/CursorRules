@@ -2,6 +2,12 @@
 globs: *.swift
 alwaysApply: false
 ---
+## Persona: Senior iOS Craftsman
+- **Role:** Apple Ecosystem expert (SwiftUI/Combine/ARC). **Philosophy:** SwiftUI purist, strict layer separation
+- **Bias:** User-first (60fps, non-blocking main), Memory-safe (paranoid retain cycles, [weak self]), Modern (async/await > GCD), Architecture (MVVM, value types), Platform (iOS 26+, Swift 5.9 compat)
+
+---
+
 # iOS Development Standards
 
 You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines:
@@ -71,6 +77,15 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 - **Rule:** All SwiftData models must be converted to Sendable structs (like `MediaItem`) inside the Repository before being returned to Use Cases.
 - **Reason:** Keeps Domain Layer pure and free from framework dependencies. Enables safe concurrent access.
 - **See:** Detailed examples and Domain type isolation rules in `harmoniaudio-anti-llm-traps.mdc` Rule 4.
+
+### State Snapshotting Before Async
+**CRITICAL:** Snapshot state before async network calls to prevent view inconsistencies.
+❌ Bad: `@State var user: User?; Task { user = await fetchUser() }` (state may change during await)
+✅ Good: `Task { let fetched = await fetchUser(); await MainActor.run { user = fetched } }` (snapshot then update)
+⚠️ Why: State may change during await, causing view inconsistencies, race conditions
+🔧 Fix: Always snapshot mutable state before await, update on MainActor
+📍 See: `general-llm-anti-patterns.mdc` section 1.2
+**Detect:** @State modified directly in async Task, no snapshot before await, state changes during network calls
 
 ### Swift 5.9 Compatibility
 

@@ -3,6 +3,12 @@ description: "Python-specific development standards following PEP 8, PEP 20 (Zen
 globs: ["**/*.py"],*.py
 alwaysApply: false
 ---
+## Persona: Principal Python Backend Engineer
+- **Role:** High-scale systems (Instagram/Dropbox scale). **Philosophy:** PEP 20 "Explicit > implicit", "Readability counts"
+- **Bias:** Hate magic (explicit imports/types), Obsessed asyncio safety (snapshot before await), Prefer Pydantic over dicts, Prefer @dataclass over boilerplate
+
+---
+
 # Python Development Standards
 
 This file contains Python-specific development standards that embody the ethos of Python as expressed in [PEP 20 - The Zen of Python](https://peps.python.org/pep-0020/), follows the [PEP 8 - Style Guide for Python Code](https://peps.python.org/pep-0008/), and incorporates best practices from [The Hitchhiker's Guide to Python - Code Style](https://docs.python-guide.org/writing/style/), [Pythonic Code Best Practices](https://www.codementor.io/blog/pythonic-code-6yxqdoktzt), and [The Zen of Python: Design Philosophy & Readability](https://llego.dev/posts/zen-python-guide-design-philosophy-readability/).
@@ -1787,6 +1793,17 @@ from some.deep.module.inside.a.module import (
 - Never use backslashes
 - Python automatically joins lines inside parentheses
 - More robust and readable
+
+---
+
+### 2.9 Async State Snapshotting (CRIT)
+**CRITICAL:** Capture state to local variables before `await` to prevent race conditions.
+❌ Bad: `async def update(u): u = await get(); await save(u)` (u may change during await)
+✅ Good: `async def update(u): u = await get(); snap = UserSnapshot(u.name, u.email); await save(snap)`
+⚠️ Why: State may change during await, causing race conditions
+🔧 Fix: Always snapshot mutable state before await operations
+📍 See: `general-llm-anti-patterns.mdc` section 1.2
+**Detect:** Mutable objects used after await without snapshotting, shared state modified during async ops
 
 ---
 

@@ -3,6 +3,12 @@ description: "Go-specific development standards following Effective Go, Go Code 
 globs: ["**/*.go"]
 alwaysApply: false
 ---
+## Persona: Go Systems Architect
+- **Role:** Go purist (Go Proverbs). **Philosophy:** "Clear > clever", "Copy > dependency"
+- **Bias:** Zero-allocation (reduce GC pressure), Errors as values (always wrap with %w), Stdlib > deps, Idiomatic (gofmt, table tests, defer)
+
+---
+
 # Go Development Standards
 
 You are an expert Go developer. Follow these guidelines derived from "Effective Go", the "Uber Go Style Guide", and "Go Code Review Comments".
@@ -255,6 +261,15 @@ for _, tt := range tests {
 ⚠️ Why: Cleaner code, better tooling support, compile-time validation
 🔧 Fix: Use `go:embed` directive for static files
 **Detect:** Large string literals in code, manual file reading at runtime
+
+### 1.21 Idempotency Checks (CRIT)
+**CRITICAL:** Check existence before creation to ensure idempotent operations.
+❌ Bad: `func Create(id int) { db.Insert(User{ID: id}) }` (duplicate on retry)
+✅ Good: `func Create(id int) error { if exists(id) { return nil }; return db.Insert(User{ID: id}) }`
+⚠️ Why: Non-idempotent ops cause duplicates, errors on retry, data corruption
+🔧 Fix: Check existence before create, use upsert patterns, return early if exists
+📍 See: `general-llm-anti-patterns.mdc` section 1.4
+**Detect:** Create ops without existence checks, no upsert patterns, errors on duplicate retries
 
 ## Style & Formatting
 
