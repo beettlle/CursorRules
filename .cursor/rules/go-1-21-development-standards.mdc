@@ -34,7 +34,7 @@ Go's design philosophy centers on simplicity, reliability, and concurrency:
 ✅ Good: `if err := do(); err != nil { return fmt.Errorf("do failed: %w", err) }`
 ⚠️ Why: Silent failures hide bugs; unwrapped errors lose trace/context
 🔧 Fix: Handle every error; use `%w` to wrap; check `errors.Is/As`
-📍 See: `general-llm-anti-patterns.mdc` Rule 5.3
+📍 See: `general-llm-anti-patterns.mdc` section 5.3
 **Detect:** `_ = func()`, `return err` without wrapping in high-level func, `panic(err)`
 
 ### 1.2 Concurrency Safety (CRIT)
@@ -126,7 +126,7 @@ for _, tt := range tests {
 ✅ Good: `defer f.Close()` OR `defer mu.Unlock()`
 ⚠️ Why: Ensures cleanup even on early returns/panics; prevents resource leaks
 🔧 Fix: Use `defer` immediately after acquiring resource
-📍 See: `general-llm-anti-patterns.mdc` Rule 5.4
+📍 See: `general-llm-anti-patterns.mdc` section 5.4
 **Detect:** Manual cleanup without defer, mutex unlock without defer, file close without defer
 
 ### 1.10 Range Loop Variable Capture (CRIT)
@@ -215,6 +215,24 @@ for _, tt := range tests {
 🔧 Fix: Use `const` for immutable values; initialize variables properly
 📍 See: [Effective Go - Constants](https://go.dev/doc/effective_go#constants), [Effective Go - Variables](https://go.dev/doc/effective_go#variables)
 **Detect:** Variables that should be constants, redundant initialization, uninitialized variables
+
+### 1.19 Sync Primitives (CRIT)
+**CRITICAL:** Use appropriate sync primitives for specific use cases.
+
+❌ Bad: `var mu sync.Mutex; var once sync.Once` (using wrong primitive)
+✅ Good: `sync.Once` for one-time init, `sync.Pool` for object reuse, `atomic` for counters
+⚠️ Why: Wrong primitive causes performance issues, race conditions, or unnecessary overhead
+🔧 Fix: Match primitive to use case: Once for init, Pool for reuse, atomic for counters
+**Detect:** Mutex used for one-time init, manual pooling instead of sync.Pool, mutex for simple counters
+
+### 1.20 File Embedding (CRIT)
+**CRITICAL:** Use `go:embed` for embedding static files instead of string literals.
+
+❌ Bad: `const html = "<html>...</html>"` (large string literals)
+✅ Good: `//go:embed template.html` `var template string`
+⚠️ Why: Cleaner code, better tooling support, compile-time validation
+🔧 Fix: Use `go:embed` directive for static files
+**Detect:** Large string literals in code, manual file reading at runtime
 
 ## Style & Formatting
 
@@ -327,20 +345,50 @@ import (
 **Detect:** Exported funcs/types without doc comments, missing package doc, doc comments not before declaration
 
 ### 2.8 Tooling (CRIT)
-**CRITICAL:** Use Go's built-in tooling for formatting, imports, and dependency management.
+**CRITICAL:** Use Go's built-in tooling for formatting and imports.
 
 **gofmt:**
 ❌ Bad: Manual formatting, inconsistent indentation
 ✅ Good: Run `gofmt -w .` or `go fmt ./...` before committing
 ⚠️ Why: Enforces standard formatting; all Go code uses gofmt
 🔧 Fix: Use `gofmt` or configure editor to format on save
+**Detect:** Inconsistent indentation, spaces for indentation, manual alignment
 
-**go mod:**
-❌ Bad: Manual dependency management, vendor directory without go.mod
-✅ Good: `go mod init`, `go mod tidy`, `go mod download`
-⚠️ Why: Ensures reproducible builds, clear dependency tracking, version management
-🔧 Fix: Use `go mod` commands; commit go.mod and go.sum
-**Detect:** Missing go.mod, manual dependency management, uncommitted go.sum
+### 2.9 Static Analysis Tools (CRIT)
+**CRITICAL:** Use `go vet` and `staticcheck` before committing.
+
+❌ Bad: Committing without running `go vet ./...`
+✅ Good: `go vet ./... && staticcheck ./...` before commit
+⚠️ Why: Catches bugs early, enforces best practices, prevents common mistakes
+🔧 Fix: Run static analysis tools in CI/CD, use pre-commit hooks
+**Detect:** No static analysis in CI, unchecked code, common vet issues
+
+### 2.10 Build Tags and Conditional Compilation (CRIT)
+**CRITICAL:** Use build tags for platform-specific code and feature flags.
+
+❌ Bad: `if runtime.GOOS == "windows" { }` (runtime checks)
+✅ Good: `//go:build windows` OR `// +build windows`
+⚠️ Why: Compile-time selection, smaller binaries, clearer intent
+🔧 Fix: Use build tags for platform/arch-specific code
+**Detect:** Runtime OS/arch checks, ifdef-style comments, platform-specific files without tags
+
+### 2.11 Module Management (CRIT)
+**CRITICAL:** Properly manage dependencies and module versions.
+
+❌ Bad: `go get` without version, uncommitted go.sum, replace directives without reason
+✅ Good: `go get package@version`, commit go.sum, document replace directives
+⚠️ Why: Reproducible builds, security, clear dependency tracking
+🔧 Fix: Pin versions, commit go.sum, document why replaces are needed
+**Detect:** Missing go.sum, replace without comment, unpinned dependencies
+
+### 2.12 Code Generation (Style)
+**CRITICAL:** Use `go:generate` directive for code generation tasks.
+
+❌ Bad: Manual code generation, generated code in version control without source
+✅ Good: `//go:generate stringer -type=Status`, run `go generate ./...`
+⚠️ Why: Reproducible builds, clear generation source, avoids manual errors
+🔧 Fix: Use `go:generate` for stringer, mockgen, protobuf; document generation steps
+**Detect:** Manual code generation, missing go:generate directives, generated code without source
 
 ## Anti-Patterns
 
@@ -437,6 +485,33 @@ import (
 🔧 Fix: Group related tests using `t.Run()` subtests
 **Detect:** Related tests not using subtests, multiple test functions for same feature
 
+### 4.5 Benchmarking (CRIT)
+**CRITICAL:** Write benchmarks for performance-critical code.
+
+❌ Bad: No benchmarks for hot paths, guessing at performance
+✅ Good: `func BenchmarkXxx(b *testing.B) { for i := 0; i < b.N; i++ { ... } }`
+⚠️ Why: Performance regressions go unnoticed, optimization without measurement
+🔧 Fix: Write benchmarks for critical paths, run with `go test -bench`, compare results
+**Detect:** No benchmarks for performance-critical code, performance claims without data
+
+### 4.6 Test Coverage (CRIT)
+**CRITICAL:** Use test coverage to ensure critical code is tested.
+
+❌ Bad: No coverage metrics, untested critical paths
+✅ Good: `go test -cover`, `go test -coverprofile=coverage.out`, aim for >80% coverage on business logic
+⚠️ Why: Untested code is a liability, coverage reveals gaps, critical paths need validation
+🔧 Fix: Run coverage regularly, set coverage goals, focus on business logic coverage
+**Detect:** No coverage reports, critical paths with low coverage, coverage goals not met
+
+### 4.7 Fuzz Testing (Style)
+**CRITICAL:** Use fuzz testing for functions that process untrusted input.
+
+❌ Bad: Only testing known inputs, missing edge cases
+✅ Good: `func FuzzXxx(f *testing.F) { f.Add(input); f.Fuzz(func(t *testing.T, data []byte) { ... }) }`
+⚠️ Why: Discovers edge cases, finds security vulnerabilities, validates input handling
+🔧 Fix: Write fuzz tests for parsers, validators, encoders; run with `go test -fuzz`
+**Detect:** No fuzz tests for input processing, only happy path tests, missing edge case validation
+
 ## Summary: Critical Go Rules
 
 These patterns represent the most critical Go best practices:
@@ -459,14 +534,23 @@ These patterns represent the most critical Go best practices:
 16. **Embedding** - Prefer composition over inheritance
 17. **Control Structures** - No parentheses needed
 18. **Initialization** - Use constants for immutable values
-19. **Formatting** - Always use gofmt
-20. **Naming Conventions** - Exported vs unexported, package names, getters
-21. **Package Design** - Single responsibility, use internal/
-22. **Documentation** - godoc comments for public APIs
-23. **Doc Comments** - Comments before declarations document symbols
-24. **Tooling** - Use gofmt, go mod, goimports
-25. **Test Helpers** - Use t.Helper() in helpers
-26. **Subtests** - Use t.Run() for organization
+19. **Sync Primitives** - Use appropriate sync primitives (Once, Pool, atomic)
+20. **File Embedding** - Use go:embed for static files
+21. **Formatting** - Always use gofmt
+22. **Naming Conventions** - Exported vs unexported, package names, getters
+23. **Package Design** - Single responsibility, use internal/
+24. **Documentation** - godoc comments for public APIs
+25. **Doc Comments** - Comments before declarations document symbols
+26. **Tooling** - Use gofmt and goimports
+27. **Static Analysis** - Use go vet and staticcheck
+28. **Build Tags** - Use build tags for platform-specific code
+29. **Module Management** - Pin versions, commit go.sum, document replaces
+30. **Code Generation** - Use go:generate for code generation
+31. **Test Helpers** - Use t.Helper() in helpers
+32. **Subtests** - Use t.Run() for organization
+33. **Benchmarking** - Write benchmarks for performance-critical code
+34. **Test Coverage** - Use coverage metrics, aim for >80% on business logic
+35. **Fuzz Testing** - Use fuzz testing for input processing functions
 
 ---
 
