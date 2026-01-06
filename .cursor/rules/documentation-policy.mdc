@@ -41,3 +41,42 @@ alwaysApply: true
 - Explain changes directly in your response
 - Add code comments if inline documentation is needed
 - Only create markdown files when the user explicitly asks for them
+
+## Documentation Structure (Diátaxis Framework)
+
+**CRITICAL:** When documentation is explicitly requested, structure it according to the [Diátaxis framework](https://diataxis.fr), which organizes documentation into four types based on user needs.
+
+### Four Documentation Types
+
+| Type | Orientation | User Need | Example Request |
+|------|-------------|-----------|-----------------|
+| **Tutorial** | Learning | "Can you teach me to...?" | "Create a getting started guide" |
+| **How-to Guide** | Goal | "How do I...?" | "How to add a language rule file" |
+| **Reference** | Information | "What is...?" | "Document the API endpoints" |
+| **Explanation** | Understanding | "Why...?" or "How does... work?" | "Explain why we use this architecture" |
+
+### Quick Decision Tree
+
+- User asks to "teach" or "learn" → **Tutorial**
+- User asks "how to" or "how do I" → **How-to Guide**
+- User asks "what is" or needs API docs → **Reference**
+- User asks "why" or "how does it work" → **Explanation**
+
+### Mixed-Mode Documentation Anti-Pattern (CRIT)
+
+**CRITICAL:** Each documentation type must be clearly separated; avoid mixing types in a single document.
+
+❌ Bad: Tutorial that includes API reference sections, how-to guide with conceptual explanations, reference material mixed with tutorial steps
+✅ Good: Separate sections/files for each type, clear navigation between types, single purpose per document
+⚠️ Why: Mixed types confuse users, reduce discoverability, violate single responsibility principle
+🔧 Fix: Identify primary user need, structure accordingly, use separate sections/files, cross-reference when needed
+📍 See: [Diátaxis Framework](https://diataxis.fr)
+
+**Detect:** Mixed purposes in single doc, tutorial with reference material, how-to with explanations, unclear user need, multiple document types in one file
+
+### Implementation Guidelines
+
+1. **Identify user need** from request to determine appropriate type
+2. **Keep types separate** - don't mix tutorials with reference material
+3. **Match structure** to type (tutorials are narrative, reference is factual)
+4. **Use appropriate language** - tutorials are friendly, reference is precise
