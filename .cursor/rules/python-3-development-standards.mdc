@@ -865,7 +865,7 @@ class User:
 - Prefer `@dataclass` over custom metaclasses
 - Use standard import mechanisms
 - Document why advanced techniques are needed if used
-- For monkey patching: See section 4.6 and `searchaton-project-conventions.md`
+- For monkey patching: See section 4.6
 
 ---
 
@@ -2683,7 +2683,6 @@ OriginalClass.method = patched_method
 - Store original functions/methods for potential restoration
 - Set reminders to review/remove patches periodically
 - Consider contributing fixes upstream for third-party libraries
-- For project-specific patterns: See `searchaton-project-conventions.md`
 
 **References:**
 

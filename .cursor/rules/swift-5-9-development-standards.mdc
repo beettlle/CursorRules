@@ -56,7 +56,6 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 
 - ✅ **MANDATORY:** All Use Cases MUST be implemented as `actor` types.
 - **Reason:** Actor isolation provides thread-safe execution and prevents data races.
-- **See:** Detailed Swift-specific concurrency patterns and anti-patterns in `harmoniaudio-anti-llm-traps.mdc` Rule 1.
 
 ### Explicit Sendability Requirements
 
@@ -76,7 +75,6 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 - ✅ **MANDATORY:** SwiftData `@Model` objects MUST NEVER be passed to Use Cases.
 - **Rule:** All SwiftData models must be converted to Sendable structs (like `MediaItem`) inside the Repository before being returned to Use Cases.
 - **Reason:** Keeps Domain Layer pure and free from framework dependencies. Enables safe concurrent access.
-- **See:** Detailed examples and Domain type isolation rules in `harmoniaudio-anti-llm-traps.mdc` Rule 4.
 
 ### State Snapshotting Before Async
 **CRITICAL:** Snapshot state before async network calls to prevent view inconsistencies.
@@ -102,35 +100,31 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 
 ## Critical Swift Anti-Patterns (Quick Reference)
 
-**CRITICAL:** These are the most common Swift/iOS-specific anti-patterns that cause architectural violations and performance issues. For detailed explanations, see `harmoniaudio-anti-llm-traps.mdc`.
+**CRITICAL:** These are the most common Swift/iOS-specific anti-patterns that cause architectural violations and performance issues.
 
 ### Fake Actor Pattern (SwiftData)
 
 ❌ Bad: `actor Repo { nonisolated(unsafe) let ctx; func add() { await MainActor.run { } } }`
 ✅ Good: `@ModelActor actor Repo { func add() async { /* background */ } }` OR `@MainActor class Repo`
 ⚠️ Why: Defeats concurrency benefits, causes UI freezes at scale
-📍 Details: `harmoniaudio-anti-llm-traps.mdc` Rule 1
 
 ### SwiftData Models in Domain
 
 ❌ Bad: Passing `@Model` SwiftData objects to Use Cases or Domain layer
 ✅ Good: Convert to Sendable DTOs (e.g., `MediaItem`) in Repository before returning
 ⚠️ Why: Framework dependencies in Domain, breaks isolation, violates DTO pattern
-📍 Details: See DTO Pattern section above and `harmoniaudio-anti-llm-traps.mdc` Rule 4
 
 ### MainActor on Domain Types
 
 ❌ Bad: `@MainActor struct MediaID: Hashable { }` in `Core/Domain/`
 ✅ Good: `struct MediaID: Hashable, Sendable { }` (no actor isolation)
 ⚠️ Why: Domain types must be usable from any isolation context, breaks background actors
-📍 Details: `harmoniaudio-anti-llm-traps.mdc` Rule 4
 
 ### Actor Isolation in Tests
 
 ❌ Bad: `@Test func test() { let repo = MainActorRepo() }` (no isolation match)
 ✅ Good: `@Test @MainActor func test() { let repo = MainActorRepo() }`
 ⚠️ Why: Swift 6 error - test isolation must match type isolation
-📍 Details: `harmoniaudio-anti-llm-traps.mdc` Rule 3
 
 ## Anti-Patterns to Avoid
 
@@ -716,7 +710,7 @@ case .podcast:
    - Use `#expect()` for assertions in Swift Testing Framework
    - Use `XCTAssert*` for XCTest
    - Follow Arrange-Act-Assert (AAA) pattern for clarity
-   - **CRITICAL: Actor Isolation in Tests:** See `harmoniaudio-anti-llm-traps.mdc` Rules 3, 5, and 6 for detailed Swift-specific test isolation patterns, forbidden async patterns, and test checklist.
+   - **CRITICAL: Actor Isolation in Tests:** Ensure proper actor isolation in test code to prevent data races and maintain thread safety.
 
 6. **Test Organization (Per Apple Guidelines):**
    - Mirror source directory structure in test directory

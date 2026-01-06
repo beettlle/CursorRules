@@ -30,6 +30,64 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 **If you detect any smell above, investigate for specific anti-patterns in categories below.**
 
+## Category 0: Optimization Anti-Patterns
+
+### 0.1 Cleverness Over Clarity (CRIT)
+
+**CRITICAL:** Clear beats clever every time. Clever code is unmaintainable.
+
+❌ Bad: `return reduce(map(filter(data, f), g), h)` (one-liner, unclear)
+✅ Good: `filtered := filter(data, f); mapped := map(filtered, g); return reduce(mapped, h)`
+⚠️ Why: Clever code is hard to read, debug, and maintain
+🔧 Fix: Prefer explicit over implicit, clear over clever, readable over concise
+📍 See: `engineering-philosophy.mdc` section 2.1 (Intention-Revealing Names)
+
+**Detect:** One-liners that require mental parsing, clever tricks, obfuscated code
+
+---
+
+### 0.2 Premature Abstraction (CRIT)
+
+**CRITICAL:** Wait for the third use case before abstracting.
+
+❌ Bad: `interface Processor { Process() }` (single implementation)
+✅ Good: Extract after 3+ occurrences, use concrete types until pattern emerges
+⚠️ Why: Premature abstraction adds complexity, YAGNI principle
+🔧 Fix: Wait for pattern to emerge, extract after multiple uses, avoid hypothetical futures
+📍 See: `general-llm-anti-patterns.mdc` section 3.4 (Over/Under-Engineering)
+
+**Detect:** Interfaces with single implementation, abstraction before need, hypothetical code
+
+---
+
+### 0.3 Hypothetical Futures
+
+**CRITICAL:** Build for today's requirements, not imagined futures.
+
+❌ Bad: `type Config struct { FutureFeature bool }` (unused field)
+✅ Good: Add features when needed, not "just in case"
+⚠️ Why: YAGNI principle, adds complexity, wastes effort
+🔧 Fix: Build for current requirements, add features when needed
+📍 See: `engineering-philosophy.mdc` section 1.3 (Make it Work, Make it Right, Make it Fast)
+
+**Detect:** Unused configuration, "future-proof" code, features not in requirements
+
+---
+
+### 0.4 Resume-Driven Development
+
+**CRITICAL:** Use boring tech that works, not trendy tech for resumes.
+
+❌ Bad: `import "github.com/trendy-framework"` (for simple task)
+✅ Good: Use proven tools, standard library, established patterns
+⚠️ Why: Trendy tech is unproven, adds risk, wastes time on learning curve
+🔧 Fix: Choose tools for project needs, not personal learning, prefer proven tech
+📍 See: `engineering-philosophy.mdc` section 1.2 (Boring Technology Wins)
+
+**Detect:** New frameworks for simple tasks, trendy databases, unproven tools chosen for learning
+
+---
+
 ## Category 1: Architectural Anti-Patterns
 
 ### 1.1 Ghost Layer Prevention (CRIT)
@@ -54,7 +112,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: `actor Repo { func process() async { /* actual async work */ } }`
 ⚠️ Why: Creates illusion of concurrency without benefits, adds overhead
 🔧 Fix: If abstraction doesn't provide benefit, use simpler approach; be honest about execution model
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 1.2
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 2
 
 **Detect:** Abstraction declared but 80%+ code escapes to another context, async blocks, actor hops to main thread
 
@@ -68,7 +126,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Implement, remove, or mark unavailable with explanation
 ⚠️ Why: Broken functionality, wasted resources, technical debt
 🔧 Fix: Code not complete until all branches implemented; remove if not needed; mark unavailable clearly
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 1.3
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 3
 
 **Detect:** Methods always throw same error, `_ = expensiveOp()` patterns, TODO/FIXME in production, never-called methods
 
@@ -82,7 +140,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Repository is pure CRUD, business logic in Domain layer
 ⚠️ Why: Creates God Objects, untestable code, tight coupling
 🔧 Fix: Repositories should be "dumb" (Input → API → Output); business logic in Domain enables testability
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 1.4
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 4
 
 **Detect:** Switch statements for business rules in CRUD classes, repositories calculating state transitions, persistence layer manages state machines
 
@@ -96,7 +154,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: State in Domain layer as pure data structures; Repository only saves/loads snapshots
 ⚠️ Why: Untestable repositories, tight coupling, violates separation of concerns
 🔧 Fix: State should live in Domain layer; repositories only persist state snapshots; state management in Domain services
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 1.5
 
 **Detect:** Repository methods calculate state transitions, repository manages state instead of persisting, CRUD layer computes "next state"
 
@@ -110,7 +167,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Separate classes for separate concerns (UserRepository, AuthenticationService, UserScoringService)
 ⚠️ Why: Violates SRP, makes testing difficult, hard to maintain, tight coupling
 🔧 Fix: Each class should have one reason to change; split God Objects into focused classes
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 1.6
 
 **Detect:** Single class with 50+ methods, repository handling persistence + business logic + state, service managing multiple unrelated domains
 
@@ -124,7 +180,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Split into smaller, focused modules following SRP (e.g., UserRepository, AuthenticationService)
 ⚠️ Why: Harder to understand/maintain, violates SRP, difficult code review, merge conflicts
 🔧 Fix: Review when approaching 250 lines; split into focused modules; consider Strangler Fig for legacy files
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 1.7
 
 **Detect:** File approaches/exceeds 250 lines, multiple unrelated concerns, difficult to navigate, adding functionality would push over threshold
 
@@ -140,7 +195,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Batch operations - fetch once, modify in-memory, save once
 ⚠️ Why: UI freezes at scale, database exhaustion, poor UX
 🔧 Fix: Always use batch operations for I/O; fetch once, modify in-memory, save once; use bulk APIs
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 2.1
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 5
 
 **Detect:** `for item in collection { await processItem(item) }` patterns, database query in loop, API call per item, each iteration refetches/resaves shared state
 
@@ -154,7 +209,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Use indexed lookups, in-memory state for hot paths, fetch descriptors with limits
 ⚠️ Why: For 1,000 items, converts 1,000 objects to check one ID; UI freezes with >200 items; O(N) when O(1) possible
 🔧 Fix: Use indexed lookups for single-item operations; consider in-memory state for hot paths; only fetch what you need
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 2.2
 
 **Detect:** Method fetches entire collection for single-item operation, converts all items to DTOs just to find one, full table scan, loads all data to check one property
 
@@ -168,7 +222,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: O(n) with hash set, efficient string building (join, StringBuilder), appropriate data structures
 ⚠️ Why: Scales poorly (works for 100 items, fails for 10,000), wastes CPU/memory, causes timeouts at scale
 🔧 Fix: Always consider time/space complexity; use appropriate data structures (Sets, Maps); avoid nested loops; use efficient string building
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 2.3
 
 **Detect:** O(n²) where O(n) possible, unnecessary allocations in loops, nested loops when single pass possible, repeated string concatenation
 
@@ -184,7 +237,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Extract common patterns into helper methods, base classes, or mixins
 ⚠️ Why: Violates DRY, makes refactoring difficult (must change 18 places), increases maintenance burden
 🔧 Fix: Extract patterns after 2-3 occurrences; use helper methods, base classes, or mixins; refactor to shared abstractions
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.1
 
 **Detect:** Same 10+ line code block appears 3+ times, identical error handling repeated, identical fetch/save sequences, "copy-paste" code smells
 
@@ -198,7 +250,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Use proper API (no explanation needed), keep comments brief and factual, self-documenting code
 ⚠️ Why: Comments like "This is safe because..." indicate architectural problems; if code needs 5+ lines explanation, it's likely wrong
 🔧 Fix: Good code is self-documenting; if you need to justify unsafe code, use safe alternative; refactor instead of explaining
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.2
 
 **Detect:** Comments 5+ lines explaining unsafe/problematic code, comments repeat same explanation, "This is safe because..." comments, AI-apologetic comments defending decisions
 
@@ -212,7 +263,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Search codebase before implementing, reuse existing functionality, follow established patterns
 ⚠️ Why: Creates inconsistency, wastes effort, makes maintenance harder, violates DRY
 🔧 Fix: Search codebase before implementing; reuse existing functionality; follow established patterns; check for similar implementations
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.3
 
 **Detect:** Duplicate implementations, conflicting patterns in same file, reimplementing existing code without checking, ignoring codebase conventions
 
@@ -226,7 +276,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Extract patterns after 3+ occurrences, balance abstraction, use YAGNI principle
 ⚠️ Why: Over-engineering adds complexity without benefit; under-engineering misses shared code opportunity
 🔧 Fix: Extract patterns after 3+ occurrences; avoid premature abstraction; balance between too much and too little
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.4
 
 **Detect:** Interfaces with single implementation, unused parameters, impossible error branches, no abstraction when patterns clearly emerge, configuration for things that never change
 
@@ -240,7 +289,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Only output changed functions/lines, provide complete working code for section being modified
 ⚠️ Why: Exhausts context window, makes diffs hard to read, wastes tokens, placeholder comments create incomplete code
 🔧 Fix: Only output changed functions/lines; provide complete working code; NEVER use placeholder comments; focus on specific change
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.5
 
 **Detect:** Outputting entire file when only function changed, printing 500 lines to change 5, lazy truncation, placeholder comments
 
@@ -254,7 +302,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Extract magic values to named constants, use configuration files, group related constants together
 ⚠️ Why: Hard to maintain, easy to make mistakes (typos), no single source of truth, makes code fragile
 🔧 Fix: Extract magic values to named constants; use configuration files for environment-specific values; group related constants
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.6
 
 **Detect:** Hardcoded numbers/strings, repeated magic values throughout code, no constants file or configuration
 
@@ -268,7 +315,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Fix all warnings; if a warning truly cannot be fixed, document the specific technical reason and escalate to the user
 ⚠️ Why: Warnings indicate real issues (type safety, concurrency problems, future compatibility). Dismissing them creates technical debt and bugs that surface later. Claims of "false positives" are almost always incorrect.
 🔧 Fix: Always investigate warnings thoroughly; search codebase for similar patterns and their solutions; fix the root cause; never add comments dismissing warnings without fixing them
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 3.7
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 11
 
 **Detect:** Comments claiming warnings are "false positives", "don't affect runtime", or "won't matter in current version"; warnings left unfixed with justification comments; build succeeds with warnings and code is marked "complete"
 
@@ -309,7 +356,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Verify all APIs against documentation, use direct APIs, verify package exists in registry before importing
 ⚠️ Why: Turns O(1) lookup into O(Search) fuzzy search, security risk (slopsquatting), build failures
 🔧 Fix: Always check official documentation first; verify package exists in registry before importing; use direct APIs instead of workarounds
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 4.1
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 6
 
 **Detect:** Multi-step workarounds when direct API exists, comments like "Framework X doesn't provide Y" without verification, invented packages/methods, import statements that fail resolution
 
@@ -323,7 +370,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: (4.2a) Prefer standard library over external dependencies | (4.2b) Verify all imports exist before using, check package registry
 ⚠️ Why: (4.2a) Increases bundle size, slows builds, adds security surface | (4.2b) Build failures, security risk (slopsquatting)
 🔧 Fix: Prefer standard library for simple operations; verify all imports exist; check package registry and documentation; use dependency scanning tools
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 4.2
 
 **Detect:** (4.2a) Importing heavy library for simple operation, using framework when standard library suffices | (4.2b) Import statements that fail resolution, packages with no source/documentation
 
@@ -337,7 +383,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Always check framework documentation first, use framework-provided functionality when available
 ⚠️ Why: Reinvents the wheel, misses framework updates, more code to maintain, may have bugs framework already solved
 🔧 Fix: Always check framework documentation first; use framework-provided functionality when available; only implement custom when framework doesn't provide
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 4.3
 
 **Detect:** Custom implementation before checking official APIs, reinventing standard functionality, comments suggesting framework limitation without verification
 
@@ -353,7 +398,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Use environment variables for all secrets, never commit secrets to version control, use secret management services
 ⚠️ Why: Security vulnerability, credential exposure, compliance violations, cannot rotate without code change
 🔧 Fix: Use environment variables for all secrets; never commit secrets to version control; use secret management services for production
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 5.1
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 7
 
 **Detect:** API keys in source code, passwords in code, tokens committed to version control, placeholder credentials that look real
 
@@ -367,7 +412,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Validate all input at system boundaries, use parameterized queries, sanitize output, use type-safe validation libraries
 ⚠️ Why: Security vulnerabilities (SQL injection, XSS, command injection), crashes, data corruption, system compromise
 🔧 Fix: Validate all input at system boundaries; use parameterized queries; sanitize output; fail fast on invalid input
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 5.2
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 8
 
 **Detect:** No validation of user/external input, direct use of user input in queries, unchecked parameters, trusting external API responses without validation
 
@@ -381,7 +426,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Always handle or explicitly propagate errors, use specific error types, preserve error context, log with detail
 ⚠️ Why: Hidden bugs, difficult debugging, silent data loss, unknown system state
 🔧 Fix: Always handle or explicitly propagate errors; use specific error types; preserve error context (chain errors); never silently swallow
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 5.3
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 9
 
 **Detect:** `except: pass` patterns, empty catch blocks, generic error handling that loses context, errors logged but not handled
 
@@ -395,7 +440,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Always close resources in finally blocks, use language resource management (using, with, defer), use connection pooling
 ⚠️ Why: Resource exhaustion, memory leaks, system crashes at scale, poor performance
 🔧 Fix: Always close resources in finally blocks; use language resource management; use connection pooling; monitor resource usage
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 5.4
 
 **Detect:** Not closing file handles, database connections not released, memory not freed, network connections left open
 
@@ -409,7 +453,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Only catch errors that can actually occur, use specific error types, preserve error context (chain errors)
 ⚠️ Why: Dead code, lost debugging information, generic errors don't help, wastes CPU on unnecessary error handling
 🔧 Fix: Only catch errors that can actually occur; use specific error types; preserve error context; add context when rethrowing
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 5.5
 
 **Detect:** Try/catch for errors that cannot occur, lost error context, catching and rethrowing without adding context, phantom error handling
 
@@ -423,7 +466,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Use dependency injection, pass state explicitly, use immutable state when possible, make dependencies explicit
 ⚠️ Why: Testing impossible, unpredictable behavior, race conditions in concurrent code, hidden dependencies
 🔧 Fix: Use dependency injection; pass state explicitly, don't use globals; use immutable state when possible; avoid singleton patterns with mutable state
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 5.6
 
 **Detect:** Global variables, module-level mutable state, singleton patterns that hold mutable state, shared mutable state across modules
 
@@ -439,7 +481,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Mocks match real API signatures and behavior, test both success and failure cases, verify mocks against real API documentation
 ⚠️ Why: False confidence, integration failures, production bugs, wasted debugging time
 🔧 Fix: Mocks must match real API signatures and behavior; test both success and failure cases; verify mocks against real API documentation; use contract testing
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 6.1
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 10
 
 **Detect:** Mocks that don't match real API behavior, tests pass but integration fails, mock returns different shape, mock doesn't throw errors that real API throws
 
@@ -453,7 +495,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Test error conditions explicitly, test boundary conditions (0, -1, max, empty, null), test edge cases, use negative testing
 ⚠️ Why: Undiscovered bugs in error paths, system fails in production on edge cases, no confidence in error handling
 🔧 Fix: Test error conditions explicitly; test boundary conditions; test edge cases (duplicates, conflicts, limits); aim for high code coverage on error paths
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 6.2
 
 **Detect:** Only testing happy paths, no tests for error conditions, missing edge case tests, no boundary condition tests
 
@@ -467,7 +508,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Test all critical business logic, aim for high coverage on business rules, test complex calculations with multiple cases
 ⚠️ Why: Regression risk, no confidence in business logic, bugs in critical paths, difficult to refactor safely
 🔧 Fix: Test all critical business logic; aim for high coverage on business rules; test complex calculations with multiple cases; use code coverage tools
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 6.3
 
 **Detect:** Complex calculations untested, state transitions untested, business rules untested, critical paths with low coverage
 
@@ -481,7 +521,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Mocks match real API behavior exactly, test both success and failure cases in mocks, verify mocks against real implementation
 ⚠️ Why: False confidence (tests pass but production fails), integration failures, production bugs, wasted debugging time
 🔧 Fix: Mocks must match real API behavior exactly; test both success and failure cases; verify mocks against real implementation; use contract testing
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 6.4
 
 **Detect:** Mock behavior differs from production, mock doesn't throw errors that real implementation throws, mock returns different types, mock has different method signatures
 
@@ -495,7 +534,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Make tests deterministic (no timing, no external state), use setup/teardown for test data, isolate test state, mock external services
 ⚠️ Why: Unreliable CI/CD, wastes time debugging false failures, hides real bugs, reduces confidence in test suite
 🔧 Fix: Make tests deterministic; use setup/teardown for test data; isolate test state (no shared variables); mock external services; avoid sleep/wait in tests
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 6.5
 
 **Detect:** Tests that sometimes pass/fail, tests that depend on execution order, tests that use real time, tests that depend on external services or state
 
@@ -511,7 +549,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Review existing code before implementing, follow established patterns and conventions, use consistent naming and structure
 ⚠️ Why: Creates inconsistency, makes codebase harder to understand, violates established architecture, wastes effort
 🔧 Fix: Review existing code before implementing; follow established patterns and conventions; use consistent naming and structure; ask questions if pattern unclear
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 7.1
 
 **Detect:** Not following established codebase conventions, different pattern for same problem, duplicate implementations, ignoring architectural decisions
 
@@ -525,7 +562,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Break complex tasks into smaller steps, implement one piece at a time, review and test each step
 ⚠️ Why: Context window exhaustion, incomplete implementations, missing important details, difficult to review and test
 🔧 Fix: Break complex tasks into smaller steps; implement one piece at a time; review and test each step; use iterative development
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 7.2
 
 **Detect:** Trying to implement entire feature in one go, not breaking down complex tasks, incomplete implementations due to context limits, missing important details due to truncation
 
@@ -539,7 +575,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Always ask clarifying questions for vague requests, identify which layer/component is affected, understand expected vs actual behavior
 ⚠️ Why: Implements wrong solution, wastes time on incorrect implementation, may introduce new bugs, creates "Prompt Debt"
 🔧 Fix: Always ask clarifying questions for vague requests; identify which layer/component is affected; verify the problem before proposing solution; don't guess
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 7.3
 
 **Detect:** Request uses vague terms like "fix it", "make it better", missing critical details, multiple possible interpretations, request could apply to multiple components
 
@@ -555,7 +590,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Output brief plan before coding (Goal, Architecture, Safety, Verification), check existing codebase, consider if new module needed vs editing existing
 ⚠️ Why: Violates existing architectural patterns, creates duplicate functionality, introduces breaking changes, wastes effort on wrong approach
 🔧 Fix: For complex tasks, output brief plan before coding (Goal, Architecture, Safety, Verification); check existing codebase; consider if new module needed vs editing existing
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 8.1
 
 **Detect:** Jumping directly to code without understanding problem, not considering how changes fit into existing architecture, implementing without checking for side effects, not verifying if new module needed
 
@@ -569,7 +603,6 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 ✅ Good: Create new module for new functionality, intercept calls from old system, test new module in isolation, gradually retire old code paths
 ⚠️ Why: Direct edits risk breaking existing functionality, adds complexity, makes testing difficult, violates SRP
 🔧 Fix: Create new module for new functionality; intercept calls from old system; test new module in isolation; only use for legacy/complex files, not active development
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 8.2
 
 **Detect:** Editing large legacy file directly (>200 lines, complex logic), modifying complex code you don't fully understand, changes could have cascading side effects, file violates SRP
 
