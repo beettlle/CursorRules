@@ -220,9 +220,19 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 
 **Only after build succeeds with zero warnings:**
 
-1. Run test command
-2. Capture full output
-3. Parse test results
+1. **Determine which tests to run:**
+   - For UI tests: Use targeted test execution per Rule 9 in `harmoniaudio-anti-llm-traps.mdc` when modifying specific features
+   - For unit tests: Run all unit tests (fast execution)
+   - For UI infrastructure changes (UITestBase, UIHelpers, LiquidGlass): Run full UI test suite
+
+2. Run test command (targeted or full suite)
+3. Capture full output
+4. Parse test results
+
+**Targeted UI Test Execution:**
+- Use `-only-testing:HarmoniAudioUITests/<TestClassName>` for feature-specific UI changes
+- See Rule 9 in `harmoniaudio-anti-llm-traps.mdc` for file-to-test mapping
+- **Exception:** Always run full UI suite for Liquid Glass changes or shared components
 
 ### Step 5: Handle Test Failures
 
