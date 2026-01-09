@@ -364,14 +364,23 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ### 4.2 Dependency Management
 
-**CRITICAL:** Manage dependencies carefully. Two related but distinct issues:
+**CRITICAL:** Manage dependencies carefully. Three related but distinct issues:
 
-❌ Bad: (4.2a) Importing heavy library for simple operation, adding 100MB dependency to sort a list | (4.2b) Import statements that fail resolution, plausible-sounding but non-existent packages
-✅ Good: (4.2a) Prefer standard library over external dependencies | (4.2b) Verify all imports exist before using, check package registry
-⚠️ Why: (4.2a) Increases bundle size, slows builds, adds security surface | (4.2b) Build failures, security risk (slopsquatting)
-🔧 Fix: Prefer standard library for simple operations; verify all imports exist; check package registry and documentation; use dependency scanning tools
+❌ Bad: (4.2a) Importing heavy library for simple operation, adding 100MB dependency to sort a list | (4.2b) Import statements that fail resolution, plausible-sounding but non-existent packages | (4.2c) Choosing obscure libraries agents don't know well, trendy but poorly-documented packages
+✅ Good: (4.2a) Prefer standard library over external dependencies | (4.2b) Verify all imports exist before using, check package registry | (4.2c) Popular well-documented packages, standard library when possible, verify agent knowledge, consider agent training data coverage
+⚠️ Why: (4.2a) Increases bundle size, slows builds, adds security surface | (4.2b) Build failures, security risk (slopsquatting) | (4.2c) Agents work better with familiar libraries; obscure packages lead to more errors and slower iteration
+🔧 Fix: Prefer standard library for simple operations; verify all imports exist; check package registry and documentation; use dependency scanning tools; consider agent knowledge when selecting dependencies
 
-**Detect:** (4.2a) Importing heavy library for simple operation, using framework when standard library suffices | (4.2b) Import statements that fail resolution, packages with no source/documentation
+**Dependency Selection Criteria:**
+| Criteria | Question |
+|----------|----------|
+| Maintenance | Is it well-maintained? |
+| Dependencies | How about peer dependencies? |
+| Popularity | Is it popular? (affects AI agent knowledge) |
+| Documentation | Is documentation comprehensive? |
+| Agent Knowledge | Will agents struggle with this choice? |
+
+**Detect:** (4.2a) Importing heavy library for simple operation, using framework when standard library suffices | (4.2b) Import statements that fail resolution, packages with no source/documentation | (4.2c) Obscure libraries, poorly-documented packages, packages agents don't know well
 
 ---
 
@@ -558,12 +567,20 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 **CRITICAL:** Break down complex tasks. Don't try to implement entire features in one response.
 
-❌ Bad: Trying to implement entire feature in one go, not breaking down complex tasks, incomplete implementations due to context limits
-✅ Good: Break complex tasks into smaller steps, implement one piece at a time, review and test each step
-⚠️ Why: Context window exhaustion, incomplete implementations, missing important details, difficult to review and test
-🔧 Fix: Break complex tasks into smaller steps; implement one piece at a time; review and test each step; use iterative development
+❌ Bad: Trying to implement entire feature in one go, not breaking down complex tasks, incomplete implementations due to context limits, restarting sessions unnecessarily for related tasks
+✅ Good: Break complex tasks into smaller steps, implement one piece at a time, review and test each step, keep context loaded for related tasks when working on connected features
+⚠️ Why: Context window exhaustion, incomplete implementations, missing important details, difficult to review and test; maintaining context for related tasks improves coherence and reduces redundant file loading
+🔧 Fix: Break complex tasks into smaller steps; implement one piece at a time; review and test each step; use iterative development; maintain context for related tasks (don't restart unnecessarily)
 
-**Detect:** Trying to implement entire feature in one go, not breaking down complex tasks, incomplete implementations due to context limits, missing important details due to truncation
+**Context Management Strategy:**
+- **For related tasks:** Keep session active to maintain loaded context
+- **For unrelated tasks:** New session is acceptable
+- **For very large codebases:** Use `@` symbols to explicitly include only needed files
+- **For complex features:** Break into phases, maintain context within each phase
+
+**Note:** Modern models generally work efficiently with fuller context. Don't restart sessions unnecessarily for related work, but do break down tasks that exceed model capabilities.
+
+**Detect:** Trying to implement entire feature in one go, not breaking down complex tasks, incomplete implementations due to context limits, missing important details due to truncation, restarting sessions unnecessarily for related tasks
 
 ---
 
@@ -608,6 +625,48 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+## Category 9: Agent Workflow Anti-Patterns
+
+### 9.1 UI-First Development (CRIT)
+
+**CRITICAL:** Start with CLI implementation before building UI layers.
+
+❌ Bad: Building UI/extension first, starting with complex frontend before core logic works, UI tightly coupled to business logic
+✅ Good: CLI first (agents can test directly), verify core logic works, then build UI/extensions, keep UI as thin layer
+⚠️ Why: CLI allows agents to test and verify directly; UI-first delays verification and adds complexity; agents work faster with CLI interfaces
+🔧 Fix: Always start with CLI for core functionality; build UI after CLI is proven and working; CLI becomes testable interface
+📍 See: `engineering-philosophy.mdc` section 1.5 (CLI-First Development)
+
+**Detect:** Starting with UI/extension code, building frontend before CLI works, no way to test logic directly, business logic in UI layer
+
+---
+
+### 9.2 Verbose Text-Only Prompts (CRIT)
+
+**CRITICAL:** Use visual aids (screenshots, images) for UI/design work instead of lengthy text descriptions.
+
+❌ Bad: Long text descriptions of UI issues, 500-word prompt explaining visual problems, trying to describe visual problems in words, verbose explanations when image would suffice
+✅ Good: Short prompt + screenshot/image, "fix padding" with visual, concise instructions, show what's wrong visually, use images for UI iteration
+⚠️ Why: Visual aids are more efficient than text descriptions, shorter prompts preserve context, faster iteration, images are more accurate than descriptions, reduces ambiguity
+🔧 Fix: Use images for UI issues, keep text prompts brief when visuals are available, include screenshots/clips for UI work, use images for design work
+
+**Detect:** Long prompts for simple issues, text descriptions of visual problems, verbose explanations when image would suffice, no visual aids for UI work, trying to describe layout/design in words
+
+---
+
+### 9.3 Pattern Propagation (CRIT)
+
+**CRITICAL:** When discovering improvements, apply them across all similar projects.
+
+❌ Bad: Fixing pattern in one project, leaving similar issues in other projects, inconsistent patterns across codebase, better patterns only applied to one project
+✅ Good: When finding improvement, apply to all similar projects, maintain consistency across codebase, use scripts to find and update related codebases, update changelogs
+⚠️ Why: Prevents pattern drift, reduces maintenance burden, ensures consistency, leverages improvements broadly, reduces context switching
+🔧 Fix: When finding pattern improvement, search for similar projects/patterns, apply change consistently, use scripts to propagate changes, update changelogs
+
+**Detect:** Pattern fixed in one place but not others, inconsistent implementations, improvements not propagated, manual updates needed everywhere, patterns only in one place
+
+---
+
 ## Summary: Critical Rules
 
 These six patterns represent the most critical "making it work vs. making it right" violations:
@@ -619,7 +678,7 @@ These six patterns represent the most critical "making it work vs. making it rig
 5. **Zero-Hallucination Policy** - Verify all APIs
 6. **Hardcoded Secrets** - Use environment variables
 
-**Quick Ref:** Arch: Ghost layers, fake abstractions, dead code, logic leakage, state confusion, god objects, file size limit, Strangler Fig | Perf: O(N²), unoptimized hot paths, performance blindness | Quality: Duplication, defensive comments, context blindness, over/under-engineering, formatting, magic values, warning dismissal | API: Hallucination, dependency issues, workaround-first | Security: Hardcoded secrets, missing validation, silent failures, resource leaks, error handling, global state | Testing: Mock mismatches, missing error paths, incomplete coverage, flaky tests | Context: Ignoring patterns, context window limitations, ambiguity intolerance | Process: Pre-execution planning
+**Quick Ref:** Arch: Ghost layers, fake abstractions, dead code, logic leakage, state confusion, god objects, file size limit, Strangler Fig | Perf: O(N²), unoptimized hot paths, performance blindness | Quality: Duplication, defensive comments, context blindness, over/under-engineering, formatting, magic values, warning dismissal | API: Hallucination, dependency issues, workaround-first | Security: Hardcoded secrets, missing validation, silent failures, resource leaks, error handling, global state | Testing: Mock mismatches, missing error paths, incomplete coverage, flaky tests | Context: Ignoring patterns, context window limitations, ambiguity intolerance | Process: Pre-execution planning | Agent: UI-first, verbose prompts, pattern propagation
 
 **For language-specific implementations:** See your project's language-specific anti-trap rules file for concrete detection patterns and code examples in your target language.
 

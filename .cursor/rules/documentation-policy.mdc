@@ -80,3 +80,24 @@ alwaysApply: true
 2. **Keep types separate** - don't mix tutorials with reference material
 3. **Match structure** to type (tutorials are narrative, reference is factual)
 4. **Use appropriate language** - tutorials are friendly, reference is precise
+
+---
+
+## Strategic Documentation for Agents
+
+**CRITICAL:** When explicitly requested, use `docs/` folders for subsystem documentation that agents should read before working on features.
+
+❌ Bad: Creating docs without user request, documenting obvious code, no project documentation, context only in code comments, agents must read entire codebase
+✅ Good: User-requested `docs/` structure for complex subsystems, using "read docs/feature-name.md" pattern, maintain `docs/` folder with subsystem/feature docs, use scripts to force model to read relevant docs, keep docs up-to-date
+⚠️ Why: Strategic docs help agents understand complex systems; automatic docs waste effort; reduces context window usage, provides focused context, enables faster agent work on large projects
+🔧 Fix: Only create `docs/` when user requests; structure for agent consumption; use clear filenames; use scripts/instructions to force models to read relevant docs for large projects; maintain docs in `docs/` folder
+
+**Pattern:** When user says "write docs to docs/*.md" or explicitly requests documentation, create appropriately named documentation file following Diátaxis framework.
+
+**When explicitly requested to create documentation:**
+- Use `docs/` folder as default location
+- When user says "write docs to docs/*.md", let the model pick appropriate filename
+- Structure documentation following Diátaxis framework (see above)
+- Use scripts/instructions to force models to read relevant docs for large projects
+
+**Detect:** Documentation in root, unclear naming, scattered docs, no clear structure, no docs folder, all context in code, agents reading entire codebase for simple tasks

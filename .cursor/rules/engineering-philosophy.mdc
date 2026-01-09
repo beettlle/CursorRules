@@ -49,6 +49,53 @@ alwaysApply: false
 
 ---
 
+### 1.4 Agent-Optimized Design (CRIT)
+
+**CRITICAL:** Design codebases for agent efficiency, not just human readability.
+
+❌ Bad: Code structure optimized only for human navigation, unclear file organization, inconsistent patterns, non-standard layouts
+✅ Good: Clear structure following conventions agents are trained on, consistent patterns, obvious file organization, standard project layouts (docs/, src/, tests/)
+⚠️ Why: Agents work faster and more accurately when codebase follows predictable patterns they're trained on; fighting model conventions wastes tokens and time
+🔧 Fix: Use standard project structures, consistent naming, clear separation of concerns, follow established patterns from training data
+📍 See: `general-llm-anti-patterns.mdc` section 9.1 (UI-First Development Anti-Pattern)
+
+**Detect:** Unclear project structure, inconsistent patterns, files in unexpected locations, non-standard layouts, custom patterns requiring explanation
+
+---
+
+### 1.5 CLI-First Development (CRIT)
+
+**CRITICAL:** Start new features as CLI tools before building UI layers.
+
+❌ Bad: Building UI/API first, complex web interface before core logic works, UI tightly coupled to business logic
+✅ Good: Build CLI first, verify core logic works, then add UI/API layer, keep UI as thin layer over CLI/core
+⚠️ Why: CLI is faster to build/test, agents can verify output directly, reduces complexity, enables faster iteration, clearer separation of concerns
+🔧 Fix: Always start with CLI for new features; add UI/API only after core logic is verified; CLI becomes testable interface
+📍 See: `general-llm-anti-patterns.mdc` section 9.1 (UI-First Development Anti-Pattern)
+
+**Detect:** Building UI before CLI, complex interfaces before core logic, skipping CLI layer for agent-verifiable features, business logic embedded in UI layer
+
+---
+
+### 1.6 Continuous Refactoring (CRIT)
+
+**CRITICAL:** Fix issues as they appear, don't defer to dedicated refactor days.
+
+❌ Bad: Deferring refactoring to "later", accumulating technical debt, waiting for dedicated refactor days, "we'll fix this later" patterns
+✅ Good: Fix issues immediately when noticed, refactor ad-hoc during development, address problems as they appear, refactor when prompts take too long
+⚠️ Why: Prevents debt accumulation, keeps codebase clean, easier to fix when context is fresh, reduces future effort, poor code quality slows agent work
+🔧 Fix: Address issues immediately when noticed, don't defer refactoring, fix problems during development, refactor when code quality impacts efficiency
+
+**Refactoring Triggers:**
+- Prompts taking longer than expected
+- Seeing complex/ugly code in agent stream
+- Code that confuses agents
+- Patterns that slow down development
+
+**Detect:** TODO comments for refactoring, deferred improvements, accumulating technical debt, ignoring agent inefficiency, waiting for dedicated refactor time
+
+---
+
 ## Unix Philosophy
 
 | Principle | Detect |
