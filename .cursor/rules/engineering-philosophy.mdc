@@ -63,17 +63,20 @@ alwaysApply: false
 
 ---
 
-### 1.5 CLI-First Development (CRIT)
+### 1.5 Core Logic-First Development (CRIT)
 
-**CRITICAL:** Start new features as CLI tools before building UI layers.
+**CRITICAL:** Start new features by building core business logic/testable domain layer before UI/API layers.
 
-❌ Bad: Building UI/API first, complex web interface before core logic works, UI tightly coupled to business logic
-✅ Good: Build CLI first, verify core logic works, then add UI/API layer, keep UI as thin layer over CLI/core
-⚠️ Why: CLI is faster to build/test, agents can verify output directly, reduces complexity, enables faster iteration, clearer separation of concerns
-🔧 Fix: Always start with CLI for new features; add UI/API only after core logic is verified; CLI becomes testable interface
-📍 See: `general-llm-anti-patterns.mdc` section 9.1 (UI-First Development Anti-Pattern)
+❌ Bad: Building UI/API first, complex web interface before core logic works, UI tightly coupled to business logic, SwiftUI views before domain layer
+✅ Good: Build core logic first (CLI, domain layer, or testable interfaces), verify logic works, then add UI/API layer, keep UI as thin layer over core
+⚠️ Why: Core logic layer is faster to build/test, agents can verify output directly, reduces complexity, enables faster iteration, clearer separation of concerns
+🔧 Fix: Always start with core logic/domain layer for new features; add UI/API only after logic is verified; for iOS/Swift: build Domain layer (Pure Swift) first, then Presentation layer (SwiftUI)
 
-**Detect:** Building UI before CLI, complex interfaces before core logic, skipping CLI layer for agent-verifiable features, business logic embedded in UI layer
+**Exception:** Pure UI apps with minimal business logic may iterate rapidly between UI and logic.
+
+📍 See: `general-llm-anti-patterns.mdc` section 9.1, `swift-5-9-development-standards.mdc` section "Architectural Layers"
+
+**Detect:** Building UI before core logic, complex interfaces before domain layer, skipping testable logic layer, business logic embedded in UI layer, SwiftUI views importing SwiftData/MusicKit directly
 
 ---
 

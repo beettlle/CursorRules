@@ -627,17 +627,20 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ## Category 9: Agent Workflow Anti-Patterns
 
-### 9.1 UI-First Development (CRIT)
+### 9.1 UI-First Development Anti-Pattern (CRIT)
 
-**CRITICAL:** Start with CLI implementation before building UI layers.
+**CRITICAL:** Start with core logic/domain layer implementation before building UI layers.
 
-❌ Bad: Building UI/extension first, starting with complex frontend before core logic works, UI tightly coupled to business logic
-✅ Good: CLI first (agents can test directly), verify core logic works, then build UI/extensions, keep UI as thin layer
-⚠️ Why: CLI allows agents to test and verify directly; UI-first delays verification and adds complexity; agents work faster with CLI interfaces
-🔧 Fix: Always start with CLI for core functionality; build UI after CLI is proven and working; CLI becomes testable interface
-📍 See: `engineering-philosophy.mdc` section 1.5 (CLI-First Development)
+❌ Bad: Building UI/extension first, starting with complex frontend before core logic works, UI tightly coupled to business logic, SwiftUI views before domain layer exists
+✅ Good: Core logic first (CLI, domain layer, or testable interfaces), verify logic works, then build UI/extensions, keep UI as thin layer; for iOS/Swift: Domain layer (Pure Swift) first, then Presentation layer (SwiftUI)
+⚠️ Why: Core logic layer allows agents to test and verify directly; UI-first delays verification and adds complexity; agents work faster with testable interfaces; domain layer enables proper separation of concerns
+🔧 Fix: Always start with core logic/domain layer for core functionality; build UI after logic is proven and working; for iOS/Swift: build Pure Swift domain layer before SwiftUI presentation layer
 
-**Detect:** Starting with UI/extension code, building frontend before CLI works, no way to test logic directly, business logic in UI layer
+**Exception:** Pure UI apps with minimal business logic may iterate rapidly between UI and logic.
+
+📍 See: `engineering-philosophy.mdc` section 1.5, `swift-5-9-development-standards.mdc` section "Architectural Layers"
+
+**Detect:** Starting with UI/extension code, building frontend before core logic works, no way to test logic directly, business logic in UI layer, SwiftUI views importing SwiftData/MusicKit directly, domain layer importing SwiftUI
 
 ---
 
