@@ -15,7 +15,7 @@ alwaysApply: false
 This file contains Fargate-specific anti-patterns and best practices for container orchestration on AWS.
 
 **For general AWS patterns:** See `aws-general-best-practices.mdc`
-**For SearchATon-specific Fargate patterns:** See `searchaton-project-conventions.md` section "AWS Deployment Conventions"
+**For project-specific Fargate patterns:** See project-specific rules file or project-conventions.md
 **For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
 
 ---
@@ -112,7 +112,7 @@ This file contains Fargate-specific anti-patterns and best practices for contain
 ✅ Good: Fargate task health checks configured (`"healthCheck": {"command": ["CMD-SHELL", "curl -f http://localhost:8888/health || exit 1"], "interval": 30, "timeout": 5, "retries": 3, "startPeriod": 60}`), application health check endpoint validates database connectivity and critical dependencies
 ⚠️ Why: Without health checks, unhealthy tasks continue serving traffic; health checks validate service health and dependencies; grace period prevents false positives during startup
 🔧 Fix: Configure health checks in task definition, implement application health endpoints, set appropriate intervals/timeouts, configure grace period, monitor health check failures
-📍 See: `aws-general-best-practices.mdc` section 2.2, `searchaton-project-conventions.md`
+📍 See: `aws-general-best-practices.mdc` section 2.2
 
 **Detect:** Missing health check configuration, health checks that don't validate dependencies, health check grace period too short (<60 seconds), no automatic task replacement on failures, missing CloudWatch alarms
 
@@ -154,7 +154,7 @@ This file contains Fargate-specific anti-patterns and best practices for contain
 ✅ Good: Configure CloudWatch log driver in task definition (`"logConfiguration": {"logDriver": "awslogs", "options": {"awslogs-group": "/ecs/service-name"}}`), create log groups with retention policies, enable log encryption (KMS), structured logging (JSON format)
 ⚠️ Why: Without centralized logging, security incidents go undetected; logs are essential for compliance and incident response; structured logging enables querying
 🔧 Fix: Configure `logConfiguration` in task definition with CloudWatch log driver, create log groups, set retention policies, enable encryption, use structured logging
-📍 See: `aws-cloudwatch-best-practices.mdc`, `searchaton-project-conventions.md`
+📍 See: `aws-cloudwatch-best-practices.mdc`
 
 **Detect:** Task definitions without `logConfiguration`, missing CloudWatch log groups, logs not encrypted, no log retention policy, unstructured logs (not JSON format)
 
@@ -199,4 +199,4 @@ This file contains Fargate-specific anti-patterns and best practices for contain
 
 ---
 
-*This file consolidates Fargate-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For SearchATon-specific Fargate requirements, see `searchaton-project-conventions.md`.*
+*This file consolidates Fargate-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For project-specific Fargate requirements, see project-specific rules file or project-conventions.md.*

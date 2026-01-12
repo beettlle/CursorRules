@@ -15,7 +15,7 @@ alwaysApply: false
 This file contains OpenSearch-specific anti-patterns and best practices for managed search services on AWS.
 
 **For general AWS patterns:** See `aws-general-best-practices.mdc`
-**For SearchATon-specific OpenSearch patterns:** See `searchaton-project-conventions.md` section "AWS Deployment Conventions"
+**For project-specific OpenSearch patterns:** See project-specific rules file or project-conventions.md
 **For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
 
 ---
@@ -100,7 +100,6 @@ This file contains OpenSearch-specific anti-patterns and best practices for mana
 ✅ Good: Search queries return only IDs (`_source: false` in search queries), application fetches full documents from RDS using IDs, reduces data transfer costs and improves performance
 ⚠️ Why: Fetching full documents from OpenSearch is expensive (data transfer, storage); OpenSearch should return IDs only; RDS stores full documents more efficiently
 🔧 Fix: Set `_source: false` in search queries, return only document IDs, fetch full documents from RDS, reduce data transfer costs
-📍 See: `searchaton-project-conventions.md`
 
 **Detect:** Search queries returning full documents, `_source` field included in search results, full post content returned from OpenSearch, high data transfer costs from OpenSearch, missing `_source: false` in queries
 
@@ -150,7 +149,6 @@ This file contains OpenSearch-specific anti-patterns and best practices for mana
 ✅ Good: Use filters instead of queries when relevance scoring not needed (filters are cached faster), query result caching enabled where appropriate, query timeout configured (prevent long-running queries), avoid wildcard queries on analyzed fields, monitor slow queries (CloudWatch metrics)
 ⚠️ Why: Filters are cached and faster than queries; wildcard queries are expensive; query timeouts prevent resource exhaustion; inefficient queries cause performance issues
 🔧 Fix: Use filters for exact matches, enable query result caching, configure query timeouts, avoid expensive queries, monitor query performance
-📍 See: `searchaton-project-conventions.md`
 
 **Detect:** Queries used instead of filters for exact matches, wildcard queries on analyzed fields, missing query timeout, slow queries in CloudWatch metrics, no query result caching, expensive aggregations on large datasets
 
@@ -226,4 +224,4 @@ This file contains OpenSearch-specific anti-patterns and best practices for mana
 
 ---
 
-*This file consolidates OpenSearch-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For SearchATon-specific OpenSearch migration requirements, see `searchaton-project-conventions.md`.*
+*This file consolidates OpenSearch-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For project-specific OpenSearch requirements, see project-specific rules file or project-conventions.md.*

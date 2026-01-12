@@ -15,7 +15,7 @@ alwaysApply: false
 This file contains RDS PostgreSQL-specific anti-patterns and best practices for managed database services on AWS.
 
 **For general AWS patterns:** See `aws-general-best-practices.mdc`
-**For SearchATon-specific RDS patterns:** See `searchaton-project-conventions.md` section "AWS Deployment Conventions"
+**For project-specific RDS patterns:** See project-specific rules file or project-conventions.md
 **For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
 
 ---
@@ -100,7 +100,7 @@ This file contains RDS PostgreSQL-specific anti-patterns and best practices for 
 ✅ Good: Connection pooling (SQLAlchemy pool: `pool_size=10, max_overflow=20, pool_pre_ping=True`), connection pool size based on concurrent requests, RDS `max_connections` parameter tuned for instance type, connection pool monitoring (active/idle connections)
 ⚠️ Why: Creating connections per request is inefficient and can exhaust connection limits; connection pooling reuses connections; proper sizing prevents connection exhaustion
 🔧 Fix: Use connection pools (SQLAlchemy, psycopg2 pool), configure pool size based on concurrency, monitor connection pool usage, tune RDS max_connections
-📍 See: `aws-general-best-practices.mdc` section 3.2, `searchaton-project-conventions.md`
+📍 See: `aws-general-best-practices.mdc` section 3.2
 
 **Detect:** New connection created per request, no connection pool configuration, RDS connection errors in logs, RDS connection count at maximum, missing connection pool monitoring, connection pool size not based on metrics
 
@@ -198,4 +198,4 @@ This file contains RDS PostgreSQL-specific anti-patterns and best practices for 
 
 ---
 
-*This file consolidates RDS-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For SearchATon-specific RDS migration requirements, see `searchaton-project-conventions.md`.*
+*This file consolidates RDS-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For project-specific RDS requirements, see project-specific rules file or project-conventions.md.*

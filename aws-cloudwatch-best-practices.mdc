@@ -15,7 +15,7 @@ alwaysApply: false
 This file contains CloudWatch-specific anti-patterns and best practices for monitoring, logging, and alerting on AWS.
 
 **For general AWS patterns:** See `aws-general-best-practices.mdc`
-**For SearchATon-specific CloudWatch patterns:** See `searchaton-project-conventions.md` section "AWS Deployment Conventions"
+**For project-specific CloudWatch patterns:** See project-specific rules file or project-conventions.md
 **For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
 
 ---
@@ -30,7 +30,7 @@ This file contains CloudWatch-specific anti-patterns and best practices for moni
 ✅ Good: Redact sensitive data before logging, structured logging (JSON format), hash instance URLs
 ⚠️ Why: CloudWatch Logs accessible to multiple IAM users/roles; sensitive data in logs violates compliance
 🔧 Fix: Redact sensitive data in application code, use log filtering, implement data masking, review log content
-📍 See: `searchaton-project-conventions.md`, `aws-general-best-practices.mdc` section 1.5
+📍 See: `aws-general-best-practices.mdc` section 1.5
 
 **Detect:** Passwords in logs, API keys in logs, PII in log messages, credentials in stack traces, no log redaction
 
@@ -44,7 +44,6 @@ This file contains CloudWatch-specific anti-patterns and best practices for moni
 ✅ Good: Structured logging (JSON format) with CloudWatchJSONFormatter, consistent format across services
 ⚠️ Why: Unstructured logs difficult to parse/query; structured logs enable efficient searching with CloudWatch Logs Insights
 🔧 Fix: Use JSON formatters for all logs, include consistent context fields, structure logs for querying
-📍 See: `searchaton-project-conventions.md`
 
 **Detect:** Plain text logs, inconsistent log formats, missing log context, CloudWatch Logs Insights queries ineffective
 
@@ -214,4 +213,4 @@ This file contains CloudWatch-specific anti-patterns and best practices for moni
 
 ---
 
-*This file consolidates CloudWatch-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For SearchATon-specific CloudWatch requirements, see `searchaton-project-conventions.md`.*
+*This file consolidates CloudWatch-specific best practices. For general AWS patterns, see `aws-general-best-practices.mdc`. For project-specific CloudWatch requirements, see project-specific rules file or project-conventions.md.*

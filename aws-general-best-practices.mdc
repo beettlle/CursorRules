@@ -16,7 +16,7 @@ This file contains general AWS best practices aligned with the [AWS Well-Archite
 
 **For service-specific patterns:** See `aws-fargate-best-practices.mdc`, `aws-rds-best-practices.mdc`, `aws-opensearch-best-practices.mdc`, `aws-cloudwatch-best-practices.mdc`
 
-**For SearchATon-specific AWS patterns:** See `searchaton-project-conventions.md` section "AWS Deployment Conventions"
+**For project-specific AWS patterns:** See project-specific rules file or project-conventions.md
 
 **For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
 
@@ -158,7 +158,7 @@ This file contains general AWS best practices aligned with the [AWS Well-Archite
 ✅ Good: Database connection pooling (SQLAlchemy pool: `pool_size=10, max_overflow=20, pool_pre_ping=True`), RDS `max_connections` parameter tuned for instance type, OpenSearch query result caching enabled where appropriate, application-level caching for frequently accessed data
 ⚠️ Why: Creating connections per request is inefficient and can exhaust connection limits; connection pooling reuses connections; caching reduces database/API load
 🔧 Fix: Use connection pools (SQLAlchemy, psycopg2 pool), configure pool size based on concurrency, monitor connection pool usage, implement application-level caching
-📍 See: `aws-rds-best-practices.mdc`, `searchaton-project-conventions.md`
+📍 See: `aws-rds-best-practices.mdc`
 
 **Detect:** New connection created per request, no connection pool configuration, RDS connection errors in logs, missing caching layer, RDS connection count at maximum, no connection pool monitoring
 
@@ -171,7 +171,7 @@ This file contains general AWS best practices aligned with the [AWS Well-Archite
 **CRITICAL:** All resources must be tagged for cost allocation and management.
 
 ❌ Bad: Resources without tags, inconsistent tag naming conventions, no cost allocation tags (Environment, Project, Team), resources from different environments mixed (dev/staging/prod in same account)
-✅ Good: Consistent tagging strategy (`Environment: dev/staging/prod`, `Project: searchaton`, `Service: web/crawler/indexer`), all resources tagged, cost allocation tags enabled in AWS Cost Explorer, regular cost reviews (monthly), cost anomaly detection enabled
+✅ Good: Consistent tagging strategy (`Environment: dev/staging/prod`, `Project: project-name`, `Service: web/crawler/indexer`), all resources tagged, cost allocation tags enabled in AWS Cost Explorer, regular cost reviews (monthly), cost anomaly detection enabled
 ⚠️ Why: Tags enable cost allocation, resource management, and compliance reporting; untagged resources are unmanaged; cost anomaly detection identifies unauthorized usage
 🔧 Fix: Define tagging strategy, enforce tags via AWS Config, use consistent tag keys/values, review regularly, enable cost allocation tags
 **Detect:** Untagged resources, inconsistent tag names/values, no cost allocation reports, missing cost monitoring, resources without required tags (Environment, Project)
@@ -198,7 +198,6 @@ This file contains general AWS best practices aligned with the [AWS Well-Archite
 ✅ Good: VPC endpoints for S3 Gateway endpoint (free), CloudWatch Logs Interface endpoint, Secrets Manager Interface endpoint, application optimizations (OpenSearch returns only post IDs, batch operations where possible), monitor data transfer costs in Cost Explorer
 ⚠️ Why: Internet egress charges add up quickly; VPC endpoints reduce data transfer costs and improve security; optimizing queries reduces data transfer
 🔧 Fix: Create VPC endpoints for required AWS services, optimize application queries, use CloudFront for static content, monitor data transfer costs
-📍 See: `searchaton-project-conventions.md`
 
 **Detect:** Missing VPC endpoints causing internet egress, high data transfer costs in billing, inefficient query patterns (fetching full documents from OpenSearch), no data transfer cost monitoring
 
@@ -262,4 +261,4 @@ This file contains general AWS best practices aligned with the [AWS Well-Archite
 
 ---
 
-*This file consolidates general AWS best practices from the AWS Well-Architected Framework. For service-specific patterns, see the dedicated service files. For SearchATon-specific AWS requirements, see `searchaton-project-conventions.md`.*
+*This file consolidates general AWS best practices from the AWS Well-Architected Framework. For service-specific patterns, see the dedicated service files. For project-specific AWS requirements, see project-specific rules file or project-conventions.md.*
