@@ -30,6 +30,31 @@ We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't sl
 
 ---
 
+## 🟢 PRE-AUDIT: Self-Verification Checklist
+
+**Verify before audit:**
+- No unverified imports (check registry)
+- No TODO/FIXME in production
+- No discarded results (`_ = expensiveOp()`)
+- No I/O in loops (batch operations)
+- No >80% delegation methods
+- No hardcoded secrets
+- No silent failures
+
+**Tool:** Use `grep` to verify before detailed audit.
+
+---
+
+## 🔵 PRE-CODE GENERATION: Chain-of-Thought Checkpoints
+
+**Before generating code, identify:**
+1. Which layer affected (Domain/Data/Presentation)
+2. Similar pattern exists? (Check codebase first)
+3. Framework provides direct API? (Verify docs)
+4. Ghost layer candidate? (>80% delegation check)
+
+---
+
 ## 🔴 SECTION A: Critical LLM Anti-Pattern Detection
 
 ### A1. "Fake Async" Pattern (Audit Report #1 Issue)
@@ -275,13 +300,69 @@ Rank by severity (blocking Phase [X+1]):
 | Missing type hints | | |
 | Blocking I/O in async functions | | |
 
-### G4. Regression Check
+### G4. Regression Baseline
 
-Compare to previous audit:
+Compare violation counts to previous audit (if available):
 
-- ❓ Did any previously fixed issues regress?
-- ❓ Are new files following the patterns we established?
-- ❓ Is code quality trending better or worse?
+**Key Metrics:**
+- Ghost Layers: Previous: X, Current: Y
+- API Hallucinations: Previous: X, Current: Y
+- Performance Issues: Previous: X, Current: Y
+- Security Issues: Previous: X, Current: Y
+
+**Trend Analysis:**
+- Improving: Violation count decreased
+- Stable: Violation count unchanged
+- Worsening: Violation count increased
+
+**Questions:**
+- Did any previously fixed issues regress?
+- Are new files following the patterns we established?
+- Is code quality trending better or worse?
+
+---
+
+## 🟢 SECTION X: Execution-Based Validation
+
+**CRITICAL:** Static analysis can miss runtime issues. Always verify execution.
+
+### X1. Test Suite Execution
+
+**Action:** Run test suite and verify all tests pass.
+
+**Tool:** Use `run_terminal_cmd` to execute test suite:
+- Python: `pytest tests/ -v`
+
+**Evidence Required:**
+- Test output showing pass/fail counts
+- Any failing tests flagged as CRITICAL violations
+- Test coverage metrics (if available)
+
+### X2. Runtime Error Detection
+
+**Action:** Check for exceptions that aren't handled properly.
+
+**Tool:** Use `grep` to find:
+- Bare `except:` clauses (should be `except SpecificError:`)
+- Silent failures: `except: pass` patterns
+- Generic error handling without logging
+
+**Evidence Required:**
+- List of unhandled exceptions with file locations
+- Severity: CRITICAL if in production paths
+
+### X3. Silent Failure Detection
+
+**Action:** Verify error messages contain context.
+
+**Tool:** Use `codebase_search` to find error handling patterns:
+- Error messages without context (no variable values, no stack trace)
+- Errors logged but not handled
+- Generic error messages that don't help debugging
+
+**Evidence Required:**
+- List of silent failures with file locations
+- Recommended fixes for each
 
 ---
 
@@ -302,7 +383,7 @@ End with: **"Ready for Phase [X+1]? YES/NO - If NO, list blockers."**
 
 ---
 
-## 🚀 Quick Reference: The 14 Anti-LLM-Trap Rules
+## 🚀 Quick Reference: The 15 Anti-LLM-Trap Rules
 
 1. **Proper Async/Await Usage** - No blocking I/O in async functions
 2. **No Pass-Through Services** - Services must add value

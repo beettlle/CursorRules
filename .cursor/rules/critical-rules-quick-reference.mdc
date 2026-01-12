@@ -9,7 +9,7 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 
 "compiles", "builds", "zero warnings", "build succeeded" → Must show build output or say "verification pending"
 
-## Top 13 Universal Anti-Patterns
+## Top 15 Universal Anti-Patterns
 
 ### 1. Ghost Layer Prevention
 
@@ -102,6 +102,25 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 ✅ Good: "Code changes complete. Test verification pending." OR show actual test output
 ⚠️ Why: Creates false confidence, wastes user time, violates trust, leads to broken code
 📍 Details: `general-llm-anti-patterns.mdc` section 3.9
+
+### 14. Package Verification (Slopsquatting Prevention)
+
+❌ Bad: `import suspicious_package` (unverified package), importing plausible-sounding packages without checking
+✅ Good: Verify package exists in registry, check maintainer, check download stats, verify owner
+⚠️ Why: Security risk (slopsquatting), attackers register packages with LLM-hallucinated names, build failures
+🔧 Fix: Always verify packages exist, check package registry before importing, verify maintainer identity
+📍 Details: `general-llm-anti-patterns.mdc` section 4.2d
+
+**Detect:** Import statements without verification, plausible-sounding but unverified packages, no package registry checks
+
+### 15. Example Over-Reliance
+
+❌ Bad: Example code used verbatim without adaptation
+✅ Good: Adapt examples to project patterns, verify examples match requirements
+⚠️ Why: Example code may not fit project patterns, introduces inconsistencies
+📍 Details: `general-llm-anti-patterns.mdc` section 4.4
+
+**Detect:** Example code used verbatim, example code not adapted to project patterns, copy-paste without modification
 
 ---
 

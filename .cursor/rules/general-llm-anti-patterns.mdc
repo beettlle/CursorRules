@@ -88,6 +88,20 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+### 0.5 Chain-of-Thought Over-Use (CRIT)
+
+**CRITICAL:** Don't generate verbose reasoning when simple code would suffice.
+
+❌ Bad: Multi-paragraph explanations for simple operations, excessive reasoning for straightforward code, verbose CoT when direct solution exists
+✅ Good: Concise code for simple operations, brief explanations for complex logic, CoT only when truly needed
+⚠️ Why: Wastes tokens, adds complexity, makes code harder to understand, violates "Simple is better than complex"
+🔧 Fix: Prefer simple code over verbose explanations; use CoT only for complex logic that requires reasoning
+📍 See: `critical-rules-quick-reference.mdc` section 15
+
+**Detect:** Code generation with excessive reasoning, verbose explanations for simple operations, multi-step reasoning for direct solutions, CoT used unnecessarily
+
+---
+
 ## Category 1: Architectural Anti-Patterns
 
 ### 1.1 Ghost Layer Prevention (CRIT)
@@ -384,6 +398,20 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+### 4.2d Slopsquatting Protection (CRIT)
+
+**CRITICAL:** Hallucinated package names can be registered maliciously. Always verify package legitimacy.
+
+❌ Bad: Importing plausible-sounding packages without verification (`import ml_utils`, `import data_processor`)
+✅ Good: Check package registry (PyPI, npm), verify maintainer identity, check download stats, verify spelling
+⚠️ Why: Attackers register packages with LLM-hallucinated names (slopsquatting), supply chain attacks, code execution risk
+🔧 Fix: Always verify packages exist before importing, check maintainer history, use only trusted packages
+📍 See: `critical-rules-quick-reference.mdc` section 14
+
+**Detect:** Import statements without verification, plausible-sounding but unverified packages, no package registry checks, similar-sounding package names (typosquatting)
+
+---
+
 ### 4.3 Workaround-First Mentality
 
 **CRITICAL:** Before implementing custom solutions, check if the framework provides the functionality.
@@ -394,6 +422,20 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 🔧 Fix: Always check framework documentation first; use framework-provided functionality when available; only implement custom when framework doesn't provide
 
 **Detect:** Custom implementation before checking official APIs, reinventing standard functionality, comments suggesting framework limitation without verification
+
+---
+
+### 4.4 Example Over-Reliance (CRIT)
+
+**CRITICAL:** Don't copy-paste example code without adaptation to project context.
+
+❌ Bad: Example code used verbatim without modification, inappropriate example reuse, missing adaptation to project context
+✅ Good: Adapt examples to project patterns, verify examples match requirements, customize examples for specific use case
+⚠️ Why: Example code may not fit project patterns, introduces inconsistencies, creates technical debt
+🔧 Fix: Always adapt examples to project context; verify examples match requirements; customize for specific use case
+📍 See: `general-llm-anti-patterns.mdc` section 3.3 (Context Window Blindness)
+
+**Detect:** Example code used verbatim, example code not adapted to project patterns, example code that doesn't match requirements, copy-paste without modification
 
 ---
 
@@ -584,6 +626,34 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+### 7.2a Large Context Window Strategies (CRIT)
+
+**CRITICAL:** Even with large context capacity, use targeted context loading.
+
+❌ Bad: Loading entire codebase for single-file changes, using @codebase for localized edits, no context management
+✅ Good: Use @filename for targeted changes, load only necessary files, monitor context size
+⚠️ Why: Large contexts reduce coherence, slow processing, waste tokens regardless of capacity
+🔧 Fix: Use targeted file loading; manage context size actively; only load necessary files
+📍 See: `cursor-integration.mdc` section 1.2
+
+**Detect:** @codebase for single-file changes, entire repo loading unnecessarily, no context size management, context window exhaustion
+
+---
+
+### 7.2b Context Window Exhaustion Patterns (CRIT)
+
+**CRITICAL:** Detect and prevent context exhaustion despite large capacity.
+
+❌ Bad: Loading all rules simultaneously, redundant rule loading, inefficient cross-referencing
+✅ Good: Load only necessary rules, use glob patterns effectively, efficient cross-references
+⚠️ Why: Context exhaustion wastes tokens, reduces rule effectiveness, slows agent processing
+🔧 Fix: Use glob patterns to load only relevant rules; avoid redundant loading; optimize cross-references
+📍 See: `cursor-integration.mdc` section 1.3
+
+**Detect:** All rules loaded simultaneously, redundant rule files, inefficient cross-referencing, context window exhaustion warnings
+
+---
+
 ### 7.3 Ambiguity Intolerance
 
 **CRITICAL:** Do not guess when requirements are vague. Ask clarifying questions before implementing.
@@ -622,6 +692,19 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 🔧 Fix: Create new module for new functionality; intercept calls from old system; test new module in isolation; only use for legacy/complex files, not active development
 
 **Detect:** Editing large legacy file directly (>200 lines, complex logic), modifying complex code you don't fully understand, changes could have cascading side effects, file violates SRP
+
+---
+
+### 8.3 AST-Based Detection Enhancement (Optional)
+
+**ENHANCEMENT:** Consider AST-based tools as complementary to manual audits for structural analysis.
+
+❌ Bad: Relying only on manual code review, missing structural patterns, no automated structural analysis
+✅ Good: Use AST-based tools for ghost layer detection, complement manual audits with structural analysis, identify unnecessary abstraction layers
+⚠️ Why: AST analysis can identify patterns missed by manual review, complements manual audits, enables automated structural detection
+🔧 Fix: Consider AST-based tools for structural analysis; use as complement to manual audits; identify ghost layers via AST
+
+**Detect:** No structural analysis tools, missing AST-based detection, relying only on manual review, no automated pattern detection
 
 ---
 
@@ -670,6 +753,182 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+### 9.4 Multi-Agent Coordination Anti-Pattern (CRIT)
+
+**CRITICAL:** Don't orchestrate multiple agents when a single pipeline suffices.
+
+❌ Bad: Multiple agents for simple tasks, complex agent orchestration, agent coordination that adds latency without benefit
+✅ Good: Single agent workflow, simple pipelines, avoid agent complexity, use multiple agents only when truly needed
+⚠️ Why: Adds latency, complexity, difficult debugging, often unnecessary, wastes resources
+🔧 Fix: Use single agent; only use multiple agents when truly needed; avoid unnecessary orchestration
+
+**Detect:** Multiple agents for simple tasks, complex agent orchestration, agent coordination adding latency, unnecessary multi-agent patterns
+
+---
+
+### 9.5 Feedback Loop Integration (CRIT)
+
+**CRITICAL:** Monitor rule effectiveness and update based on real-world patterns.
+
+❌ Bad: Static rules never updated, ignoring common false positives, no rule effectiveness tracking, rules that don't improve
+✅ Good: Track which rules catch most issues, refine based on patterns, monitor rule effectiveness, update rules based on feedback
+⚠️ Why: Static rules become outdated, false positives waste time, no tracking means no improvement, ineffective rules persist
+🔧 Fix: Monitor rule effectiveness; track which rules catch issues; refine based on patterns; update rules based on feedback
+
+**Detect:** Static rules never updated, ignoring false positives, no rule effectiveness tracking, rules that don't improve, outdated rules
+
+---
+
+## Category 10: Modern LLM Capability Anti-Patterns
+
+### 10.1 Reasoning Mode Misuse (CRIT)
+
+**CRITICAL:** Don't use reasoning modes for simple tasks that don't require complex analysis.
+
+❌ Bad: Using reasoning mode for trivial operations, extended reasoning for straightforward code, verbose reasoning for simple tasks
+✅ Good: Use reasoning modes only for complex multi-step tasks, instant mode for simple operations, brief reasoning for straightforward code
+⚠️ Why: Wastes tokens, adds latency, unnecessary for simple tasks, slows down simple operations
+🔧 Fix: Use reasoning modes only when truly needed; use instant mode for simple tasks; match mode to task complexity
+
+**Detect:** Reasoning mode for simple operations, extended reasoning for straightforward code, verbose reasoning for trivial tasks, unnecessary reasoning mode usage
+
+---
+
+### 10.2 Long Context Waste (CRIT)
+
+**CRITICAL:** Don't use @codebase for single-file changes. Use @filename for targeted context.
+
+❌ Bad: `@codebase` for single-file changes, loading entire repository for localized edits, no context management
+✅ Good: `@filename` for targeted changes, load only necessary files, manage context size actively
+⚠️ Why: Wastes tokens, reduces coherence, slows processing, unnecessary context loading
+🔧 Fix: Use @filename for targeted changes; load only necessary files; manage context size actively
+📍 See: `cursor-integration.mdc` section 1.2
+
+**Detect:** @codebase for single-file changes, entire repo loading for localized edits, no context size management, excessive context usage
+
+---
+
+### 10.3 Multimodal Misuse (CRIT)
+
+**CRITICAL:** Don't request image analysis for text-only tasks. Use visual aids only for UI/design work.
+
+❌ Bad: Requesting image analysis for text-only tasks, including screenshots when code inspection would suffice, visual analysis for non-visual problems
+✅ Good: Use visual aids only for UI/design work, text descriptions for code issues, images for visual problems only
+⚠️ Why: Wastes tokens, adds latency, unnecessary processing, slows down text-only tasks
+🔧 Fix: Use images only for visual problems; use text for code issues; match input type to task
+📍 See: `general-llm-anti-patterns.mdc` section 9.2 (Verbose Text-Only Prompts)
+
+**Detect:** Image analysis for text-only tasks, screenshots for code inspection, visual analysis for non-visual problems, multimodal input when text suffices
+
+---
+
+### 10.4 Structured Output Overuse (CRIT)
+
+**CRITICAL:** Don't force structured output when plain text is clearer.
+
+❌ Bad: JSON schemas for simple responses, structured output for straightforward text, forcing structure when text suffices
+✅ Good: Use structured output only for machine-readable data, plain text for simple responses, match format to use case
+⚠️ Why: Adds complexity, wastes tokens, unnecessary structure, makes simple responses harder
+🔧 Fix: Use structured output only when needed; use plain text for simple responses; match format to use case
+
+**Detect:** JSON schemas for simple responses, structured output for straightforward text, forcing structure when text suffices, unnecessary structured formats
+
+---
+
+### 10.5 Tool Use Anti-Patterns (CRIT)
+
+**CRITICAL:** Don't over-call tools or invent tool parameters. Batch operations when possible.
+
+❌ Bad: Over-calling tools for simple operations, not batching tool calls, inventing tool parameters, single tool call per item in loop
+✅ Good: Batch tool calls when possible, verify tool parameters, use tools efficiently, combine related operations
+⚠️ Why: Adds latency, wastes tokens, inefficient processing, slower execution
+🔧 Fix: Batch tool calls when possible; verify tool parameters; use tools efficiently; combine related operations
+
+**Detect:** Over-calling tools, not batching tool calls, inventing tool parameters, single tool call per item, inefficient tool usage
+
+---
+
+### 10.6 Extended Reasoning Anti-Patterns (CRIT)
+
+**CRITICAL:** Don't use extended reasoning for simple operations.
+
+❌ Bad: Extended reasoning for simple operations, excessive reasoning traces for straightforward code, long reasoning for trivial tasks
+✅ Good: Extended reasoning only for complex multi-step tasks, brief reasoning for simple operations, reasoning checkpoints for long tasks
+⚠️ Why: Wastes compute time, adds latency, unnecessary for simple operations, slows down simple tasks
+🔧 Fix: Use extended reasoning only for complex tasks; use brief reasoning for simple operations; add checkpoints for long tasks
+
+**Detect:** Extended reasoning for simple operations, excessive traces for straightforward code, long reasoning for trivial tasks, unnecessary extended reasoning
+
+---
+
+### 10.7 Large Context Window Misuse (CRIT)
+
+**CRITICAL:** Don't load entire codebase when targeted files suffice, even with large context capacity.
+
+❌ Bad: Loading entire codebase for single-file changes, using @codebase for localized edits, no context window management
+✅ Good: Use @filename for targeted changes, manage context window size, only load necessary files
+⚠️ Why: Reduces coherence even with large capacity, slows processing, wastes tokens, unnecessary context loading
+🔧 Fix: Use targeted file loading; manage context size actively; only load necessary files for task
+📍 See: `cursor-integration.mdc` section 1.2, `general-llm-anti-patterns.mdc` section 7.2a
+
+**Detect:** @codebase for single-file changes, entire repo loading unnecessarily, no context size management, context window exhaustion
+
+---
+
+## Category 11: Operations Anti-Patterns
+
+### 11.1 Logging Anti-Patterns (CRIT)
+
+**CRITICAL:** Avoid over-logging, under-logging, and log injection vulnerabilities.
+
+❌ Bad: Excessive logging in hot paths, missing structured logs, user input in log messages, no log redaction
+✅ Good: Structured logging (JSON), log levels appropriate to context, redact sensitive data, log only necessary information
+⚠️ Why: Over-logging wastes resources, under-logging hides issues, log injection creates security risks
+🔧 Fix: Use structured logging; redact sensitive data; log at appropriate levels; validate log inputs
+
+**Detect:** Excessive logging in loops, missing structured logs, user input in logs, no log redaction, log injection vulnerabilities
+
+---
+
+### 11.2 Metrics Anti-Patterns (CRIT)
+
+**CRITICAL:** Use correct metric types and include necessary labels.
+
+❌ Bad: Wrong metric types (gauge vs counter), missing labels, no metric collection, metrics without context
+✅ Good: Correct metric types (counter/gauge/histogram), appropriate labels, consistent metric naming, metrics with context
+⚠️ Why: Wrong types give incorrect insights, missing labels prevent filtering, no metrics means no observability
+🔧 Fix: Use correct metric types; include necessary labels; follow naming conventions; collect metrics consistently
+
+**Detect:** Wrong metric types, missing labels, no metric collection, metrics without context, inconsistent naming
+
+---
+
+### 11.3 Error Tracking Anti-Patterns (CRIT)
+
+**CRITICAL:** Provide error context and avoid generic error messages.
+
+❌ Bad: Generic error messages, missing stack traces, no error context, errors without correlation IDs
+✅ Good: Specific error messages with context, stack traces included, correlation IDs for tracing, error categorization
+⚠️ Why: Generic errors are hard to debug, missing context delays resolution, no correlation prevents tracing
+🔧 Fix: Include error context; add stack traces; use correlation IDs; categorize errors appropriately
+
+**Detect:** Generic error messages, missing stack traces, no error context, errors without correlation IDs, untraceable errors
+
+---
+
+### 11.4 Observability Blindness (CRIT)
+
+**CRITICAL:** Implement monitoring, alerting, and observability for production systems.
+
+❌ Bad: No monitoring, missing alerts, no observability, no health checks, no performance tracking
+✅ Good: Comprehensive monitoring, appropriate alerts, observability tools, health checks, performance metrics
+⚠️ Why: No observability means blind operations, missing alerts delay incident response, no health checks prevent proactive detection
+🔧 Fix: Implement monitoring; configure alerts; use observability tools; add health checks; track performance metrics
+
+**Detect:** No monitoring, missing alerts, no observability tools, no health checks, no performance tracking
+
+---
+
 ## Summary: Critical Rules
 
 These six patterns represent the most critical "making it work vs. making it right" violations:
@@ -681,7 +940,7 @@ These six patterns represent the most critical "making it work vs. making it rig
 5. **Zero-Hallucination Policy** - Verify all APIs
 6. **Hardcoded Secrets** - Use environment variables
 
-**Quick Ref:** Arch: Ghost layers, fake abstractions, dead code, logic leakage, state confusion, god objects, file size limit, Strangler Fig | Perf: O(N²), unoptimized hot paths, performance blindness | Quality: Duplication, defensive comments, context blindness, over/under-engineering, formatting, magic values, warning dismissal | API: Hallucination, dependency issues, workaround-first | Security: Hardcoded secrets, missing validation, silent failures, resource leaks, error handling, global state | Testing: Mock mismatches, missing error paths, incomplete coverage, flaky tests | Context: Ignoring patterns, context window limitations, ambiguity intolerance | Process: Pre-execution planning | Agent: UI-first, verbose prompts, pattern propagation
+**Quick Ref:** Arch: Ghost layers, fake abstractions, dead code, logic leakage, state confusion, god objects, file size limit, Strangler Fig | Perf: O(N²), unoptimized hot paths, performance blindness | Quality: Duplication, defensive comments, context blindness, over/under-engineering, formatting, magic values, warning dismissal | API: Hallucination, dependency issues, workaround-first | Security: Hardcoded secrets, missing validation, silent failures, resource leaks, error handling, global state | Testing: Mock mismatches, missing error paths, incomplete coverage, flaky tests | Context: Ignoring patterns, context window limitations, ambiguity intolerance, large context strategies, exhaustion patterns | Process: Pre-execution planning, AST-based detection | Agent: UI-first, verbose prompts, pattern propagation, multi-agent coordination, feedback loops | Modern LLM: Reasoning mode misuse, long context waste, multimodal misuse, structured output overuse, tool use anti-patterns, extended reasoning, large context misuse | Operations: Logging anti-patterns, metrics anti-patterns, error tracking, observability blindness
 
 **For language-specific implementations:** See your project's language-specific anti-trap rules file for concrete detection patterns and code examples in your target language.
 

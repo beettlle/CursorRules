@@ -199,6 +199,50 @@ Before submitting a PR, verify:
 - [ ] Tables used for structured meta-rules
 - [ ] Language-specific rules reference universal rules
 - [ ] Frontmatter includes proper `description`, `globs`, and `alwaysApply`
+- [ ] Rule has been tested on sample code (see Testing & Validation below)
+
+## Testing & Validation
+
+After writing a rule, validate it before submitting:
+
+### Format Validation
+
+- ✅ Has required sections: ❌ Bad, ✅ Good, ⚠️ Why, 🔧 Fix, 📍 See, Detect
+- ✅ Code examples are 1-3 lines maximum
+- ✅ Detect items are comma-separated phrases (max 5-7 items)
+- ✅ Rule is ~60 tokens or less
+- ✅ No model-specific references (GPT/Claude/Gemini)
+- ✅ Proper frontmatter (description, globs, alwaysApply)
+
+### Content Validation
+
+- ✅ Anti-pattern is real and common
+- ✅ Examples are correct and demonstrate the issue
+- ✅ Fix is actionable and correct
+- ✅ Detection criteria are accurate
+- ✅ Cross-references are valid
+
+### Effectiveness Testing
+
+1. **Test on sample code** - Apply rule to codebase examples
+2. **Check for false positives** - Verify rule doesn't flag correct code
+3. **Verify detection works** - Rule should catch the anti-pattern
+
+### Integration Testing
+
+- ✅ Rule loads correctly in Cursor
+- ✅ Rule applies to correct file types (globs)
+- ✅ Rule doesn't conflict with other rules
+- ✅ Rule follows dependency order (see `RULE_COMPOSITION.md`)
+- ✅ Rule is token-efficient
+
+### Rule Iteration
+
+1. Create initial rule following format
+2. Test on sample code
+3. Refine detection criteria if false positives occur
+4. Update rule based on feedback
+5. Re-test to verify improvements
 
 ## Token Budget Guidelines
 
@@ -218,4 +262,8 @@ Study these files for density and structure:
 - `documentation-policy.mdc` - Concise and complete
 
 These files represent the target density and structure for all contributions.
+
+## See Also
+
+- `RULE_COMPOSITION.md` - Rule dependencies and conflict resolution
 
