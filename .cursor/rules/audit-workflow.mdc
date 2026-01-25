@@ -19,7 +19,7 @@ Apply this workflow when:
 
 ## Available Audit Workflows
 
-The repository includes two comprehensive brutal audit workflows:
+The repository includes comprehensive brutal audit workflows:
 
 ### Swift/iOS Projects
 
@@ -33,14 +33,20 @@ The repository includes two comprehensive brutal audit workflows:
 - **Use when:** Working on Python 3.13+ projects
 - **Covers:** Async/await patterns, layer boundaries, performance, test quality, type safety, web compliance
 
+### Java Projects
+
+- **File:** `java-brutal-audit.mdc`
+- **Use when:** Working on Java 17 or Java 21 LTS projects
+- **Covers:** Concurrency (ExecutorService/Virtual Threads), layer boundaries, Effective Java patterns, Optional/Records, test quality, JVM tuning
+
 ## Workflow Steps
 
-1. **Identify the project type** (Swift/iOS or Python)
+1. **Identify the project type** (Swift/iOS, Python, or Java)
 2. **Invoke the appropriate audit** by mentioning:
    - "run the audit"
    - "check for anti-patterns"
    - "verify phase completion"
-   - "run the Swift audit" or "run the Python audit"
+   - "run the Swift audit", "run the Python audit", or "run the Java audit"
 3. **Review the audit results** - The audit will provide:
    - Critical violations with file locations
    - Severity ratings (CRITICAL/HIGH/MEDIUM/LOW)
@@ -75,5 +81,6 @@ Both work together to ensure code quality throughout the development lifecycle.
 
 - `swift-5-9-brutal-audit.mdc` - Swift/iOS comprehensive audit
 - `python-3-brutal-audit.mdc` - Python comprehensive audit
+- `java-brutal-audit.mdc` - Java 17/21 comprehensive audit
 - `critical-rules-quick-reference.mdc` - Quick reference for when to run audits
 - Language-specific development standards files for ongoing guidance

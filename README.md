@@ -32,7 +32,8 @@ The core rules live in `.cursor/rules/`.
 ├── documentation-policy.mdc            # Rules for creating/editing documentation
 ├── audit-workflow.mdc                  # Phase completion verification workflow
 ├── swift-5-9-brutal-audit.mdc          # Swift/iOS comprehensive phase audit
-└── python-3-brutal-audit.mdc           # Python comprehensive phase audit
+├── python-3-brutal-audit.mdc           # Python comprehensive phase audit
+└── java-brutal-audit.mdc               # Java 17/21 comprehensive phase audit
 ```
 
 ## Installation
@@ -129,6 +130,7 @@ The repository includes on-demand brutal audit workflows for comprehensive archi
 
 - **Swift/iOS**: `.cursor/rules/swift-5-9-brutal-audit.mdc` - Comprehensive audit for Swift 5.9/iOS 26 projects
 - **Python**: `.cursor/rules/python-3-brutal-audit.mdc` - Comprehensive audit for Python 3.13 projects
+- **Java**: `.cursor/rules/java-brutal-audit.mdc` - Comprehensive audit for Java 17/21 LTS projects
 
 These audits are designed to run after phase completion to ensure code quality and architectural compliance. They complement the always-on rules by providing deep, milestone-based validation.
 
