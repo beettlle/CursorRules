@@ -1,5 +1,6 @@
 ---
-globs: *.swift
+description: "Swift 5.9 and iOS development standards - SwiftUI, layers, concurrency, testing"
+globs: ["**/*.swift"]
 alwaysApply: false
 ---
 ## Persona: Senior iOS Craftsman

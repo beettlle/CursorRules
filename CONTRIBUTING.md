@@ -35,7 +35,7 @@ Each anti-pattern or rule MUST follow this exact structure:
 - **❌ Bad / ✅ Good**: Use inline code blocks for examples. Keep examples to 1-3 lines maximum.
 - **⚠️ Why**: Single sentence. Focus on impact, not theory.
 - **🔧 Fix**: Single sentence. Action-oriented.
-- **📍 See**: Use cross-references like `critical-rules-quick-reference.mdc section 1.1` instead of repeating content.
+- **📍 See**: Use cross-references like `general-llm-anti-patterns.mdc section 1.1` or `critical-rules-quick-reference.mdc section 1` instead of repeating content.
 - **Detect**: Comma-separated phrases, not full sentences. Maximum 5-7 items.
 
 ## What NOT to Do
@@ -157,7 +157,7 @@ See also: Ghost Layer Prevention, Business Logic Location
 ✅ Good: Batch operations - fetch once, modify in-memory, save once
 ⚠️ Why: UI freezes at scale, database exhaustion, poor UX
 🔧 Fix: Always use batch operations for I/O; fetch once, modify in-memory, save once; use bulk APIs
-📍 See: Examples in `critical-rules-quick-reference.mdc` section 2.1
+📍 See: Examples in `general-llm-anti-patterns.mdc` section 2.1
 
 **Detect:** `for item in collection { await processItem(item) }` patterns, database query in loop, API call per item, each iteration refetches/resaves shared state
 ```

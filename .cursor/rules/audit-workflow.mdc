@@ -39,9 +39,21 @@ The repository includes comprehensive brutal audit workflows:
 - **Use when:** Working on Java 17 or Java 21 LTS projects
 - **Covers:** Concurrency (ExecutorService/Virtual Threads), layer boundaries, Effective Java patterns, Optional/Records, test quality, JVM tuning
 
+### Go Projects
+
+- **File:** `go-1-21-brutal-audit.mdc`
+- **Use when:** Working on Go 1.21+ projects
+- **Covers:** Effective Go, concurrency, testing, structure
+
+### JavaScript/TypeScript Projects
+
+- **File:** `javascript-3-brutal-audit.mdc`
+- **Use when:** Working on JavaScript/TypeScript projects
+- **Covers:** Modern ES, tooling, testing
+
 ## Workflow Steps
 
-1. **Identify the project type** (Swift/iOS, Python, or Java)
+1. **Identify the project type** (Swift/iOS, Python, Java, Go, or JavaScript/TypeScript)
 2. **Invoke the appropriate audit** by mentioning:
    - "run the audit"
    - "check for anti-patterns"
@@ -82,5 +94,7 @@ Both work together to ensure code quality throughout the development lifecycle.
 - `swift-5-9-brutal-audit.mdc` - Swift/iOS comprehensive audit
 - `python-3-brutal-audit.mdc` - Python comprehensive audit
 - `java-brutal-audit.mdc` - Java 17/21 comprehensive audit
+- `go-1-21-brutal-audit.mdc` - Go 1.21+ comprehensive audit
+- `javascript-3-brutal-audit.mdc` - JavaScript/TypeScript comprehensive audit
 - `critical-rules-quick-reference.mdc` - Quick reference for when to run audits
 - Language-specific development standards files for ongoing guidance

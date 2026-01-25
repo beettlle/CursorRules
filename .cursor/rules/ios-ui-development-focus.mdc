@@ -1,5 +1,6 @@
 ---
-description: This rule is helpful to any UI change or for work with SwiftUI
+description: "UI/UX and SwiftUI best practices - HIG compliance, presentation APIs, layout patterns"
+globs: ["**/*.swift"]
 alwaysApply: false
 ---
 # UI Development Standards
@@ -96,7 +97,7 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 - ❌ Custom components that duplicate system functionality
 - ❌ Non-standard navigation patterns
 
-*For comprehensive HIG guidelines, see `ios-development-standards.mdc`*
+*For comprehensive HIG guidelines, see `swift-5-9-development-standards.mdc`*
 
 ## SwiftUI Best Practices
 
@@ -104,7 +105,7 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for sheet requirements
 - **Integrate Liquid Glass materials into SwiftUI views and components**
 
-*For comprehensive SwiftUI guidelines, see `ios-development-standards.mdc`*
+*For comprehensive SwiftUI guidelines, see `swift-5-9-development-standards.mdc`*
 
 ## Layout Patterns for Media/Playback Screens
 

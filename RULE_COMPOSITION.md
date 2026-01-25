@@ -7,6 +7,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 1. **Always-on rules** (`alwaysApply: true`)
    - `critical-rules-quick-reference.mdc`
    - `general-llm-anti-patterns.mdc`
+   - `documentation-policy.mdc`
 
 2. **Language-specific rules** (`alwaysApply: false`, glob-based)
    - Load only for matching file types

@@ -131,6 +131,8 @@ After completing a development phase, run the appropriate brutal audit:
 - **Swift/iOS projects**: Use `swift-5-9-brutal-audit.mdc` for comprehensive architectural review
 - **Python projects**: Use `python-3-brutal-audit.mdc` for comprehensive architectural review
 - **Java projects**: Use `java-brutal-audit.mdc` for comprehensive architectural review (Java 17/21)
+- **Go projects**: Use `go-1-21-brutal-audit.mdc` for comprehensive architectural review
+- **JavaScript/TypeScript projects**: Use `javascript-3-brutal-audit.mdc` for comprehensive architectural review
 
 **When to run:**
 

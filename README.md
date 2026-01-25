@@ -20,7 +20,7 @@ The core rules live in `.cursor/rules/`.
 
 ```text
 .cursor/rules/
-├── critical-rules-quick-reference.mdc  # Top 13 universal rules for fast context loading
+├── critical-rules-quick-reference.mdc  # Top 15 universal rules for fast context loading
 ├── general-llm-anti-patterns.mdc       # Comprehensive guide to LLM behavioral smells
 ├── python-3-development-standards.mdc  # Python-specific standards (PEP 8, Zen of Python)
 ├── go-1-21-development-standards.mdc   # Go-specific standards (Effective Go, Uber Style Guide)
@@ -33,7 +33,11 @@ The core rules live in `.cursor/rules/`.
 ├── audit-workflow.mdc                  # Phase completion verification workflow
 ├── swift-5-9-brutal-audit.mdc          # Swift/iOS comprehensive phase audit
 ├── python-3-brutal-audit.mdc           # Python comprehensive phase audit
-└── java-brutal-audit.mdc               # Java 17/21 comprehensive phase audit
+├── java-brutal-audit.mdc               # Java 17/21 comprehensive phase audit
+├── go-1-21-brutal-audit.mdc            # Go 1.21+ comprehensive phase audit
+├── javascript-3-development-standards.mdc  # JavaScript/TypeScript standards
+├── javascript-3-brutal-audit.mdc       # JavaScript/TypeScript comprehensive phase audit
+└── ...                                 # Other rules: ai-ml-development-standards.mdc, aws-*.mdc (5), cursor-integration.mdc, engineering-philosophy.mdc. See .cursor/rules/ for the full list.
 ```
 
 ## Installation
@@ -73,7 +77,7 @@ alwaysApply: true
 # Project-Specific Standards
 
 **For universal anti-patterns:** See `general-llm-anti-patterns.mdc`
-**For Python standards:** See `python-development-standards.mdc`
+**For Python standards:** See `python-3-development-standards.mdc`
 
 ## Project Conventions
 
@@ -92,7 +96,7 @@ The `general-llm-anti-patterns.mdc` file is language-agnostic and enforces:
 
 ## Python Standards
 
-The `python-development-standards.mdc` file enforces:
+The `python-3-development-standards.mdc` file enforces:
 
 - **PEP 8 & PEP 20** compliance.
 - **Modern Python**: usage of `@dataclass`, `pathlib`, and type hints (`PEP 484`).
@@ -101,7 +105,7 @@ The `python-development-standards.mdc` file enforces:
 
 ## iOS/Swift Standards
 
-The `ios-development-standards.mdc` file focuses on:
+The `swift-5-9-development-standards.mdc` file focuses on:
 
 - **Swift 5+** modern concurrency features.
 - **Architecture**: Clean separation of UI, Domain, and Data layers.
@@ -117,7 +121,7 @@ To add support for a new language (e.g., TypeScript/React):
     ```markdown
     ---
     description: TypeScript and React development standards
-    globs: "**/*.ts", "**/*.tsx"
+    globs: ["**/*.ts", "**/*.tsx"]
     alwaysApply: false
     ---
     ```
@@ -131,6 +135,8 @@ The repository includes on-demand brutal audit workflows for comprehensive archi
 - **Swift/iOS**: `.cursor/rules/swift-5-9-brutal-audit.mdc` - Comprehensive audit for Swift 5.9/iOS 26 projects
 - **Python**: `.cursor/rules/python-3-brutal-audit.mdc` - Comprehensive audit for Python 3.13 projects
 - **Java**: `.cursor/rules/java-brutal-audit.mdc` - Comprehensive audit for Java 17/21 LTS projects
+- **Go**: `.cursor/rules/go-1-21-brutal-audit.mdc` - Comprehensive audit for Go 1.21+ projects (Effective Go, concurrency, testing)
+- **JavaScript/TypeScript**: `.cursor/rules/javascript-3-brutal-audit.mdc` - Comprehensive audit for JS/TS projects (modern ES, tooling, testing)
 
 These audits are designed to run after phase completion to ensure code quality and architectural compliance. They complement the always-on rules by providing deep, milestone-based validation.
 

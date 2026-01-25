@@ -1,6 +1,6 @@
 ---
 description: "Python-specific development standards following PEP 8, PEP 20 (Zen of Python), and Pythonic best practices"
-globs: ["**/*.py"],*.py
+globs: ["**/*.py"]
 alwaysApply: false
 ---
 ## Persona: Principal Python Backend Engineer

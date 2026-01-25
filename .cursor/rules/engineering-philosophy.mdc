@@ -30,7 +30,7 @@ alwaysApply: false
 ✅ Good: `import "net/http"` (standard library, battle-tested)
 ⚠️ Why: Let others discover edge cases; proven tech reduces risk
 🔧 Fix: Prefer standard library, established tools, proven patterns
-📍 See: `go-1-21-development-standards.mdc` section 2.1
+📍 See: `general-llm-anti-patterns.mdc` section 0.4 (Resume-Driven Development)
 
 **Detect:** New frameworks for simple tasks, trendy databases, unproven tools
 

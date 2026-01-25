@@ -1,5 +1,6 @@
 ---
 description: "Build automation rules for SweetPad/xcodebuild integration and automated verification workflows"
+globs: ["**/*.swift"]
 alwaysApply: false
 ---
 # Build Automation & SweetPad Integration
@@ -23,20 +24,22 @@ When in agent mode, the LLM must automatically verify builds and tests after cod
 
 **Current Configuration:**
 
-- **Device ID:** `00008110-0006758C2683801E` (physical iOS device)
-- **Workspace:** `/Users/cdelgado/Documents/github.com/HarmoniAudio/HarmoniAudio.xcodeproj/project.xcworkspace`
-- **Scheme:** `HarmoniAudio`
+- **Device ID:** `{{DEVICE_ID}}` (physical iOS device)
+- **Workspace:** `{{WORKSPACE_PATH}}`
+- **Scheme:** `{{SCHEME}}`
 - **Configuration:** `Debug`
+
+Set these via a project-specific rule, env vars, or `.xcode.env`. Example: `export DEVICE_ID=... WORKSPACE_PATH=... SCHEME=... RESULT_BUNDLE_PATH=...` and use `$DEVICE_ID`, `$WORKSPACE_PATH`, etc. in the commands below.
 
 **Build Command:**
 
 ```bash
 xcodebuild \
-  -scheme HarmoniAudio \
+  -scheme {{SCHEME}} \
   -configuration Debug \
-  -workspace /Users/cdelgado/Documents/github.com/HarmoniAudio/HarmoniAudio.xcodeproj/project.xcworkspace \
-  -destination 'platform=iOS,id=00008110-0006758C2683801E' \
-  -resultBundlePath '/Users/cdelgado/Library/Application Support/Cursor/User/workspaceStorage/64515c314cd23c8f4b0eabadd2006e0c/sweetpad.sweetpad/bundle/HarmoniAudio' \
+  -workspace {{WORKSPACE_PATH}} \
+  -destination 'platform=iOS,id={{DEVICE_ID}}' \
+  -resultBundlePath '{{RESULT_BUNDLE_PATH}}' \
   -allowProvisioningUpdates \
   build
 ```
@@ -45,11 +48,11 @@ xcodebuild \
 
 ```bash
 xcodebuild \
-  -scheme HarmoniAudio \
+  -scheme {{SCHEME}} \
   -configuration Debug \
-  -workspace /Users/cdelgado/Documents/github.com/HarmoniAudio/HarmoniAudio.xcodeproj/project.xcworkspace \
-  -destination 'platform=iOS,id=00008110-0006758C2683801E' \
-  -resultBundlePath '/Users/cdelgado/Library/Application Support/Cursor/User/workspaceStorage/64515c314cd23c8f4b0eabadd2006e0c/sweetpad.sweetpad/bundle/HarmoniAudio' \
+  -workspace {{WORKSPACE_PATH}} \
+  -destination 'platform=iOS,id={{DEVICE_ID}}' \
+  -resultBundlePath '{{RESULT_BUNDLE_PATH}}' \
   -allowProvisioningUpdates \
   test
 ```
@@ -71,9 +74,9 @@ If physical device is unavailable or for faster iteration, use iOS Simulator:
 
 ```bash
 xcodebuild \
-  -scheme HarmoniAudio \
+  -scheme {{SCHEME}} \
   -configuration Debug \
-  -workspace /Users/cdelgado/Documents/github.com/HarmoniAudio/HarmoniAudio.xcodeproj/project.xcworkspace \
+  -workspace {{WORKSPACE_PATH}} \
   -destination 'platform=iOS Simulator,name=iPhone 16' \
   build
 ```
@@ -82,11 +85,11 @@ xcodebuild \
 
 ```bash
 xcodebuild test \
-  -scheme HarmoniAudio \
+  -scheme {{SCHEME}} \
   -configuration Debug \
-  -workspace /Users/cdelgado/Documents/github.com/HarmoniAudio/HarmoniAudio.xcodeproj/project.xcworkspace \
+  -workspace {{WORKSPACE_PATH}} \
   -destination 'platform=iOS Simulator,name=iPhone 16' \
-  -testPlan HarmoniAudio
+  -testPlan {{SCHEME}}
 ```
 
 **When to Use Simulator:**
@@ -154,14 +157,14 @@ xcodebuild test \
 **Test Success:**
 
 ```
-Test Suite 'HarmoniAudioTests' passed.
+Test Suite 'MyAppTests' passed.
 Executed 45 tests, with 0 failures (0 unexpected) in 2.345 seconds
 ```
 
 **Test Failure:**
 
 ```
-Test Suite 'HarmoniAudioTests' failed.
+Test Suite 'MyAppTests' failed.
 Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 ```
 
@@ -203,7 +206,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 
 **If warnings exist:**
 
-- ⚠️ **FIX** - Per zero-warning policy (see `ios-development-standards.mdc`)
+- ⚠️ **FIX** - Per zero-warning policy (see `swift-5-9-development-standards.mdc`)
 - Extract all warning details
 - Fix warnings in code
 - **Loop back to Step 1** until zero warnings
@@ -221,7 +224,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 **Only after build succeeds with zero warnings:**
 
 1. **Determine which tests to run:**
-   - For UI tests: Use targeted test execution per Rule 9 in `harmoniaudio-anti-llm-traps.mdc` when modifying specific features
+   - For UI tests: Use targeted test execution when modifying specific features (e.g. `-only-testing:MyAppUITests/<TestClassName>`). For file-to-test mapping, maintain a project-specific rule or doc.
    - For unit tests: Run all unit tests (fast execution)
    - For UI infrastructure changes (UITestBase, UIHelpers, LiquidGlass): Run full UI test suite
 
@@ -230,8 +233,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 4. Parse test results
 
 **Targeted UI Test Execution:**
-- Use `-only-testing:HarmoniAudioUITests/<TestClassName>` for feature-specific UI changes
-- See Rule 9 in `harmoniaudio-anti-llm-traps.mdc` for file-to-test mapping
+- Use `-only-testing:MyAppUITests/<TestClassName>` for feature-specific UI changes. Project-specific rules can define file-to-test mappings.
 - **Exception:** Always run full UI suite for Liquid Glass changes or shared components
 
 ### Step 5: Handle Test Failures
@@ -273,7 +275,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 
 ### Zero-Warning Policy
 
-**Reference:** `ios-development-standards.mdc` - "Zero-Warning Policy"
+**Reference:** `swift-5-9-development-standards.mdc` - "Zero-Warning Policy"
 
 **Enforcement:**
 
@@ -283,7 +285,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 
 ### Test Requirements
 
-**Reference:** `ios-development-standards.mdc` - "Code Completion Requires Passing Tests"
+**Reference:** `swift-5-9-development-standards.mdc` - "Code Completion Requires Passing Tests"
 
 **Enforcement:**
 
@@ -294,7 +296,7 @@ Executed 45 tests, with 2 failures (2 unexpected) in 2.345 seconds
 
 ### Compile and Test Between Phases
 
-**Reference:** `ios-development-standards.mdc` - "Development Process"
+**Reference:** `swift-5-9-development-standards.mdc` - "Development Process"
 
 **Enforcement:**
 
@@ -318,7 +320,7 @@ xcrun xctrace list devices
 
 ```
 == Devices ==
-cdelgado's iPhone (00008110-0006758C2683801E) (Connected)
+My iPhone ({{DEVICE_ID}}) (Connected)
 iPhone 16 Simulator (ABC12345-...) (Booted)
 ```
 
@@ -408,13 +410,13 @@ User: "Fix the compilation error in PlaylistRepository"
 LLM (Agent Mode):
 1. Read PlaylistRepository.swift
 2. Make code changes
-3. Execute: xcodebuild -scheme HarmoniAudio ... build
+3. Execute: xcodebuild -scheme {{SCHEME}} ... build
 4. Parse output: "error: 'X' is unavailable at PlaylistRepository.swift:42"
 5. Fix error in code
 6. Re-execute build
 7. Parse output: "BUILD SUCCEEDED" + 0 errors, 0 warnings ✅
-8. Execute: xcodebuild test -scheme HarmoniAudio ... test
-9. Parse output: "Test Suite 'HarmoniAudioTests' passed. 45 tests, 0 failures" ✅
+8. Execute: xcodebuild test -scheme {{SCHEME}} ... test
+9. Parse output: "Test Suite 'MyAppTests' passed. 45 tests, 0 failures" ✅
 10. Report: "✅ Fixed. Build clean (0 warnings), all 45 tests passing."
 ```
 

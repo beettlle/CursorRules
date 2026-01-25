@@ -360,6 +360,22 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+### 3.9 False Test Verification Claims (CRIT)
+
+**CRITICAL:** Never claim tests pass or that test verification succeeded without actually running the test suite.
+
+❌ Bad: "All tests pass" (without running tests), "Test verification complete" (without evidence), "Code changes complete and tested" (without test output)
+✅ Good: "Code changes complete. Test verification pending." OR show actual test command and output when claiming success
+⚠️ Why: Creates false confidence, wastes user time debugging, violates trust, leads to broken code in repository
+🔧 Fix: Only claim test success after running the test command; if in plan mode or can't run tests, explicitly state "Test verification pending"; show test output when claiming success
+📍 See: Examples in `critical-rules-quick-reference.mdc` section 13
+
+**Detect:** Claims like "all tests pass", "tests pass", "tested" without evidence of test execution; no test output shown; claims made in plan mode where tests can't run
+
+**Key Principle:** If you can't run tests, you can't claim they pass. Only claim test success when you have actual test output showing success.
+
+---
+
 ## Category 4: API/Framework Usage Anti-Patterns
 
 ### 4.1 Zero-Hallucination Policy (CRIT)
