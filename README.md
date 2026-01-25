@@ -24,6 +24,7 @@ The core rules live in `.cursor/rules/`.
 ├── general-llm-anti-patterns.mdc       # Comprehensive guide to LLM behavioral smells
 ├── python-3-development-standards.mdc  # Python-specific standards (PEP 8, Zen of Python)
 ├── go-1-21-development-standards.mdc   # Go-specific standards (Effective Go, Uber Style Guide)
+├── java-17-development-standards.mdc   # Java 17 LTS (Effective Java, ExecutorService, Records)
 ├── java-21-development-standards.mdc   # Java 21 LTS (Effective Java, Virtual Threads, Records)
 ├── swift-5-9-development-standards.mdc # iOS/Swift 5.9 development standards
 ├── ios-ui-development-focus.mdc        # UI/UX best practices
