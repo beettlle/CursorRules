@@ -22,15 +22,16 @@ The core rules live in `.cursor/rules/`.
 .cursor/rules/
 ├── critical-rules-quick-reference.mdc  # Top 13 universal rules for fast context loading
 ├── general-llm-anti-patterns.mdc       # Comprehensive guide to LLM behavioral smells
-├── python-3-development-standards.mdc # Python-specific standards (PEP 8, Zen of Python)
+├── python-3-development-standards.mdc  # Python-specific standards (PEP 8, Zen of Python)
 ├── go-1-21-development-standards.mdc   # Go-specific standards (Effective Go, Uber Style Guide)
+├── java-21-development-standards.mdc   # Java 21 LTS (Effective Java, Virtual Threads, Records)
 ├── swift-5-9-development-standards.mdc # iOS/Swift 5.9 development standards
 ├── ios-ui-development-focus.mdc        # UI/UX best practices
 ├── ios-build-automation.mdc            # CI/CD and build automation rules
 ├── documentation-policy.mdc            # Rules for creating/editing documentation
 ├── audit-workflow.mdc                  # Phase completion verification workflow
 ├── swift-5-9-brutal-audit.mdc          # Swift/iOS comprehensive phase audit
-└── python-3-brutal-audit.mdc          # Python comprehensive phase audit
+└── python-3-brutal-audit.mdc           # Python comprehensive phase audit
 ```
 
 ## Installation
