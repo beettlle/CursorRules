@@ -53,6 +53,52 @@ To use these rules in your project:
 2. **Create a project-specific rules file** (see Project-Specific Rules below).
 3. **Restart Cursor** or reload the window to ensure the rules are indexed.
 
+## AGENTS.md for Non-Cursor Agents
+
+Cursor reads `.cursor/rules/`; Aider, Gemini CLI, Zed, and similar tools read `AGENTS.md`. After copying `.cursor` into your project, create `AGENTS.md` so non-Cursor agents follow the same standards.
+
+### Generating AGENTS.md for Your Project
+
+Use this prompt with your AI agent to generate a project-specific AGENTS.md:
+
+```
+Read .cursor/rules/critical-rules-quick-reference.mdc and .cursor/rules/general-llm-anti-patterns.mdc.
+
+Then scan this project to detect primary languages (e.g., *.py, *.go, *.java, *.swift, *.ts, *.tsx, package.json, go.mod, etc.).
+
+Produce an AGENTS.md with:
+
+1. **Intro**: Brief statement that this project uses CursorRules; full rules are in .cursor/rules/
+
+2. **Universal Anti-Patterns**: Include the Top 15 universal anti-patterns from critical-rules-quick-reference.mdc (Bad/Good/Why format)
+
+3. **Language-Specific References**: Based on detected languages, add a section referencing the appropriate .cursor/rules/ files:
+   - Python: python-3-development-standards.mdc, python-3-brutal-audit.mdc
+   - Go: go-1-21-development-standards.mdc, go-1-21-brutal-audit.mdc
+   - Java: java-17-development-standards.mdc or java-21-development-standards.mdc, java-brutal-audit.mdc
+   - Swift/iOS: swift-5-9-development-standards.mdc, swift-5-9-brutal-audit.mdc
+   - JavaScript/TypeScript: javascript-3-development-standards.mdc, javascript-3-brutal-audit.mdc
+
+4. **Project-Specific Sections**: Add placeholders or fill in from project files:
+   - Dev environment tips (setup commands, build, run)
+   - Testing instructions (how to run tests)
+   - PR/commit instructions (title format, pre-merge checks)
+
+5. **Phase Verification**: When to run brutal audits (reference the appropriate audit file per language)
+```
+
+### Tool-Specific Setup
+
+| Tool | Configuration |
+|------|---------------|
+| **Aider** | Add to `.aider.conf.yml` in project root: `read: AGENTS.md` (or `read: [AGENTS.md]`) |
+| **Gemini CLI** | Add to `.gemini/settings.json`: `{ "context": { "fileName": "AGENTS.md" } }` |
+| **Zed** | Zed reads AGENTS.md automatically when present at project root (per [agents.md](https://agents.md) ecosystem) |
+
+### Optional: Nested AGENTS.md
+
+For monorepos or large codebases, place `AGENTS.md` in subdirectories. Agents (e.g., Codex, Gemini CLI) read the nearest file in the directory tree; the closest one takes precedence.
+
 ## Project-Specific Rules
 
 In addition to the universal and language-specific rules, each project should maintain a **project-specific rules file** (e.g., `project-specific-standards.mdc` or `myproject-conventions.mdc`) in `.cursor/rules/` to capture:
