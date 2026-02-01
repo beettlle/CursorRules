@@ -157,6 +157,36 @@ The `swift-5-9-development-standards.mdc` file focuses on:
 - **Architecture**: Clean separation of UI, Domain, and Data layers.
 - **UI**: SwiftUI/UIKit best practices.
 
+## Go Standards
+
+The `go-1-21-development-standards.mdc` file enforces:
+
+- **Effective Go** and Uber Go Style Guide compliance.
+- **Error handling**: Explicit error checks; wrap errors with `%w` for context.
+- **Concurrency**: No fire-and-forget goroutines; use `WaitGroup` or `errgroup` for lifecycle management.
+- **Context propagation**: `context.Context` as first argument for blocking I/O.
+- **Interface design**: Define interfaces at consumer, not producer; avoid interface pollution.
+
+## Java Standards
+
+The `java-17-development-standards.mdc` and `java-21-development-standards.mdc` files enforce:
+
+- **Effective Java** principles and Google Java Style Guide.
+- **Modern Java**: Records for immutable DTOs, pattern matching, sealed classes, switch expressions.
+- **Java 17**: ExecutorService for I/O; tuned thread pools.
+- **Java 21**: Virtual Threads for I/O-bound tasks; sequenced collections.
+- **Immutability**: Records over POJOs; fail-fast with `Optional` over null.
+
+## JavaScript/TypeScript Standards
+
+The `javascript-3-development-standards.mdc` file enforces:
+
+- **Modern ES6+**: `const`/`let` over `var`; async/await over callbacks; strict mode always.
+- **Type safety**: Prefer TypeScript or JSDoc for types.
+- **Style**: Airbnb/Google conventions; camelCase; explicit over implicit.
+- **Security**: Input validation; no `eval()`; sanitize user input.
+- **Modular**: ES6 modules; functional over imperative where appropriate.
+
 ## Extending
 
 To add support for a new language (e.g., TypeScript/React):
