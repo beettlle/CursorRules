@@ -1,0 +1,1 @@
+For Java projects, run: mvn verify or ./gradlew build (per project build system).

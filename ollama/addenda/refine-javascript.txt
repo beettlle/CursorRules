@@ -1,0 +1,1 @@
+For JavaScript/TypeScript projects, run: npm run build and npm test (or pnpm test, yarn test per project).

@@ -2,6 +2,20 @@
 
 This repository provides a centralized collection of **Cursor Rules** (`.mdc` files) designed to enforce best practices and mitigate common "bad habits" often introduced by LLM-assisted coding.
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [Repository Structure](#repository-structure)
+- [Installation](#installation)
+- [AGENTS.md for Non-Cursor Agents](#agentsmd-for-non-cursor-agents)
+- [Local Model Integrations](#local-model-integrations)
+- [Project-Specific Rules](#project-specific-rules)
+- [Core Principles](#core-principles-universal)
+- [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript)
+- [Extending](#extending)
+- [Phase-Based Audit Workflows](#phase-based-audit-workflows)
+- [Contributing](#contributing)
+
 ## Purpose
 
 Large Language Models (LLMs) are powerful tools, but they often exhibit recurring behavioral anti-patterns, such as:
@@ -94,10 +108,17 @@ Produce an AGENTS.md with:
 | **Aider** | Add to `.aider.conf.yml` in project root: `read: AGENTS.md` (or `read: [AGENTS.md]`) |
 | **Gemini CLI** | Add to `.gemini/settings.json`: `{ "context": { "fileName": "AGENTS.md" } }` |
 | **Zed** | Zed reads AGENTS.md automatically when present at project root (per [agents.md](https://agents.md) ecosystem) |
+| **Ollama** | Use Modelfiles in `ollama/` for local review/refine; see [Local Model Integrations](#local-model-integrations) |
+
+Ollama uses Modelfiles (system prompts) rather than AGENTS.md; see [Local Model Integrations](#local-model-integrations).
 
 ### Optional: Nested AGENTS.md
 
 For monorepos or large codebases, place `AGENTS.md` in subdirectories. Agents (e.g., Codex, Gemini CLI) read the nearest file in the directory tree; the closest one takes precedence.
+
+## Local Model Integrations
+
+**Ollama**: Modelfiles in `ollama/` provide system prompts for local LLMs (different from AGENTS.md). Use for git-diff review and refinement workflows. See [ollama/README.md](ollama/README.md) for setup, requirements, and language addenda. Base model and parameters are configurable; `qwen3-coder:30b` is tested.
 
 ## Project-Specific Rules
 

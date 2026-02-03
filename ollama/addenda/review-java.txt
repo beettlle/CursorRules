@@ -1,0 +1,1 @@
+For Java: POJO instead of Record for data carriers, null instead of Optional, raw types or unchecked casts, blocking I/O without Virtual Threads for 21+, platform threads for I/O-bound work in 21+, missing input validation at boundaries, mutable shared state.

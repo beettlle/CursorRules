@@ -1,0 +1,1 @@
+For Python projects, run: pytest or python -m pytest or make test (per project conventions).

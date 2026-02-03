@@ -1,0 +1,1 @@
+For Swift: SwiftData @Model passed to Domain layer (use DTOs), Presentation importing SwiftData/MusicKit directly, @MainActor on Domain types, fake actor pattern (nonisolated(unsafe) or MainActor.run in actor), state modified in async Task without snapshot before await.

@@ -1,0 +1,1 @@
+For Python: bare except or except: pass, missing type hints on public APIs, *args/**kwargs abuse, PEP 8 violations (4 spaces, snake_case), list/dict used for membership when set would be O(1), mutable default arguments, errors passed silently.

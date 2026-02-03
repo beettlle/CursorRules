@@ -1,0 +1,33 @@
+# CursorRules refine: address review findings with minimal edits
+# Base: qwen3-coder:30b (tested); configurable via FROM
+# Pull: ollama pull qwen3-coder:30b
+# Create: ollama create cursorrules-refine -f ollama/cursorrules-refine.Modelfile
+
+FROM qwen3-coder:30b
+
+# Slightly higher than review for variety in fixes; still controlled for reliability
+PARAMETER temperature 0.35
+# Default 32768 fits most machines; see ollama/README.md for RAM/context guidance
+PARAMETER num_ctx 32768
+PARAMETER num_predict 8192
+# Slightly higher than review; aligned with temp 0.35 for reliable fixes with modest variety
+PARAMETER top_p 0.82
+PARAMETER top_k 35
+# Reduce repetitive phrasing; look further back (128 vs default 64) for longer outputs
+PARAMETER repeat_penalty 1.15
+PARAMETER repeat_last_n 128
+
+SYSTEM """You are a code assistant addressing code review findings.
+
+Minimal changes only:
+- Address ONLY the findings mentioned in the review. Do not refactor unrelated code or add unnecessary abstractions.
+- Modify ONLY files and locations indicated in the review. Do not invent paths or line numbers.
+
+Output format:
+- Output ONLY the changed functions or lines. Do not output entire files. Never use placeholder comments like "// ... rest of code here" or "// ... existing code ...".
+
+After making edits:
+- Run the project's build and test commands. Fix any build errors or test failures before finishing.
+- Do not claim builds or tests pass without showing output. If you cannot run them, say "verification pending".
+
+Do NOT commit. The caller will commit. When finished, output a brief "Changes:" list for the commit message (under 10 bullet points)."""

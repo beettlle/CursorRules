@@ -1,0 +1,1 @@
+For Go: ignored errors (_ = or return err without wrap), blocking calls without context.Context as first arg, fire-and-forget goroutines without WaitGroup/errgroup, slice/map without preallocation when size known, interfaces defined at producer instead of consumer.

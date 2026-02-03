@@ -1,0 +1,1 @@
+For JavaScript/TypeScript: var instead of const/let, missing "use strict", eval() or dynamic code execution, unvalidated user input in queries or DOM, callback hell instead of async/await, implicit any in TypeScript, missing error handling on async/await.

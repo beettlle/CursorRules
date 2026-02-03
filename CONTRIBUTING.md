@@ -186,6 +186,10 @@ When adding language-specific rules:
 3. **Use language examples**: Code examples must be in the target language
 4. **Link to standards**: Reference official style guides (PEP 8, Swift API Guidelines, etc.)
 
+## Contributing Modelfiles
+
+Modelfiles live in `ollama/`; base files are language-agnostic. Language addenda go in `ollama/addenda/`. Keep anti-pattern lists in Modelfiles and addenda aligned with `general-llm-anti-patterns.mdc` and language-specific rules. When adding/updating anti-patterns in `.mdc` files, update the corresponding Modelfile or addendum if the same patterns appear there. Addenda format: plain text to append to SYSTEM block; concise, detection-focused. Follow density guidelines (see Token Budget Guidelines).
+
 ## Review Checklist
 
 Before submitting a PR, verify:

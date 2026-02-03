@@ -1,0 +1,1 @@
+For Swift projects, run: xcodebuild -scheme YourScheme build test or swift build && swift test (per project setup).
