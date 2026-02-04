@@ -64,6 +64,10 @@ Java 21 enables patterns that significantly reduce boilerplate and improve clari
 📍 See: Effective Java Item 68, `general-llm-anti-patterns.mdc` section 0.1
 **Detect:** Single-letter variables outside loops, cryptic abbreviations, generic names (data, info, temp), names requiring comments to explain
 
+### 1.1a Source File Naming (Guidance)
+
+One public class per file; filename = PascalCase class name + `.java` (case-sensitive). 📍 See: `general-llm-anti-patterns.mdc` Category 12.
+
 ---
 
 ### 1.2 Use Records for Immutable Data Carriers (CRIT)

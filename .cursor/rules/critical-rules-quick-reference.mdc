@@ -122,6 +122,10 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 
 **Detect:** Example code used verbatim, example code not adapted to project patterns, copy-paste without modification
 
+### File and Directory Naming (Guidance)
+
+No spaces; safe chars [a-zA-Z0-9_.-]; dates YYYY-MM-DD or YYYYMMDD; zero-pad versions (v01, v02); one convention per project. Optional for non-source assets: subject_date_code with dashes in subject, underscores between parts. If project has a convention, keep it; new projects use industry standard. Details: `general-llm-anti-patterns.mdc` Category 12
+
 ---
 
 ## Phase Verification Workflows

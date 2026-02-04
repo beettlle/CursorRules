@@ -277,6 +277,10 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 📍 See: `general-llm-anti-patterns.mdc` section 1.7
 **Detect:** Large modules with multiple responsibilities, modules with 500+ lines, mixing unrelated functionality, circular dependencies
 
+### 4.2a Source File Naming (Guidance)
+
+If project has convention keep it. New projects: kebab-case for most files; PascalCase for React/component files. No spaces or special chars. 📍 See: Google JS Style Guide; `general-llm-anti-patterns.mdc` Category 12.
+
 ---
 
 ### 4.3 Import Organization (CRIT)

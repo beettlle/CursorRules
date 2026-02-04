@@ -134,6 +134,10 @@ def process_positive_numbers(numbers: dict[str, int]) -> list[int]:
 - Follow PEP 8 naming conventions
 - Make names self-documenting
 
+### 1.1a Source File Naming (Guidance)
+
+Modules: short, all-lowercase, underscores allowed (`my_module.py`). Packages: all-lowercase, underscores discouraged. 📍 See: PEP 8 Package and Module Names; `general-llm-anti-patterns.mdc` Category 12.
+
 ---
 
 ### 1.2 Explicit is Better Than Implicit (CRITICAL)

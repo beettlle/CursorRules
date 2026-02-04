@@ -302,6 +302,10 @@ for _, tt := range tests {
 🔧 Fix: Rename unexported globals with leading underscore
 **Detect:** Top-level unexported vars without `_` prefix
 
+### 2.1a Source File Naming (Guidance)
+
+Lowercase; multiple words with underscores (`http_client.go`). Test files: `*_test.go`. 📍 See: Effective Go; `general-llm-anti-patterns.mdc` Category 12.
+
 ### 2.2 Mutex Grouping (Style)
 
 **CRITICAL:** Place `sync.Mutex` directly above the fields it protects.

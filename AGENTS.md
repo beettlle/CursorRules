@@ -6,6 +6,10 @@ This project uses CursorRules—a collection of development standards and anti-p
 
 "compiles", "builds", "zero warnings", "build succeeded" → Must show build output or say "verification pending"
 
+## File and Directory Naming
+
+No spaces in file or directory names; use underscores, hyphens, or language-appropriate case. Use only safe characters (letters, digits, underscore, hyphen). Dates in names: YYYY-MM-DD or YYYYMMDD. Zero-pad version suffixes (v01, v02). One convention per project; if the project already has one, keep it. For non-source assets (docs, exports, logs), optional pattern: subject_date_code with dashes in subject and underscores between parts. Source file naming per language: Python snake_case modules; Java one public class per file, filename = class name; Go lowercase + underscores; Swift PascalCase; JavaScript/TypeScript follow project or use kebab-case. Full rules: `.cursor/rules/general-llm-anti-patterns.mdc` Category 12.
+
 ## Top 15 Universal Anti-Patterns
 
 ### 1. Ghost Layer Prevention
