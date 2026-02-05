@@ -122,6 +122,12 @@ This file contains Cursor IDE-specific optimizations for context window manageme
 
 ---
 
+## Custom Modes (Optional)
+
+Rules cannot influence Auto model selection. For task-based model/behavior switching: Cursor Settings > Chat > Custom Modes. Create modes (e.g., Debug, Architecture) with model preselection and custom instructions. Invoke via mode dropdown.
+
+---
+
 ## Summary: Cursor Integration Rules
 
 These patterns represent critical Cursor IDE optimization anti-patterns:

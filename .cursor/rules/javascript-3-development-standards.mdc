@@ -60,6 +60,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `const userName = 'John';`, `let userCount = 0; userCount = getUserCount();` (only when reassignment needed), `for (let i = 0; i < items.length; i++)` (proper scoping), `for (const item of items)` (prefer for...of), `const users = []; users.push({ name: 'John' });` (const for objects/arrays even if contents change)
 ⚠️ Why: `var` has function scope and hoisting issues; `var` in loops creates closure bugs; using `let` when `const` would work reduces intent clarity; variables can be declared but undefined causing bugs
 🔧 Fix: Always use `const` unless reassignment is needed; use `let` only when variable will be reassigned; never use `var` in new code; initialize variables when declaring; use `const` for arrays/objects even if contents change (reference is constant)
+📍 See: `general-llm-anti-patterns.mdc` section 5.6
 **Detect:** Using `var` declarations, using `let` when `const` would work, variables declared but not initialized, reassigning `const` variables, `var` in loops creating closure bugs
 
 ---
@@ -72,6 +73,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `'use strict';` directive at top of file, ES modules (`export function processData(data) {}`) are strict by default, configure ESLint to enforce strict mode
 ⚠️ Why: Silent failures (undeclared variables become globals); allows dangerous features (eval with access to enclosing scope); not catching common mistakes; poor error messages
 🔧 Fix: Always use `'use strict';` or ES modules; ES modules are strict by default (preferred); configure ESLint to enforce strict mode; never disable strict mode
+📍 See: `general-llm-anti-patterns.mdc` section 5.2
 **Detect:** Missing `'use strict';` directive, not using ES modules, silent failures that strict mode would catch, undeclared variables becoming globals
 
 ---
@@ -84,6 +86,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `const x = 1;`, `return x + y;`, explicit semicolons after all statements, configure ESLint to enforce semicolons, use Prettier for automatic formatting
 ⚠️ Why: ASI can cause subtle bugs; automatic insertion doesn't always work as expected; inconsistent with team standards; makes code harder to read
 🔧 Fix: Add semicolons after all statements; configure ESLint to enforce semicolons; use Prettier for automatic formatting (includes semicolons)
+📍 See: `general-llm-anti-patterns.mdc` section 3.6
 **Detect:** Missing semicolons after statements, ASI-dependent code, inconsistent semicolon usage, return statements without semicolons before expression
 
 ---
@@ -96,6 +99,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `numbers.map(n => n * 2);` (arrow functions for callbacks), `function calculateTotal(items) { ... }` (function declaration for hoisting), `getName() { return this.name; }` (class method not arrow when this needed), `document.addEventListener('click', (e) => { this.handleClick(e); });` (arrow when lexical this desired), `greet() { return \`Hello, ${this.name}\`; }` (method shorthand in objects)
 ⚠️ Why: Verbose syntax when arrow function would be clearer; arrow functions in classes create per-instance functions (memory overhead); loses hoisting benefits of function declarations; unclear when to use which style
 🔧 Fix: Use arrow functions for callbacks and when lexical `this` is needed; use function declarations for named functions that benefit from hoisting; use class methods (not arrow) for class instance methods; use method shorthand (`getName() {}`) for object methods
+📍 See: `general-llm-anti-patterns.mdc` section 0.5
 **Detect:** Using `function` keyword for simple callbacks, arrow functions in class methods that need `this`, mixing styles inconsistently, arrow functions in object methods that need `this`, arrow function when hoisting needed
 
 ---
@@ -108,6 +112,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `const message = \`Hello, ${userName}! You have ${count} messages.\`;`, template literals for string interpolation, template literals for multi-line strings, expression interpolation in template literals, only use `+` for actual numeric addition
 ⚠️ Why: Harder to read especially with multiple variables; easy to make mistakes with quotes and spacing; verbose and error-prone; not modern JavaScript idiom
 🔧 Fix: Always use template literals for string interpolation; use template literals for multi-line strings; only use `+` for actual numeric addition
+📍 See: `general-llm-anti-patterns.mdc` section 3.6
 **Detect:** String concatenation with `+` operator, complex string building with concatenation, escaping quotes in strings unnecessarily, multi-line strings using `+`
 
 ---
@@ -120,6 +125,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `const { name: userName, email: userEmail, age: userAge = 0 } = user;` (object destructuring with defaults), `const [first, second, third] = items;` (array destructuring), `const { name, email = 'unknown@example.com' } = user;` (destructuring with defaults), `const { address: { street, city } } = user;` (nested destructuring), `function processUser({ name, email, age = 0 }) {}` (function parameters), `const { name, email, ...otherProps } = user;` (rest operator with destructuring)
 ⚠️ Why: Verbose and repetitive; harder to read; missing modern JavaScript idiom; no default values for missing properties
 🔧 Fix: Use destructuring for object property access; use destructuring for array elements; provide default values when properties might be missing; use destructuring in function parameters; use rest operator with destructuring
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 **Detect:** Manual property access when destructuring would work, multiple lines accessing same object properties, array access by index when destructuring would be clearer, missing default values in destructuring
 
 ---
@@ -132,6 +138,7 @@ JavaScript's evolution (ES6+) has transformed it into a powerful, expressive lan
 ✅ Good: `const copy = [...originalArray];` (spread for copying), `function sum(...numbers) { return numbers.reduce((total, num) => total + num, 0); }` (rest parameters), `const combined = [...array1, ...array2, ...array3];` (spread for combining), `const merged = { ...defaults, ...userProvided, ...overrides };` (object spread), `const [first, second, ...rest] = items;` (rest for collecting remaining), `const max = Math.max(...numbers);` (spread for function arguments)
 ⚠️ Why: Verbose and less readable; `arguments` is not a real array (no array methods); not using modern JavaScript features; harder to maintain
 🔧 Fix: Use spread operator for copying arrays/objects; use rest parameters instead of `arguments`; use spread for combining arrays/objects; use rest for collecting remaining items in destructuring; use spread for function arguments instead of `.apply()`
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 **Detect:** Using `Array.prototype.slice()` for copying, using `arguments` object instead of rest parameters, manual array/object copying, concatenating arrays with `concat()`, using `.apply()` for function arguments
 
 ---

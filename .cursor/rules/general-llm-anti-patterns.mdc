@@ -15,6 +15,15 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+## Example: Good Completion Behavior
+
+**User:** Fix the null pointer in UserService.
+
+**Good response ends with:**
+"Changes applied to `src/UserService.java` lines 42–45. Root cause: missing null check before accessing `user.getProfile()`. Build verification pending."
+
+---
+
 ## Universal Detection Principles (Meta-Rules)
 
 |Smell|Detect|Action|
@@ -29,6 +38,18 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 |"Prompt Debt"|Vague requests leading to guessing|Ask clarifying questions, don't guess|
 
 **If you detect any smell above, investigate for specific anti-patterns in categories below.**
+
+---
+
+## Task-Aware Behavior
+
+| Task Type | Behavior |
+|-----------|----------|
+| Debugging | Trace root cause before proposing fix; consider reproduction steps |
+| Architecture | Discuss tradeoffs before structural changes; ask before large refactors |
+| Coding | Follow project patterns; output only necessary changes; verify before claiming done |
+
+---
 
 ## Category 0: Optimization Anti-Patterns
 

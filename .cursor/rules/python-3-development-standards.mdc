@@ -60,1739 +60,327 @@ All Python code must follow [PEP 8](https://peps.python.org/pep-0008/) conventio
 
 ## Category 1: Pythonic Style & Readability
 
-### 1.1 Meaningful and Descriptive Names (CRITICAL)
+### 1.1 Meaningful and Descriptive Names (CRIT)
 
-**CRITICAL:** Use descriptive variable and function names that clearly indicate their purpose. Names are one of the most important aspects of readable code.
+**CRITICAL:** Use descriptive variable and function names that clearly indicate their purpose.
 
-**Detection:**
+❌ Bad: `def calc(x, y): z = x * y; return z`, `proc(d)`, single-letter vars (`x`, `i`, `tmp`)
+✅ Good: `def calculate_area(length: float, width: float) -> float:`, `user_data`, `total_count`
+⚠️ Why: Names don't indicate purpose; violates "Readability counts"; hard to maintain
+🔧 Fix: Use full words; function names verbs; variable names nouns; follow PEP 8
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 
-- Single-letter variables (`x`, `i`, `tmp`)
-- Abbreviations that aren't obvious (`usr`, `cnt`, `calc`)
-- Generic names (`data`, `value`, `result` without context)
-- Names that don't describe purpose or content
-- Hungarian notation or type prefixes
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Unclear, non-descriptive names
-def calc(x, y):
-    z = x * y
-    return z
-
-def proc(d):
-    r = []
-    for i in d:
-        if i > 0:
-            r.append(i * 2)
-    return r
-```
-
-**Why This Is Wrong:**
-
-- Names don't indicate purpose
-- Violates "Readability counts"
-- Hard to understand code intent
-- Makes code maintenance difficult
-- Violates Python's emphasis on clarity
-
-**Required: Use Descriptive Names**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Descriptive, meaningful names (PEP 8 compliant)
-def calculate_area(length: float, width: float) -> float:
-    """Calculate rectangle area."""
-    area = length * width
-    return area
-
-def process_positive_numbers(numbers: dict[str, int]) -> list[int]:
-    """Extract and double positive numbers from dictionary."""
-    doubled_positive = []
-    for number in numbers.values():
-        if number > 0:
-            doubled_positive.append(number * 2)
-    return doubled_positive
-```
-
-**Impact:**
-
-- Unclear code intent
-- Hard to maintain
-- Violates "Readability counts"
-- Difficult for team collaboration
-- Poor code quality
-
-**Solution:**
-
-- Use full words, not abbreviations
-- Names should describe purpose or content
-- Function names should be verbs (`calculate`, `process`, `validate`)
-- Variable names should be nouns (`user_data`, `total_count`)
-- Use domain-specific terminology when appropriate
-- Follow PEP 8 naming conventions
-- Make names self-documenting
+**Detect:** Single-letter variables (except `i` in short loops), abbreviations (`usr`, `cnt`), generic names (`data`, `value` without context), Hungarian notation
 
 ---
 
-### 1.2 Explicit is Better Than Implicit (CRITICAL)
+### 1.2 Explicit is Better Than Implicit (CRIT)
 
 **CRITICAL:** Prefer explicit code over implicit magic. Code should be self-documenting.
 
-**Detection:**
+❌ Bad: `def make_complex(*args): return dict(**locals())`, implicit `return None`, missing type hints
+✅ Good: `def make_complex(x: float, y: float) -> dict[str, float]: return {'x': x, 'y': y}`
+⚠️ Why: `locals()` returns too much; implicit None easy to miss; violates "Explicit > implicit"
+🔧 Fix: Use explicit params; return None explicitly; add type hints (PEP 484); avoid `locals()`
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 
-- Using `*args` or `**kwargs` when specific parameters would be clearer
-- Relying on implicit type coercion
-- Magic methods used in non-obvious ways
-- Implicit return values (None vs explicit return)
-- Missing type hints
-- Using `locals()` or `globals()` for dynamic behavior
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Implicit behavior, black magic
-def make_complex(*args):
-    x, y = args
-    return dict(**locals())  # Returns 'args' too - not what we want!
-
-# ❌ WRONG: Implicit return
-def process_data(*args, **kwargs):
-    result = args[0] + kwargs.get('value', 0)
-    if result > 100:
-        return result
-    # Implicitly returns None - not obvious
-```
-
-**Why This Is Wrong:**
-
-- `locals()` returns more than needed (includes 'args', 'x', 'y', and any other local variables)
-- Unclear what parameters are expected
-- Implicit None return is easy to miss
-- Violates "Explicit is better than implicit"
-- Makes code harder to understand and maintain
-- No type checking possible
-- "Black magic" reduces readability
-
-**Required: Be Explicit**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Explicit parameters and return (PEP 8 compliant)
-def make_complex(x: float, y: float) -> dict[str, float]:
-    """Create a complex data structure from x and y."""
-    return {'x': x, 'y': y}
-
-def process_data(
-    value: float,
-    multiplier: float = 1.0
-) -> float | None:
-    """
-    Process data value with optional multiplier.
-    
-    Args:
-        value: The base value to process
-        multiplier: Optional multiplier (default: 1.0)
-    
-    Returns:
-        Processed value if > 100, None otherwise
-    """
-    result = value * multiplier
-    if result > 100:
-        return result
-    return None  # Explicit None return
-```
-
-**Impact:**
-
-- Unclear code (implicit behavior)
-- Harder to maintain
-- Violates Python ethos
-- Type hints missing
-- No IDE support
-- Reduced readability
-
-**Solution:**
-
-- Use explicit parameter names instead of *args/**kwargs when possible
-- Always explicitly return None when appropriate
-- Use type hints for all function signatures (PEP 484)
-- Document expected parameters in docstrings (PEP 257)
-- Use `TypedDict` for dictionary parameters when possible
-- Avoid `locals()`, `globals()`, and other "magical" constructs
+**Detect:** `*args`/`**kwargs` when specific params clearer, `locals()`/`globals()`, implicit return, missing type hints
 
 ---
 
-### 1.3 Simple and Uncluttered Syntax (CRITICAL)
+### 1.3 Simple and Uncluttered Syntax (CRIT)
 
-**CRITICAL:** Utilize Python's straightforward syntax and whitespace conventions to enhance readability. Keep code simple and uncluttered.
+**CRITICAL:** Keep code simple and uncluttered. Break complex expressions into steps.
 
-**Detection:**
+❌ Bad: `result = (((x+y)*z)/w)+((a*b)/c) if cond else default`, nested list comprehension 3+ levels
+✅ Good: Use intermediate variables; `for` loops over deeply nested comprehensions
+⚠️ Why: Hard to read; violates "Simple is better than complex"; difficult to debug
+🔧 Fix: Break complex expressions; use intermediate vars; prefer clarity over cleverness
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 
-- Overly complex expressions
-- Unnecessary parentheses
-- Dense code without whitespace
-- Complex nested structures
-- Verbose code when simple syntax exists
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Cluttered, complex syntax
-result = (((x + y) * z) / w) + ((a * b) / c) if condition else default_value
-
-def process(data):
-    return [item for sublist in [[x for x in row if x > 0] for row in data] for item in sublist]
-```
-
-**Why This Is Wrong:**
-
-- Hard to read and understand
-- Violates "Simple is better than complex"
-- Difficult to debug
-- Not Pythonic
-- Whitespace and clarity are missing
-
-**Required: Simple, Clear Syntax**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Simple, uncluttered syntax (PEP 8 compliant)
-def calculate_result(x: float, y: float, z: float, w: float, 
-                     a: float, b: float, c: float,
-                     condition: bool, default: float) -> float:
-    """Calculate result with clear intermediate steps."""
-    if condition:
-        first_part = (x + y) * z / w
-        second_part = (a * b) / c
-        return first_part + second_part
-    return default_value
-
-def process(data: list[list[int]]) -> list[int]:
-    """Flatten and filter positive numbers."""
-    positive_numbers = []
-    for row in data:
-        for item in row:
-            if item > 0:
-                positive_numbers.append(item)
-    return positive_numbers
-```
-
-**Impact:**
-
-- Hard to read
-- Difficult to maintain
-- Violates Python ethos
-- Error-prone
-- Poor code quality
-
-**Solution:**
-
-- Break complex expressions into steps
-- Use intermediate variables with clear names
-- Leverage Python's whitespace for clarity
-- Prefer simple syntax over clever one-liners
-- Use parentheses only when necessary for clarity
-- Follow PEP 8 whitespace guidelines
+**Detect:** Complex one-liners, nested comprehensions 3+ levels, dense code without whitespace
 
 ---
 
-### 1.4 One Statement Per Line (CRITICAL)
+### 1.4 One Statement Per Line (CRIT)
 
-**CRITICAL:** While list comprehensions are allowed, don't put multiple disjointed statements on one line.
+**CRITICAL:** One statement per line. Don't combine multiple statements with semicolons.
 
-**Detection:**
+❌ Bad: `print('foo'); print('bar')`, `if x == 1: print('foo')`, complex comparison on one line
+✅ Good: One statement per line; break complex comparisons into named variables
+⚠️ Why: Violates "Sparse is better than dense"; harder to read and debug; violates PEP 8
+🔧 Fix: One statement per line; extract complex conditions to variables; no semicolons
+📍 See: PEP 8
 
-- Multiple statements separated by semicolons
-- Compound if statements with actions on same line
-- Complex comparisons that should be split
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Multiple statements per line
-print('foo'); print('bar')
-
-if x == 1: print('foo')
-
-if <complex comparison> and <other complex comparison>:
-    # do something
-```
-
-**Why This Is Wrong:**
-
-- Harder to read
-- Violates "Sparse is better than dense"
-- Makes debugging difficult
-- Violates PEP 8 readability principles
-
-**Required: One Statement Per Line**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: One statement per line (PEP 8 compliant)
-print('foo')
-print('bar')
-
-if x == 1:
-    print('foo')
-
-cond1 = <complex comparison>
-cond2 = <other complex comparison>
-if cond1 and cond2:
-    # do something
-```
-
-**Impact:**
-
-- Harder to read
-- Difficult to debug
-- Violates Python ethos
-- Violates PEP 8
-
-**Solution:**
-
-- One statement per line
-- Break complex comparisons into variables
-- Use list comprehensions for their intended purpose (brevity and expressiveness)
-- Don't use semicolons to combine statements
+**Detect:** Semicolons combining statements, compound if with action on same line
 
 ---
 
-### 1.5 Using Built-in Types and Functions (CRITICAL)
+### 1.5 Using Built-in Types and Functions (CRIT)
 
-**CRITICAL:** Take advantage of Python's built-in types and functions to write efficient and concise code. Use intuitive data structures.
+**CRITICAL:** Use built-in types and functions. Don't reimplement standard library.
 
-**Detection:**
+❌ Bad: `def custom_length(items): count=0; [count:=count+1 for _ in items]; return count`, list for key-value pairs
+✅ Good: `len()`, `sum()`, `max()`, `Counter`, `defaultdict`; dict for key-value, set for unique
+⚠️ Why: Reinventing wheel; less efficient; violates "one obvious way"
+🔧 Fix: Use built-ins (`len`, `sum`, `max`, `sorted`); use `collections`; match structure to use case
+📍 See: `general-llm-anti-patterns.mdc` section 0.4
 
-- Reimplementing built-in functionality
-- Not using built-in types (list, dict, set, tuple)
-- Custom implementations when standard library exists
-- Ignoring built-in functions (`len()`, `sum()`, `max()`, etc.)
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Reimplementing built-ins
-def custom_length(items):
-    count = 0
-    for item in items:
-        count += 1
-    return count
-
-def custom_max(numbers):
-    max_val = numbers[0]
-    for num in numbers:
-        if num > max_val:
-            max_val = num
-    return max_val
-
-# ❌ WRONG: Not using appropriate data structures
-user_data = []  # Should be dict for key-value pairs
-user_data.append(('name', 'John'))
-user_data.append(('email', 'john@example.com'))
-```
-
-**Why This Is Wrong:**
-
-- Reinventing the wheel
-- Less efficient than built-ins
-- More code to maintain
-- Violates "There should be one obvious way"
-- Not using Python's strengths
-
-**Required: Use Built-in Types and Functions**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Use built-in functions (PEP 8 compliant)
-items = [1, 2, 3, 4, 5]
-count = len(items)  # Built-in function
-maximum = max(items)  # Built-in function
-total = sum(items)  # Built-in function
-
-# ✅ CORRECT: Use appropriate data structures
-user_data = {  # Dict for key-value pairs
-    'name': 'John',
-    'email': 'john@example.com'
-}
-
-# ✅ CORRECT: Use built-in types effectively
-from collections import defaultdict, Counter
-
-word_counts = Counter(['hello', 'world', 'hello'])  # Built-in counter
-grouped_data = defaultdict(list)  # Built-in defaultdict
-```
-
-**Impact:**
-
-- Code duplication
-- Less efficient
-- More maintenance
-- Violates Python ethos
-- Misses Python's strengths
-
-**Solution:**
-
-- Use built-in functions: `len()`, `sum()`, `max()`, `min()`, `sorted()`, etc.
-- Use appropriate data structures:
-  - Lists for ordered sequences
-  - Dicts for key-value mappings
-  - Sets for unique collections
-  - Tuples for immutable sequences
-- Use `collections` module (Counter, defaultdict, deque)
-- Leverage built-in types instead of custom classes when possible
-- Read Python documentation to discover built-in capabilities
+**Detect:** Custom implementations of len/sum/max, list for key-value pairs, ignoring collections module
 
 ---
 
-### 1.6 Simple Iterations Over Index Manipulation (CRITICAL)
+### 1.6 Simple Iterations Over Index Manipulation (CRIT)
 
-**CRITICAL:** Prefer straightforward iteration methods instead of complex index manipulations. Use iterators and generators.
+**CRITICAL:** Prefer direct iteration. Use `enumerate()` when index needed, not `range(len())`.
 
-**Detection:**
+❌ Bad: `for i in range(len(items)): items[i]`, manual counter `count += 1` in loop
+✅ Good: `for item in items:`, `for i, item in enumerate(items):`, `zip(names, ages)`
+⚠️ Why: Verbose, error-prone (off-by-one); violates "Simple is better than complex"
+🔧 Fix: Use `for item in items`; use `enumerate()` for index; use `zip()` for parallel
+📍 See: `general-llm-anti-patterns.mdc` section 2.3
 
-- Manual index manipulation (`for i in range(len(items))`)
-- Using `range(len())` when direct iteration works
-- Complex index calculations
-- Not using `enumerate()` when index is needed
-- Manual loop counters
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Complex index manipulation
-items = ['a', 'b', 'c']
-for i in range(len(items)):
-    print(f"Index {i}: {items[i]}")
-
-# ❌ WRONG: Manual counter
-count = 0
-for item in items:
-    print(f"Item {count}: {item}")
-    count += 1
-
-# ❌ WRONG: Complex index calculations
-for i in range(len(items)):
-    if i > 0:
-        prev_item = items[i - 1]
-        current_item = items[i]
-        # Complex logic with indices
-```
-
-**Why This Is Wrong:**
-
-- Verbose and error-prone
-- Harder to read
-- Violates "Simple is better than complex"
-- Not Pythonic
-- Easy to introduce off-by-one errors
-
-**Required: Use Simple Iterations**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Simple iteration with enumerate (PEP 8 compliant)
-items = ['a', 'b', 'c']
-for index, item in enumerate(items):
-    print(f"Index {index}: {item}")
-
-# ✅ CORRECT: Direct iteration when index not needed
-for item in items:
-    print(f"Item: {item}")
-
-# ✅ CORRECT: Use zip for parallel iteration
-names = ['Alice', 'Bob', 'Charlie']
-ages = [25, 30, 35]
-for name, age in zip(names, ages):
-    print(f"{name} is {age} years old")
-
-# ✅ CORRECT: Use iterators/generators
-def process_items(items):
-    """Process items using generator."""
-    for item in items:
-        yield process_single_item(item)
-```
-
-**Impact:**
-
-- Verbose code
-- Error-prone (off-by-one)
-- Hard to read
-- Not Pythonic
-- Violates simplicity principle
-
-**Solution:**
-
-- Use direct iteration: `for item in items:`
-- Use `enumerate()` when index is needed: `for i, item in enumerate(items):`
-- Use `zip()` for parallel iteration
-- Use iterators and generators for large datasets
-- Avoid `range(len())` patterns
-- Prefer simple, readable loops
+**Detect:** `range(len())` when iteration works, manual loop counters, complex index calculations
 
 ---
 
-### 1.7 Assignment Tricks and Tuple Unpacking (CRITICAL)
+### 1.7 Assignment Tricks and Tuple Unpacking (CRIT)
 
-**CRITICAL:** Use Python's assignment features to write more concise and readable code. Leverage tuple unpacking and modern assignment operators.
+**CRITICAL:** Use tuple unpacking and walrus operator (`:=`) where appropriate.
 
-**Detection:**
+❌ Bad: `temp=x; x=y; y=temp`, `x=point[0]; y=point[1]`, `value=calc(); if value>100: process(value)` (duplicate calc)
+✅ Good: `x, y = y, x`, `x, y = point`, `if (value := calc()) > 100: process(value)`
+⚠️ Why: Verbose; misses Python's elegant features; violates "Simple is better than complex"
+🔧 Fix: Use tuple unpacking for swap; unpack function returns; use walrus operator when needed
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 
-- Manual variable swapping
-- Not using tuple unpacking
-- Missing walrus operator (`:=`) when appropriate (Python 3.8+)
-- Verbose assignment patterns
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Manual variable swapping
-temp = x
-x = y
-y = temp
-
-# ❌ WRONG: Not using tuple unpacking
-point = get_point()
-x = point[0]
-y = point[1]
-
-# ❌ WRONG: Verbose assignment
-value = calculate_expensive_operation()
-if value > 100:
-    process(value)
-```
-
-**Why This Is Wrong:**
-
-- Verbose and unnecessary
-- More lines of code
-- Not Pythonic
-- Misses Python's elegant features
-
-**Required: Use Assignment Features**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Tuple unpacking for swapping (PEP 8 compliant)
-x, y = y, x  # Elegant swap
-
-# ✅ CORRECT: Tuple unpacking for multiple assignment
-point = get_point()
-x, y = point  # Unpack tuple directly
-
-# ✅ CORRECT: Extended unpacking
-first, *middle, last = [1, 2, 3, 4, 5]
-# first = 1, middle = [2, 3, 4], last = 5
-
-# ✅ CORRECT: Walrus operator (Python 3.8+)
-if (value := calculate_expensive_operation()) > 100:
-    process(value)
-
-# ✅ CORRECT: Multiple return values
-def get_name_and_age():
-    return 'John', 30
-
-name, age = get_name_and_age()  # Unpack return values
-```
-
-**Impact:**
-
-- Verbose code
-- More lines than necessary
-- Not Pythonic
-- Misses elegant features
-
-**Solution:**
-
-- Use tuple unpacking: `x, y = y, x` for swapping
-- Unpack function returns: `name, age = get_name_and_age()`
-- Use extended unpacking: `first, *rest = items`
-- Use walrus operator (`:=`) for assignment in expressions (Python 3.8+)
-- Leverage Python's assignment features for concise code
+**Detect:** Manual variable swap, index access instead of unpacking, duplicate call when walrus would work
 
 ---
 
-### 1.8 Using Containers to Simplify Logic (CRITICAL)
+### 1.8 Using Containers to Simplify Logic (CRIT)
 
-**CRITICAL:** Employ containers like lists and dictionaries to streamline logic and data management. Use data structures to simplify code.
+**CRITICAL:** Replace if/elif chains with dictionary lookups. Use dicts for mappings and config.
 
-**Detection:**
+❌ Bad: `if status=='success': return 200; elif status=='not_found': return 404; ...`
+✅ Good: `STATUS_CODES = {'success': 200, ...}; return STATUS_CODES.get(status, default)`
+⚠️ Why: Verbose and repetitive; violates "Simple is better than complex"; hard to maintain
+🔧 Fix: Use dict for mappings; use dict.get() with default; use containers for config
+📍 See: `general-llm-anti-patterns.mdc` section 0.1
 
-- Complex if/elif chains that could use dictionaries
-- Not using containers for configuration
-- Repeated lookups that could use dicts
-- Complex logic that containers could simplify
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Complex if/elif chain
-def get_status_code(status):
-    if status == 'success':
-        return 200
-    elif status == 'not_found':
-        return 404
-    elif status == 'error':
-        return 500
-    elif status == 'unauthorized':
-        return 401
-    else:
-        return 400
-
-# ❌ WRONG: Not using containers for configuration
-def process_user_type(user_type):
-    if user_type == 'admin':
-        permissions = ['read', 'write', 'delete']
-        max_storage = 1000
-    elif user_type == 'user':
-        permissions = ['read']
-        max_storage = 100
-    # ... more elifs
-```
-
-**Why This Is Wrong:**
-
-- Verbose and repetitive
-- Hard to maintain
-- Violates "Simple is better than complex"
-- Not using Python's data structures effectively
-
-**Required: Use Containers to Simplify**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Dictionary for mapping (PEP 8 compliant)
-STATUS_CODES = {
-    'success': 200,
-    'not_found': 404,
-    'error': 500,
-    'unauthorized': 401,
-    'default': 400
-}
-
-def get_status_code(status: str) -> int:
-    """Get HTTP status code for status string."""
-    return STATUS_CODES.get(status, STATUS_CODES['default'])
-
-# ✅ CORRECT: Dictionary for configuration
-USER_CONFIG = {
-    'admin': {
-        'permissions': ['read', 'write', 'delete'],
-        'max_storage': 1000
-    },
-    'user': {
-        'permissions': ['read'],
-        'max_storage': 100
-    }
-}
-
-def process_user_type(user_type: str) -> dict:
-    """Get configuration for user type."""
-    return USER_CONFIG.get(user_type, USER_CONFIG['user'])
-```
-
-**Impact:**
-
-- Verbose code
-- Hard to maintain
-- Violates simplicity
-- Not Pythonic
-
-**Solution:**
-
-- Use dictionaries for mappings and lookups
-- Use lists for sequences and iterations
-- Use sets for unique collections and membership testing
-- Replace if/elif chains with dictionary lookups
-- Use containers for configuration data
-- Leverage data structures to simplify logic
+**Detect:** Long if/elif chains for mappings, config in if/elif, repeated lookups without dict
 
 ---
 
-### 1.9 Function Arguments Best Practices (CRITICAL)
+### 1.9 Function Arguments Best Practices (CRIT)
 
-**CRITICAL:** Use appropriate argument passing styles. Prefer explicit positional/keyword arguments over *args/**kwargs.
+**CRITICAL:** Use list param instead of `*args` when clearer. Use keyword args for optional params.
 
-**Detection:**
+❌ Bad: `def send(message, *args)`, `def create_user(name, email, age, address, phone, country, zipcode)`
+✅ Good: `def send(message: str, recipients: list[str])`, keyword args with defaults for optional
+⚠️ Why: Unclear API; hard to remember order; violates "Explicit > implicit"
+🔧 Fix: Use list param for sequences; use keyword args for 3+ optional params; follow YAGNI
+📍 See: `general-llm-anti-patterns.mdc` section 1.2
 
-- Using `*args` when a list parameter would be clearer
-- Using `**kwargs` when specific keyword arguments would work
-- Too many positional arguments (hard to remember order)
-- Inconsistent argument ordering
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: *args when list would be clearer
-def send(message, *args):
-    # args is tuple of recipients - unclear
-    for recipient in args:
-        send_to(recipient, message)
-
-send('Hello', 'God', 'Mom', 'Cthulhu')  # Unclear structure
-
-# ❌ WRONG: Too many positional arguments
-def create_user(name, email, age, address, phone, country, zipcode):
-    # Hard to remember order of 7 arguments
-    pass
-```
-
-**Why This Is Wrong:**
-
-- Unclear API structure
-- Hard to remember argument order
-- Violates "Explicit is better than implicit"
-- Makes function calls error-prone
-
-**Required: Appropriate Argument Styles**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: List parameter is clearer (PEP 8 compliant)
-def send(message: str, recipients: list[str]) -> None:
-    """Send message to list of recipients."""
-    for recipient in recipients:
-        send_to(recipient, message)
-
-send('Hello', ['God', 'Mom', 'Cthulhu'])  # Clear structure
-
-# ✅ CORRECT: Use keyword arguments for optional parameters
-def create_user(
-    name: str,
-    email: str,
-    age: int | None = None,
-    address: str | None = None,
-    phone: str | None = None,
-    country: str | None = None,
-    zipcode: str | None = None
-) -> User:
-    """Create user with optional fields."""
-    # Keyword arguments make it clear what each value represents
-    pass
-
-# Call with keyword arguments for clarity
-create_user('John', 'john@example.com', age=30, country='USA')
-```
-
-**Impact:**
-
-- Unclear APIs
-- Error-prone function calls
-- Violates Python ethos
-- Hard to maintain
-
-**Solution:**
-
-- Use positional arguments for 1-2 mandatory parameters
-- Use keyword arguments with defaults for optional parameters
-- Use list parameter instead of `*args` when appropriate
-- Use specific keyword arguments instead of `**kwargs` when possible
-- Follow YAGNI - don't add optional arguments "just in case"
+**Detect:** `*args` when list clearer, `**kwargs` when specific params work, 5+ positional args
 
 ---
 
-### 1.10 Avoid the Magical Wand (CRITICAL)
+### 1.10 Avoid the Magical Wand (CRIT)
 
-**CRITICAL:** Python allows powerful tricks, but use the most straightforward way. Know when NOT to use them.
+**CRITICAL:** Use straightforward approaches. Prefer `@dataclass` over custom metaclasses.
 
-**Detection:**
+❌ Bad: Custom metaclass for simple data class, modifying import behavior, advanced metaprogramming
+✅ Good: `@dataclass` for data carriers, standard imports, simple classes
+⚠️ Why: Reduces readability; violates "Simple is better than complex"; tool incompatibility
+🔧 Fix: Use `@dataclass` over metaclasses; reserve advanced techniques for proven need
+📍 See: `general-llm-anti-patterns.mdc` section 0.2
 
-- Modifying object creation/instantiation in non-standard ways
-- Changing how Python imports modules
-- Using advanced metaprogramming when simple solution exists
-- Code that requires special knowledge to understand
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Unnecessary magic
-class MetaMagic(type):
-    def __new__(cls, name, bases, dct):
-        # Complex metaclass for simple data class
-        dct['_created'] = True
-        return super().__new__(cls, name, bases, dct)
-
-class User(metaclass=MetaMagic):
-    # Over-engineered for simple use case
-    pass
-```
-
-**Why This Is Wrong:**
-
-- Reduces readability
-- Makes code analysis tools fail
-- Violates "Simple is better than complex"
-- Harder to maintain
-- Requires special knowledge
-
-**Required: Use Straightforward Approaches**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Simple and straightforward (PEP 8 compliant)
-from dataclasses import dataclass
-
-@dataclass
-class User:
-    """User data model."""
-    name: str
-    email: str
-    created: bool = False
-```
-
-**Impact:**
-
-- Reduced readability
-- Tool incompatibility
-- Violates Python ethos
-- Maintenance burden
-
-**Solution:**
-
-- Use standard Python features when possible
-- Reserve advanced techniques for proven necessity
-- Prefer `@dataclass` over custom metaclasses
-- Use standard import mechanisms
-- Document why advanced techniques are needed if used
-- For monkey patching: See section 4.6
+**Detect:** Custom metaclass for simple case, non-standard import hooks, metaprogramming when simple works
 
 ---
 
-### 1.11 We Are All Responsible Users
+### 1.11 We Are All Responsible Users (CRIT)
 
-**CRITICAL:** Python trusts developers. Use conventions (leading underscore) for "private" members, not enforcement.
+**CRITICAL:** Use single underscore for "internal use". Avoid name mangling unless needed.
 
-**Detection:**
+❌ Bad: `self.__name` (name mangling) for simple encapsulation, getter/setter boilerplate
+✅ Good: `self._name` (convention), `@property` for controlled access
+⚠️ Why: Name mangling usually unnecessary; violates "Simple is better than complex"
+🔧 Fix: Use `_` prefix for internal; use `@property` when needed; trust conventions
+📍 See: PEP 8
 
-- Trying to enforce privacy with complex mechanisms
-- Not using naming conventions for private members
-- Over-engineering encapsulation
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Trying to enforce privacy
-class User:
-    def __init__(self):
-        self.__name = None  # Name mangling - usually unnecessary
-    
-    def get_name(self):
-        return self.__name
-    
-    def set_name(self, name):
-        self.__name = name
-```
-
-**Why This Is Wrong:**
-
-- Over-engineered for Python's philosophy
-- Name mangling is usually unnecessary
-- Violates "Simple is better than complex"
-- Not Pythonic
-
-**Required: Use Conventions**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Convention-based privacy (PEP 8 compliant)
-class User:
-    """User class with conventional privacy."""
-    
-    def __init__(self, name: str):
-        self._name = name  # Single underscore = "internal use"
-    
-    @property
-    def name(self) -> str:
-        """Get user name."""
-        return self._name
-    
-    @name.setter
-    def name(self, value: str) -> None:
-        """Set user name."""
-        self._name = value
-```
-
-**Impact:**
-
-- Over-engineering
-- Not Pythonic
-- Violates Python philosophy
-- Unnecessary complexity
-
-**Solution:**
-
-- Use single underscore prefix for "internal use" (convention)
-- Use double underscore only when name mangling is truly needed
-- Trust developers to follow conventions
-- Use properties for controlled access when needed
-- Follow PEP 8 naming conventions
+**Detect:** `__` for simple privacy, complex encapsulation when convention suffices
 
 ---
 
-### 1.12 Simple is Better Than Complex (CRITICAL)
+### 1.12 Simple is Better Than Complex (CRIT)
 
-**CRITICAL:** Prefer simple, straightforward solutions over complex abstractions.
+**CRITICAL:** Prefer simple solutions. Prefer functions over classes for simple operations.
 
-**Detection:**
+❌ Bad: Factory/Builder for simple task, complex class hierarchy for list processing
+✅ Good: `def process_numbers(nums): return [n*2 for n in nums if n>0]`
+⚠️ Why: Over-engineering; violates "Simple is better than complex"; maintenance burden
+🔧 Fix: Start with simplest solution; prefer functions over classes; use `@dataclass` for data
+📍 See: `general-llm-anti-patterns.mdc` section 0.2
 
-- Overly complex class hierarchies for simple problems
-- Unnecessary design patterns (Factory, Builder for simple cases)
-- Complex list comprehensions that would be clearer as loops
-- Premature optimization with complex algorithms
-- Over-engineering simple data structures
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Overly complex for simple task
-class DataProcessorFactory:
-    class ProcessorBuilder:
-        def __init__(self):
-            self._processor = None
-        
-        def with_validator(self, validator):
-            self._processor = ValidatedProcessor(validator)
-            return self
-        
-        def with_transformer(self, transformer):
-            self._processor = TransformedProcessor(transformer)
-            return self
-        
-        def build(self):
-            return self._processor or DefaultProcessor()
-
-# Just to process a list of numbers...
-builder = DataProcessorFactory.ProcessorBuilder()
-processor = builder.with_validator(lambda x: x > 0).build()
-result = processor.process([1, 2, 3])
-```
-
-**Why This Is Wrong:**
-
-- Over-engineered for simple task
-- Violates "Simple is better than complex"
-- Harder to understand and maintain
-- Unnecessary abstraction layers
-- More code to test and maintain
-
-**Required: Keep It Simple**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Simple and direct (PEP 8 compliant)
-def process_numbers(numbers: list[int]) -> list[int]:
-    """Filter and process positive numbers."""
-    return [n * 2 for n in numbers if n > 0]
-
-result = process_numbers([1, 2, 3])
-```
-
-**Impact:**
-
-- Over-engineering
-- Harder to understand
-- Maintenance burden
-- Violates Python ethos
-- Wasted development time
-
-**Solution:**
-
-- Start with simplest solution that works
-- Only add complexity when necessary
-- Prefer functions over classes for simple operations
-- Use list comprehensions when readable, loops when clearer
-- Use `@dataclass` for simple data structures instead of custom classes
+**Detect:** Factory/Builder for simple cases, complex hierarchy for trivial logic, premature patterns
 
 ---
 
-### 1.13 Flat is Better Than Nested (CRITICAL)
+### 1.13 Flat is Better Than Nested (CRIT)
 
-**CRITICAL:** Avoid deep nesting. Use early returns and guard clauses. PEP 8 recommends limiting nesting.
+**CRITICAL:** Avoid 4+ levels of nesting. Use early returns and guard clauses.
 
-**Detection:**
+❌ Bad: `if a: if b: if c: if d: ...` (6 levels), deeply nested if/for
+✅ Good: Early returns `if not user_data: return None`; guard clauses
+⚠️ Why: Hard to read; violates "Flat is better than nested"; error-prone
+🔧 Fix: Use early returns; extract nested logic; limit to 2-3 levels
+📍 See: PEP 8, `general-llm-anti-patterns.mdc` section 0.1
 
-- Functions with 4+ levels of nesting
-- Deeply nested if/for/while statements
-- Nested try/except blocks
-- Nested list comprehensions beyond 2 levels
-- Multiple levels of indentation making code hard to read
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Deeply nested (violates PEP 8 readability)
-def process_user_data(user_data):
-    if user_data:
-        if 'email' in user_data:
-            if user_data['email']:
-                if '@' in user_data['email']:
-                    if 'name' in user_data:
-                        if user_data['name']:
-                            return f"{user_data['name']} <{user_data['email']}>"
-                        else:
-                            return None
-                    else:
-                        return None
-                else:
-                    return None
-            else:
-                return None
-        else:
-            return None
-    else:
-        return None
-```
-
-**Why This Is Wrong:**
-
-- 6 levels of nesting - hard to read
-- Violates "Flat is better than nested"
-- Difficult to test all branches
-- Error-prone (easy to miss a case)
-- Exceeds reasonable indentation levels
-
-**Required: Use Early Returns**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Flat with early returns (PEP 8 compliant)
-def process_user_data(user_data: dict | None) -> str | None:
-    """Process user data, returning formatted string or None."""
-    if not user_data:
-        return None
-    
-    email = user_data.get('email')
-    if not email or '@' not in email:
-        return None
-    
-    name = user_data.get('name')
-    if not name:
-        return None
-    
-    return f"{name} <{email}>"
-```
-
-**Impact:**
-
-- Hard to read (deep nesting)
-- Difficult to test
-- Error-prone
-- Violates Python ethos
-- Exceeds PEP 8 readability guidelines
-
-**Solution:**
-
-- Use early returns for guard clauses
-- Extract nested logic into separate functions
-- Limit nesting to 2-3 levels maximum
-- Use `continue`/`break` in loops to reduce nesting
-- Follow PEP 8's guidance on indentation and readability
+**Detect:** 4+ nesting levels, nested try/except, comprehensions beyond 2 levels
 
 ---
 
-### 1.14 Readability Counts (CRITICAL)
+### 1.14 Readability Counts (CRIT)
 
-**CRITICAL:** Code is read more often than written. Prioritize readability. PEP 8 exists to improve readability.
+**CRITICAL:** Prioritize readability. Add docstrings for public APIs (PEP 257).
 
-**Detection:**
+❌ Bad: `def f(d): return [x for x in [y for y in d.values() if y] if len(x)>5]`, cryptic names
+✅ Good: Descriptive names; docstrings; break complex expressions; PEP 8 spacing
+⚠️ Why: Violates "Readability counts"; hard to maintain; violates PEP 8/257
+🔧 Fix: Use descriptive names; add docstrings; prefer clarity over cleverness; follow PEP 8
+📍 See: PEP 8, PEP 257, `general-llm-anti-patterns.mdc` section 0.1
 
-- Cryptic variable names (`x`, `tmp`, `data`)
-- Overly clever one-liners
-- Missing docstrings for public functions/classes (violates PEP 257)
-- Inconsistent naming conventions (violates PEP 8)
-- Lines exceeding 79 characters without proper wrapping
-- Missing whitespace around operators (violates PEP 8)
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Unreadable, violates PEP 8
-def f(d):
-    return [x for x in [y for y in d.values() if y] if len(x) > 5]
-
-# What does this do? Who knows!
-# No docstring, cryptic names, nested comprehension
-```
-
-**Why This Is Wrong:**
-
-- Cryptic function and variable names
-- Nested comprehension is hard to read
-- No documentation (violates PEP 257)
-- Violates "Readability counts"
-- Doesn't follow PEP 8 naming conventions
-
-**Required: Write Readable Code**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Readable and clear (PEP 8 & PEP 257 compliant)
-def filter_long_strings(data: dict[str, str]) -> list[str]:
-    """
-    Extract non-empty strings longer than 5 characters from dictionary values.
-    
-    Args:
-        data: Dictionary with string values
-    
-    Returns:
-        List of strings meeting criteria
-    """
-    non_empty_values = [value for value in data.values() if value]
-    return [value for value in non_empty_values if len(value) > 5]
-```
-
-**Impact:**
-
-- Unreadable code
-- Hard to maintain
-- Violates Python ethos
-- Difficult to debug
-- Doesn't follow PEP 8/PEP 257
-
-**Solution:**
-
-- Use descriptive variable and function names (PEP 8: `snake_case`)
-- Break complex expressions into steps
-- Add docstrings for public APIs (PEP 257)
-- Follow PEP 8 naming conventions
-- Prefer clarity over cleverness
-- Keep lines under 79 characters (PEP 8)
-- Use proper whitespace (PEP 8)
+**Detect:** Cryptic names (`x`, `tmp`), nested comprehensions 2+ levels, missing docstrings on public APIs
 
 ---
 
-### 1.15 Sparse is Better Than Dense
+### 1.15 Sparse is Better Than Dense (CRIT)
 
-**CRITICAL:** Don't cram too much into single lines or functions. PEP 8 recommends proper spacing.
+**CRITICAL:** Break complex operations into steps. Limit function length (<30 lines).
 
-**Detection:**
+❌ Bad: `result = [x.upper().strip().replace(...) for x in filter(lambda y:..., map(str, data)) if '@' not in x]`
+✅ Good: Intermediate variables; blank lines between functions; one logical op per line
+⚠️ Why: Violates "Sparse is better than dense"; hard to debug; violates PEP 8 spacing
+🔧 Fix: Break into steps; use intermediate vars; limit function length; follow PEP 8 blank lines
+📍 See: PEP 8
 
-- Functions with 50+ lines
-- Multiple operations on single line
-- Dense list comprehensions with multiple conditions
-- Chained method calls spanning 5+ methods
-- Missing blank lines between functions (violates PEP 8)
-- Dense code without proper spacing
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Dense and hard to read (violates PEP 8 spacing)
-result = [x.upper().strip().replace(' ', '_') for x in filter(lambda y: y and len(y) > 3, map(str, data)) if '@' not in x]
-def process():pass
-def another():pass
-# No blank lines between functions - violates PEP 8
-```
-
-**Why This Is Wrong:**
-
-- Too much happening in one line
-- Violates "Sparse is better than dense"
-- Hard to debug
-- Difficult to test individual steps
-- Violates PEP 8 spacing rules
-
-**Required: Break Into Steps**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Sparse and clear (PEP 8 compliant)
-def process_strings(data: list) -> list[str]:
-    """Process and format strings from input data."""
-    # Step 1: Convert to strings
-    string_data = [str(item) for item in data]
-    
-    # Step 2: Filter valid entries
-    valid_strings = [
-        s for s in string_data 
-        if s and len(s) > 3 and '@' not in s
-    ]
-    
-    # Step 3: Format strings
-    return [
-        s.upper().strip().replace(' ', '_')
-        for s in valid_strings
-    ]
-
-
-def another_function():
-    """Another function with proper spacing."""
-    pass
-```
-
-**Impact:**
-
-- Dense, unreadable code
-- Hard to debug
-- Difficult to test
-- Violates Python ethos
-- Violates PEP 8 spacing
-
-**Solution:**
-
-- Break complex operations into steps
-- Use intermediate variables with clear names
-- Limit function length (aim for <30 lines)
-- One logical operation per line
-- Follow PEP 8 blank line rules (2 between top-level, 1 between methods)
+**Detect:** 50+ line functions, multiple ops on one line, chained calls 5+ methods, missing blank lines
 
 ---
 
 ## Category 2: Python Idioms & Conventions
 
-### 2.1 Truth Value Testing (CRITICAL)
+### 2.1 Truth Value Testing (CRIT)
 
-**CRITICAL:** Use Python's truthiness. Don't explicitly compare to `True`, `False`, `None`, or `0`.
+**CRITICAL:** Use truthiness. Use `is None` for None, `not seq` for empty sequences.
 
-**Detection:**
+❌ Bad: `if attr == True:`, `if attr == None:`, `if len(seq) == 0:`
+✅ Good: `if attr:`, `if attr is None:`, `if not seq:`
+⚠️ Why: Not Pythonic; verbose; violates conventions
+🔧 Fix: Use truthiness; `is None` not `== None`; `not seq` not `len(seq)==0`
+📍 See: PEP 8
 
-- `if attr == True:` or `if attr == False:`
-- `if attr == None:` (should use `is None`)
-- `if len(seq) == 0:` (should use `not seq`)
-- `if count > 0:` when `if count:` would work
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Explicit comparisons to constants
-if attr == True:
-    print('True!')
-
-if attr == None:
-    print('attr is None!')
-
-if len(seq) == 0:
-    print('Empty!')
-```
-
-**Why This Is Wrong:**
-
-- Not Pythonic
-- Verbose and unnecessary
-- Violates Python conventions
-- Less readable
-
-**Required: Use Truthiness**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Use truthiness (Pythonic)
-if attr:
-    print('attr is truthy!')
-
-if not attr:
-    print('attr is falsey!')
-
-if attr is None:  # Use 'is' for None comparison
-    print('attr is None!')
-
-if not seq:  # Empty sequences are falsy
-    print('Empty!')
-```
-
-**Impact:**
-
-- Not Pythonic
-- Verbose code
-- Less readable
-- Violates conventions
-
-**Solution:**
-
-- Use truthiness: `if value:` instead of `if value == True:`
-- Use `is None` for None comparisons (not `== None`)
-- Use `not seq` for empty sequences (not `len(seq) == 0`)
-- Use `if count:` instead of `if count > 0:` when appropriate
-- Follow Python's truth value testing rules
+**Detect:** `== True`/`== False`, `== None`, `len(seq)==0`, `count>0` when `count` suffices
 
 ---
 
-### 2.2 Dictionary Access (CRITICAL)
+### 2.2 Dictionary Access (CRIT)
 
-**CRITICAL:** Use `in` operator or `.get()` method. Never use `.has_key()` (removed in Python 3).
+**CRITICAL:** Use `dict.get(key, default)` for safe access. Never use `dict.has_key()` (Python 2).
 
-**Detection:**
+❌ Bad: `d.has_key('key')`, `d['key']` without checking, KeyError risk
+✅ Good: `'key' in d`, `d.get('key', default)`, use `.get()` for optional access
+⚠️ Why: `.has_key()` removed in Python 3; KeyError risk; not Pythonic
+🔧 Fix: Use `in` operator; use `.get()` with default; use `[key]` only when key exists
+📍 See: PEP 8
 
-- Using `dict.has_key()` method
-- Using `dict[key]` without checking if key exists
-- Not using `.get()` with default values
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Using deprecated has_key()
-d = {'hello': 'world'}
-if d.has_key('hello'):
-    print(d['hello'])
-else:
-    print('default_value')
-
-# ❌ WRONG: KeyError risk
-value = d['nonexistent']  # Raises KeyError
-```
-
-**Why This Is Wrong:**
-
-- `.has_key()` removed in Python 3
-- Risk of KeyError
-- Not Pythonic
-- Verbose code
-
-**Required: Use Modern Dictionary Access**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Modern dictionary access (Pythonic)
-d = {'hello': 'world'}
-
-# Use .get() with default
-print(d.get('hello', 'default_value'))  # prints 'world'
-print(d.get('thingy', 'default_value'))  # prints 'default_value'
-
-# Or use 'in' operator
-if 'hello' in d:
-    print(d['hello'])
-```
-
-**Impact:**
-
-- Code won't work in Python 3
-- Risk of KeyError
-- Not Pythonic
-- Verbose
-
-**Solution:**
-
-- Use `key in dict` instead of `dict.has_key(key)`
-- Use `dict.get(key, default)` for safe access with defaults
-- Use `dict[key]` only when key is guaranteed to exist
-- Prefer `.get()` for optional dictionary access
+**Detect:** `has_key()`, `[key]` without existence check, no default on optional access
 
 ---
 
-### 2.3 Sets vs Lists for Membership Testing (CRITICAL)
+### 2.3 Sets vs Lists for Membership Testing (CRIT)
 
-**CRITICAL:** Use sets or dictionaries for membership testing when you have many items or repeated searches. Lists have O(n) complexity, sets have O(1).
+**CRITICAL:** Use sets for membership when many items or repeated searches. O(1) vs O(n).
 
-**Detection:**
+❌ Bad: `valid_ids = [1,2,...10000]; if id in valid_ids` (O(n) per lookup)
+✅ Good: `valid_ids = {1,2,...10000}` or `set(lst)`; O(1) lookup
+⚠️ Why: List `in` is O(n); set `in` is O(1); slow for large/repeated
+🔧 Fix: Use set when duplicates not needed and repeated membership; convert list to set once
+📍 See: `general-llm-anti-patterns.mdc` section 2.3
 
-- Using `in` operator with lists for large collections
-- Repeated membership testing on lists
-- Not converting lists to sets when appropriate
-- Using lists when duplicates aren't needed
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: List membership testing (O(n) complexity)
-valid_ids = [1, 2, 3, 4, 5, ..., 10000]  # Large list
-
-# Repeated searches - each is O(n)
-for user_id in user_list:
-    if user_id in valid_ids:  # Slow for large lists!
-        process_user(user_id)
-```
-
-**Why This Is Wrong:**
-
-- Lists have O(n) time complexity for membership testing
-- Python must check each item until match found
-- Very slow for large lists or repeated searches
-- Sets use hash tables for O(1) lookup
-- Violates performance best practices
-
-**Required: Use Sets for Membership Testing**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Set membership testing (O(1) complexity)
-valid_ids = {1, 2, 3, 4, 5, ..., 10000}  # Set, not list
-
-# Fast O(1) lookups
-for user_id in user_list:
-    if user_id in valid_ids:  # Fast hash-based lookup!
-        process_user(user_id)
-
-# ✅ CORRECT: Convert list to set when needed
-valid_ids = set([1, 2, 3, 4, 5])  # Convert once, use many times
-```
-
-**Impact:**
-
-- Poor performance (O(n) vs O(1))
-- Slow execution for large datasets
-- Wasted CPU cycles
-- Not optimal for repeated searches
-
-**Solution:**
-
-- Use sets when:
-  - Collection will contain large number of items
-  - You'll repeatedly search for items
-  - You don't need duplicate items
-  - Order doesn't matter
-- Use lists when:
-  - You need to preserve order
-  - You need duplicates
-  - Collection is small (< 100 items)
-  - You're not doing repeated membership tests
-- Convert lists to sets for repeated membership testing
-- Use dictionaries for key-value lookups (also O(1))
+**Detect:** List for repeated membership, large collection with `in` on list
 
 ---
 
-### 2.4 List Comprehensions and Generator Expressions (CRITICAL)
+### 2.4 List Comprehensions and Generator Expressions (CRIT)
 
-**CRITICAL:** Use list comprehensions for creating lists, generator expressions for iteration. Don't use for side effects. Prefer comprehensions over verbose loops.
+**CRITICAL:** Use comprehensions for lists; generators for iteration. Don't use for side effects.
 
-**Detection:**
+❌ Bad: `[print(x) for x in seq]`, `max([...])` when `max((...))` works, verbose loop when comp clearer
+✅ Good: Loop for side effects; comprehension for list; generator `(...)` when just iterating
+⚠️ Why: Comprehension for side effects wastes memory; generator saves memory; verbose when comp clearer
+🔧 Fix: Use loop for side effects; use generator expression when iterating only; prefer comprehension over verbose loop
+📍 See: PEP 8
 
-- Using list comprehension for side effects only
-- Creating list when generator would work
-- Complex comprehensions that should be loops
-- Not using generator expressions for large datasets
-- Verbose loops when comprehensions would be clearer
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: List comprehension for side effects
-[print(x) for x in sequence]
-
-# ❌ WRONG: Verbose loop when comprehension would work
-result = []
-for x in range(10):
-    if x % 2 == 0:
-        result.append(x * 2)
-
-# ❌ WRONG: Creating list when generator would work
-valedictorian = max([(student.gpa, student.name) for student in graduates])
-# Needlessly allocates entire list in memory
-```
-
-**Why This Is Wrong:**
-
-- List comprehension creates unnecessary list for side effects
-- Verbose code when comprehension is clearer
-- Wastes memory
-- Not intended for side effects
-- Violates "Simple is better than complex"
-- Not Pythonic
-
-**Required: Use Comprehensions Appropriately**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Loop for side effects
-for x in sequence:
-    print(x)
-
-# ✅ CORRECT: List comprehension over verbose loop
-result = [x * 2 for x in range(10) if x % 2 == 0]
-
-# ✅ CORRECT: Generator expression for iteration
-valedictorian = max((student.gpa, student.name) for student in graduates)
-# Generator doesn't create list - more memory efficient
-
-# ✅ CORRECT: List comprehension when list is needed
-squared = [x**2 for x in range(10)]  # Need the list
-```
-
-**Impact:**
-
-- Memory waste
-- Verbose code
-- Not Pythonic
-- Violates conventions
-- Unclear intent
-
-**Solution:**
-
-- Use list comprehensions when you need a list (prefer over verbose loops)
-- Use generator expressions when just iterating
-- Use loops for side effects, not comprehensions
-- Prefer generators for large datasets
-- Use generator functions for complex logic
-- List comprehensions are more Pythonic than verbose loops
+**Detect:** Comprehension for side effects only, list when generator works, verbose loop when comprehension clearer
 
 ---
 
-### 2.5 Filtering Lists (CRITICAL)
+### 2.5 Filtering Lists (CRIT)
 
-**CRITICAL:** Never modify a list while iterating. Use list comprehension or generator expression to create new list.
+**CRITICAL:** Never modify a list while iterating. Create new list with comprehension.
 
-**Detection:**
+❌ Bad: `for i in lst: lst.remove(i)`, `while x in lst: lst.remove(x)`
+✅ Good: `filtered = [v for v in seq if v != x]`, `seq[::] = [v for v in seq if v != x]` for in-place
+⚠️ Why: Modifying during iteration skips elements; unpredictable; violates `general-llm-anti-patterns`
+🔧 Fix: Use comprehension to create new list; use slice assignment if must modify original
+📍 See: `general-llm-anti-patterns.mdc` section 2.1
 
-- Removing items from list during iteration
-- Modifying list in loop
-- Multiple passes through list to remove items
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Modifying list during iteration
-num_list = [1, 2, 3]
-for i in num_list:
-    if i > 2:
-        num_list.remove(i)  # Dangerous - modifies while iterating!
-
-# ❌ WRONG: Multiple passes
-while i in num_list:
-    num_list.remove(i)  # Inefficient
-```
-
-**Why This Is Wrong:**
-
-- Can skip elements or raise errors
-- Inefficient (multiple passes)
-- Unpredictable behavior
-- Not Pythonic
-- Can lead to subtle bugs with multiple references
-
-**Required: Create New List**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: List comprehension creates new list
-filtered_values = [value for value in sequence if value != x]
-
-# ✅ CORRECT: Generator expression (more memory efficient)
-filtered_values = (value for value in sequence if value != x)
-
-# ✅ CORRECT: Slice assignment if you must modify original
-sequence[::] = [value for value in sequence if value != x]
-```
-
-**Impact:**
-
-- Unpredictable behavior
-- Potential errors
-- Inefficient
-- Not Pythonic
-- Subtle bugs
-
-**Solution:**
-
-- Use list comprehension to create new filtered list
-- Use generator expression for memory efficiency
-- Use slice assignment only if you must modify original
-- Never modify list during iteration
-- Create new list, don't modify in place
+**Detect:** `remove()` in loop, modifying list during iteration, multiple passes to remove
 
 ---
 
-### 2.6 Modifying List Values (CRITICAL)
+### 2.6 Modifying List Values (CRIT)
 
-**CRITICAL:** Remember assignment never creates new object. Create new list to avoid shared references.
+**CRITICAL:** Assignment creates reference, not copy. Use `enumerate()` when index needed.
 
-**Detection:**
+❌ Bad: `b=a; for i in range(len(a)): a[i]+=3` (b changes), `range(len(a))` when enumerate works
+✅ Good: `a = [i+3 for i in a]` for new list; `b=a[:]` for copy; `enumerate(a)` for index
+⚠️ Why: Shared reference causes unexpected side effects; manual counter not Pythonic
+🔧 Fix: Create new list for independent copy; use `enumerate()`; use `[:]` for shallow copy
+📍 See: `general-llm-anti-patterns.mdc` section 1.6
 
-- Modifying list that other variables reference
-- Not using `enumerate()` when index is needed
-- Mutating shared list objects
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Shared reference problem
-a = [3, 4, 5]
-b = a  # a and b refer to same list object
-
-for i in range(len(a)):
-    a[i] += 3  # b[i] also changes unexpectedly!
-
-# ❌ WRONG: Manual counter
-for i in range(len(a)):
-    print(i, a[i])  # Not Pythonic
-```
-
-**Why This Is Wrong:**
-
-- Unexpected side effects (b changes when a changes)
-- Not Pythonic (manual counter)
-- Violates "Explicit is better than implicit"
-- Hard to debug
-
-**Required: Create New List or Use enumerate()**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Create new list
-a = [3, 4, 5]
-b = a
-
-# Assign variable "a" to new list without changing "b"
-a = [i + 3 for i in a]
-
-# ✅ CORRECT: Better way to copy list
-b = a[:]  # Creates shallow copy
-
-# ✅ CORRECT: Use enumerate()
-a = [3, 4, 5]
-for i, item in enumerate(a):
-    print(i, item)
-# prints:
-# 0 3
-# 1 4
-# 2 5
-```
-
-**Impact:**
-
-- Unexpected side effects
-- Not Pythonic
-- Hard to debug
-- Violates Python ethos
-
-**Solution:**
-
-- Create new list when you need independent copy
-- Use `enumerate()` instead of manual counters
-- Understand that assignment creates reference, not copy
-- Use list comprehension to create new list
-- Use `list[:]` for shallow copy when needed
-- Be explicit about whether you're modifying or creating
+**Detect:** Mutating shared list, `range(len())` when enumerate works, reference vs copy confusion
 
 ---
 
-### 2.7 File Handling (CRITICAL)
+### 2.7 File Handling (CRIT)
 
-**CRITICAL:** Always use `with open()` statement. Never manually close files.
+**CRITICAL:** Always use `with open()`. Never manually close files.
 
-**Detection:**
+❌ Bad: `f = open('file.txt'); ...; f.close()` (resource leak on exception)
+✅ Good: `with open('file.txt') as f: ...` (auto-close on exception)
+⚠️ Why: File may not close on exception; resource leak; not Pythonic
+🔧 Fix: Use `with open()`; use `pathlib.Path` for modern handling; never manual `close()`
+📍 See: `general-llm-anti-patterns.mdc` section 5.4
 
-- Manual `open()` and `close()` calls
-- Files not closed on exceptions
-- Not using context managers
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Manual file handling
-f = open('file.txt')
-a = f.read()
-print(a)
-f.close()  # What if exception occurs before this?
-```
-
-**Why This Is Wrong:**
-
-- File may not close if exception occurs
-- Resource leak
-- Not Pythonic
-- Violates PEP 8 recommendations
-
-**Required: Use Context Managers**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Context manager (PEP 8 compliant)
-with open('file.txt') as f:
-    for line in f:
-        print(line)
-# File automatically closed, even on exception
-```
-
-**Impact:**
-
-- Resource leaks
-- Error-prone
-- Not Pythonic
-- Violates best practices
-
-**Solution:**
-
-- Always use `with open()` for file operations
-- Files automatically close, even on exceptions
-- Use `pathlib.Path` for modern file handling
-- Never manually call `close()`
-- Use context managers for all resources
+**Detect:** Manual open/close, file not in context manager, resource not released on exception
 
 ---
 
-### 2.8 Line Continuations (CRITICAL)
+### 2.8 Line Continuations (CRIT)
 
-**CRITICAL:** Use parentheses for line continuations. Never use backslashes (fragile and error-prone).
+**CRITICAL:** Use parentheses for line continuation. Never use backslashes (fragile).
 
-**Detection:**
+❌ Bad: `line1 \` or `from x import a, b \` (backslash continuation)
+✅ Good: Parentheses `(line1, line2)` or `from x import (a, b, c)` for continuation
+⚠️ Why: Backslash fragile (whitespace breaks it); error-prone; not Pythonic
+🔧 Fix: Use parentheses for implicit continuation; use brackets for lists; never backslashes
+📍 See: PEP 8
 
-- Using backslashes (`\`) for line continuation
-- Trailing whitespace after backslash
-- Not using parentheses/brackets for continuation
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Backslash continuation (fragile)
-my_very_big_string = """For a long time I used to go to bed early. Sometimes, \
-    when I had put out my candle, my eyes would close so quickly that I had not even \
-    time to say "I'm going to sleep.""""
-
-from some.deep.module.inside.a.module import a_nice_function, another_nice_function, \
-    yet_another_nice_function
-```
-
-**Why This Is Wrong:**
-
-- Backslash is fragile (whitespace breaks it)
-- Hard to maintain
-- Not Pythonic
-- Error-prone
-
-**Required: Use Parentheses**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Parentheses for continuation (PEP 8 compliant)
-my_very_big_string = (
-    "For a long time I used to go to bed early. Sometimes, "
-    "when I had put out my candle, my eyes would close so quickly "
-    "that I had not even time to say \"I'm going to sleep.\""
-)
-
-from some.deep.module.inside.a.module import (
-    a_nice_function, another_nice_function, yet_another_nice_function
-)
-```
-
-**Impact:**
-
-- Fragile code
-- Hard to maintain
-- Error-prone
-- Not Pythonic
-
-**Solution:**
-
-- Use parentheses for implicit line continuation
-- Use brackets/braces for lists/dicts
-- Never use backslashes
-- Python automatically joins lines inside parentheses
-- More robust and readable
+**Detect:** Backslash line continuation, trailing whitespace after backslash
 
 ---
 
@@ -1809,1335 +397,251 @@ from some.deep.module.inside.a.module import (
 
 ## Category 3: PEP 8 Compliance
 
-### 3.1 Indentation (CRITICAL)
+### 3.1 Indentation (CRIT)
 
-**CRITICAL:** Use 4 spaces per indentation level. Never mix tabs and spaces.
+**CRITICAL:** Use 4 spaces per level. Never mix tabs and spaces.
 
-**Detection:**
+❌ Bad: Tabs, mixing tabs/spaces, 2 or 8 spaces instead of 4
+✅ Good: 4 spaces per level; use `python -m tabnanny` to check
+⚠️ Why: PEP 8 requires 4 spaces; tabs cause editor issues; mixing breaks Python
+🔧 Fix: Configure editor 4 spaces; never tabs; use tabnanny
+📍 See: PEP 8
 
-- Tabs used for indentation
-- Mixing tabs and spaces
-- Inconsistent indentation (2 spaces, 8 spaces, etc.)
-- Continuation lines not properly indented
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Tabs or inconsistent indentation
-def process_data(data):
-    # Tab indentation - WRONG
-    if data:  # Mixed tabs and spaces
-      result = []  # 2 spaces - inconsistent
-        for item in data:  # 8 spaces - wrong
-            result.append(item)
-```
-
-**Why This Is Wrong:**
-
-- PEP 8 requires 4 spaces
-- Tabs cause issues across editors
-- Inconsistent indentation breaks Python
-- Violates PEP 8 standard
-
-**Required: 4 Spaces Always**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: 4 spaces per level (PEP 8 compliant)
-def process_data(data: list) -> list:
-    """Process data items."""
-    if data:
-        result = []
-        for item in data:
-            result.append(item)
-        return result
-    return []
-```
-
-**Impact:**
-
-- Syntax errors (mixing tabs/spaces)
-- Inconsistent appearance
-- Violates PEP 8
-- Editor compatibility issues
-
-**Solution:**
-
-- Configure editor to use 4 spaces for Python
-- Never use tabs
-- Use editor settings to show whitespace
-- Use `python -m tabnanny` to check for issues
+**Detect:** Tabs for indentation, mixed tabs/spaces, inconsistent indentation
 
 ---
 
-### 3.2 Line Length (CRITICAL)
+### 3.2 Line Length (CRIT)
 
-**CRITICAL:** Limit lines to 79 characters (99 for team agreement). Docstrings/comments to 72.
+**CRITICAL:** Limit lines to 79 chars (99 team agreement). Docstrings/comments 72 chars.
 
-**Detection:**
+❌ Bad: Lines >79 chars without wrapping, docstrings >72 chars
+✅ Good: Use parentheses for wrapping; hanging indents for params; use `black`
+⚠️ Why: Violates PEP 8; hard to read in diffs; poor code review
+🔧 Fix: Wrap at 79; use parentheses; keep docstrings 72; use black formatter
+📍 See: PEP 8
 
-- Lines exceeding 79 characters without wrapping
-- Long lines that could be broken
-- Docstrings exceeding 72 characters per line
-- Not using proper line continuation
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Lines too long (violates PEP 8)
-def process_user_data_with_multiple_parameters(user_name, user_email, user_age, user_address, user_phone):
-    # This line is way too long and violates PEP 8
-    result = f"User {user_name} with email {user_email} and age {user_age} lives at {user_address} and can be reached at {user_phone}"
-    return result
-```
-
-**Why This Is Wrong:**
-
-- Violates PEP 8 line length (79 chars)
-- Hard to read in side-by-side diffs
-- Doesn't work well in code review tools
-- Violates Python style guide
-
-**Required: Proper Line Wrapping**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Properly wrapped (PEP 8 compliant)
-def process_user_data_with_multiple_parameters(
-    user_name: str,
-    user_email: str,
-    user_age: int,
-    user_address: str,
-    user_phone: str
-) -> str:
-    """
-    Process user data with multiple parameters.
-    
-    This is a longer docstring that explains the function
-    in detail, but each line stays within 72 characters
-    as recommended by PEP 8 for docstrings.
-    """
-    result = (
-        f"User {user_name} with email {user_email} "
-        f"and age {user_age} lives at {user_address} "
-        f"and can be reached at {user_phone}"
-    )
-    return result
-```
-
-**Impact:**
-
-- Hard to read in narrow editors
-- Poor code review experience
-- Violates PEP 8
-- Unprofessional appearance
-
-**Solution:**
-
-- Wrap lines at 79 characters (use 99 if team agrees)
-- Use parentheses for implicit line continuation
-- Use hanging indents for function parameters
-- Keep docstrings to 72 characters per line
-- Use `black` formatter (defaults to 88, configurable)
+**Detect:** Lines >79 chars, long docstrings, no proper line continuation
 
 ---
 
-### 3.3 Import Organization (CRITICAL)
+### 3.3 Import Organization (CRIT)
 
-**CRITICAL:** Organize imports: standard library → third-party → local. Each group separated by blank line.
+**CRITICAL:** Organize imports: stdlib → third-party → local. Blank line between groups.
 
-**Detection:**
+❌ Bad: Mixed import groups, no blank lines, unused imports, unsorted
+✅ Good: stdlib → third-party → local; blank line between; use `isort`
+⚠️ Why: Violates PEP 8; unclear dependencies; hard to maintain
+🔧 Fix: Group imports; blank line between groups; sort; remove unused; use isort
+📍 See: PEP 8
 
-- Imports not grouped
-- Missing blank lines between import groups
-- Imports not sorted alphabetically
-- Mixing `from` and `import` styles inconsistently
-- Unused imports
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Disorganized imports (violates PEP 8)
-from mymodule import something
-import os
-from thirdparty import library
-import sys
-from another_local import module
-```
-
-**Why This Is Wrong:**
-
-- Violates PEP 8 import organization
-- Hard to see dependencies
-- Unprofessional
-- Makes it unclear what's standard vs third-party
-
-**Required: Organized Imports**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Properly organized (PEP 8 compliant)
-# Standard library imports
-import os
-import sys
-from typing import Optional
-
-# Third-party imports
-import requests
-from django.core import management
-
-# Local application imports
-from myapp.models import User
-from myapp.utils import helper_function
-```
-
-**Impact:**
-
-- Unclear dependencies
-- Violates PEP 8
-- Harder to maintain
-- Unprofessional
-
-**Solution:**
-
-- Group imports: stdlib → third-party → local
-- Separate groups with blank line
-- Sort alphabetically within groups
-- Use `isort` to automatically organize
-- Remove unused imports
+**Detect:** Imports not grouped, missing blank lines, unused imports, inconsistent order
 
 ---
 
-### 3.4 Naming Conventions (CRITICAL)
+### 3.4 Naming Conventions (CRIT)
 
-**CRITICAL:** Follow PEP 8 naming: `snake_case` functions/variables, `PascalCase` classes, `UPPER_CASE` constants.
+**CRITICAL:** PEP 8: `snake_case` functions/vars, `PascalCase` classes, `UPPER_CASE` constants.
 
-**Detection:**
+❌ Bad: `camelCase` for functions, `snake_case` for classes, inconsistent naming
+✅ Good: `snake_case` functions/vars, `PascalCase` classes, `UPPER_CASE` constants
+⚠️ Why: Violates PEP 8; inconsistent with Python community; harder to read
+🔧 Fix: Follow PEP 8 exactly; snake_case for funcs/vars; PascalCase for classes
+📍 See: PEP 8, section 1.1
 
-- `camelCase` for functions/variables
-- `snake_case` for classes
-- Inconsistent naming
-- Single-letter variables (except in comprehensions)
-- Names that don't describe purpose
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Wrong naming conventions (violates PEP 8)
-class userManager:  # Should be PascalCase
-    def getUserData(self):  # Should be snake_case
-        userCount = 0  # Should be snake_case
-        MAX_USERS = 100  # OK, but should be module-level
-        return userCount
-```
-
-**Why This Is Wrong:**
-
-- Violates PEP 8 naming conventions
-- Inconsistent with Python community
-- Harder to read
-- Unprofessional
-
-**Required: PEP 8 Naming**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Proper naming (PEP 8 compliant)
-MAX_USERS = 100  # Module-level constant
-
-
-class UserManager:  # PascalCase for classes
-    """Manage user operations."""
-    
-    def get_user_data(self) -> dict:  # snake_case for methods
-        """Get user data."""
-        user_count = 0  # snake_case for variables
-        return {'count': user_count}
-```
-
-**Impact:**
-
-- Inconsistent code
-- Violates PEP 8
-- Harder to read
-- Unprofessional
-
-**Solution:**
-
-- Functions/variables: `snake_case`
-- Classes: `PascalCase`
-- Constants: `UPPER_CASE`
-- Private: `_leading_underscore`
-- Use descriptive names, not abbreviations
-- Follow PEP 8 naming guidelines exactly
+**Detect:** camelCase for functions, snake_case for classes, single-letter vars (except loops)
 
 ---
 
-### 3.5 Whitespace Usage (CRITICAL)
+### 3.5 Whitespace Usage (CRIT)
 
-**CRITICAL:** Use whitespace properly: space around operators, after commas, but not inside parentheses.
+**CRITICAL:** Space around operators, after commas; not inside parentheses.
 
-**Detection:**
+❌ Bad: `def calc(x,y,z):`, `result=x+y*z`, `return( result )`
+✅ Good: Space around operators; space after comma; no space inside parens; use `black`
+⚠️ Why: Violates PEP 8; harder to read; inconsistent
+🔧 Fix: Space around operators; space after comma; use black/autopep8
+📍 See: PEP 8
 
-- Missing spaces around operators
-- Extra spaces inside parentheses/brackets
-- Missing space after comma
-- Inconsistent spacing
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Incorrect whitespace (violates PEP 8)
-def calculate(x,y,z):
-    result=x+y*z
-    if result>100:
-        return( result )
-    list=[1,2,3]
-    dict={'key':'value'}
-```
-
-**Why This Is Wrong:**
-
-- Violates PEP 8 whitespace rules
-- Harder to read
-- Inconsistent
-- Unprofessional
-
-**Required: Proper Whitespace**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Proper whitespace (PEP 8 compliant)
-def calculate(x, y, z):
-    """Calculate result from three values."""
-    result = x + y * z
-    if result > 100:
-        return result
-    my_list = [1, 2, 3]
-    my_dict = {'key': 'value'}
-```
-
-**Impact:**
-
-- Harder to read
-- Violates PEP 8
-- Inconsistent
-- Unprofessional
-
-**Solution:**
-
-- Space around operators: `x + y`, not `x+y`
-- Space after comma: `x, y`, not `x,y`
-- No space inside parentheses: `(x)`, not `( x )`
-- Use `black` or `autopep8` for automatic formatting
+**Detect:** Missing spaces around operators, no space after comma, extra space inside parens
 
 ---
 
 ## Category 4: Python-Specific Anti-Patterns
 
-### 4.1 Misuse of `*args` and `**kwargs`
+### 4.1 Misuse of `*args` and `**kwargs` (CRIT)
 
-**CRITICAL:** Don't use `*args`/`**kwargs` as a catch-all when specific parameters are clearer.
+**CRITICAL:** Use explicit parameters when 2-3 specific params suffice. Don't catch-all with *args/**kwargs.
 
-**Detection:**
+❌ Bad: `def create_user(*args, **kwargs):` when explicit params clearer, no type hints for kwargs
+✅ Good: Explicit params; use *args/**kwargs only for decorators/wrappers; TypedDict for kwargs
+⚠️ Why: Unclear API; no type checking; violates "Explicit > implicit"
+🔧 Fix: Use explicit params when possible; document expected params; use TypedDict for kwargs
+📍 See: section 1.9, `general-llm-anti-patterns.mdc` section 1.2
 
-- Functions using `*args`/`**kwargs` when 2-3 specific parameters would work
-- `**kwargs` passed through multiple layers without validation
-- No type hints for `*args`/`**kwargs`
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Unclear what parameters are expected
-def create_user(*args, **kwargs):
-    # What parameters does this actually need?
-    user = User()
-    if 'name' in kwargs:
-        user.name = kwargs['name']
-    if 'email' in kwargs:
-        user.email = kwargs['email']
-    # ... 10 more if statements
-    return user
-```
-
-**Why This Is Wrong:**
-
-- Unclear API (what parameters are valid?)
-- No type checking possible
-- Easy to pass wrong parameters
-- Violates "Explicit is better than implicit"
-- Violates PEP 8 principle of clarity
-
-**Required: Use Explicit Parameters**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Explicit parameters (PEP 8 compliant)
-def create_user(
-    name: str,
-    email: str,
-    age: int | None = None,
-    **extra_fields: str
-) -> User:
-    """
-    Create a new user.
-    
-    Args:
-        name: User's full name
-        email: User's email address
-        age: Optional age
-        **extra_fields: Additional fields as keyword arguments
-    
-    Returns:
-        New User instance
-    """
-    user = User(name=name, email=email, age=age)
-    # Handle extra fields if needed
-    for key, value in extra_fields.items():
-        setattr(user, key, value)
-    return user
-```
-
-**Impact:**
-
-- Unclear API
-- No type safety
-- Runtime errors from typos
-- Violates Python ethos
-- Poor IDE support
-
-**Solution:**
-
-- Use explicit parameters when possible
-- Only use `*args`/`**kwargs` when truly needed (decorators, wrappers)
-- Document expected parameters (PEP 257)
-- Use type hints with `TypedDict` for `**kwargs` when possible
-- Use `Unpack` for typed kwargs in Python 3.12+
+**Detect:** *args/**kwargs when 2-3 explicit params work, kwargs passed through without validation
 
 ---
 
-### 4.2 Improper Exception Handling
+### 4.2 Improper Exception Handling (CRIT)
 
-**CRITICAL:** Follow "Errors should never pass silently. Unless explicitly silenced." (PEP 20)
+**CRITICAL:** Never use bare `except:`. Catch specific exceptions. Log or propagate errors.
 
-**Detection:**
+❌ Bad: `except: pass`, `except Exception: return False` (swallows all), try clause too broad
+✅ Good: Specific exceptions; log before handle; re-raise when needed; minimal try clause
+⚠️ Why: Violates PEP 20 "Errors should never pass silently"; hidden bugs; silent data loss
+🔧 Fix: Catch specific exceptions; log errors; limit try to minimum; document if silenced
+📍 See: `general-llm-anti-patterns.mdc` section 5.3
 
-- Bare `except:` clauses (violates PEP 8)
-- `except Exception:` that swallows all errors
-- Silent failures without logging
-- Catching exceptions just to ignore them
-- Not limiting `try` clause to minimum code
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Silent failure (violates PEP 20 & PEP 8)
-def process_data(data):
-    try:
-        result = expensive_operation(data)
-        return result
-    except:  # Bare except - PEP 8 violation
-        # Silent failure - error is lost
-        pass
-
-# ❌ WRONG: Too broad try clause
-def save_user(user):
-    try:
-        # Too broad! Catches errors from helper too
-        result = validate_user(user)
-        database.save(user)
-        send_email(user)
-        return result
-    except Exception:  # Too broad
-        return False
-```
-
-**Why This Is Wrong:**
-
-- Errors are hidden (violates PEP 20)
-- No debugging information
-- Silent data loss
-- Violates "Errors should never pass silently"
-- PEP 8 recommends specific exceptions
-- Too broad try clause masks bugs
-
-**Required: Handle or Log Errors**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Specific exception handling (PEP 8 compliant)
-def process_data(data: dict) -> dict | None:
-    """Process data, returning result or None on error."""
-    try:
-        result = expensive_operation(data)
-    except ValidationError as e:
-        logger.warning(f"Validation failed: {e}")
-        return None
-    except ProcessingError as e:
-        logger.error(f"Processing failed: {e}", exc_info=True)
-        raise  # Re-raise if it's a critical error
-    else:
-        return result
-
-# ✅ CORRECT: Minimal try clause
-def save_user(user: User) -> bool:
-    """Save user to database."""
-    try:
-        value = database.get_user(user.id)
-    except KeyError:
-        return handle_missing_user(user.id)
-    else:
-        database.save(user)
-        return True
-```
-
-**Impact:**
-
-- Hidden bugs
-- Difficult debugging
-- Silent failures
-- Violates PEP 20
-- Violates PEP 8 recommendations
-
-**Solution:**
-
-- Catch specific exceptions, not bare `except:`
-- Always log errors before handling
-- Re-raise if error should propagate
-- Limit `try` clause to minimum code (PEP 8)
-- Use `except Exception:` only when printing/logging traceback
-- Document why errors are silenced if necessary
+**Detect:** Bare except, except Exception without logging, try clause too broad, silent pass
 
 ---
 
-### 4.3 Type Hint Neglect
+### 4.3 Type Hint Neglect (CRIT)
 
-**CRITICAL:** Use type hints for function parameters and return values (PEP 484, Python 3.5+).
+**CRITICAL:** Use type hints for params and return (PEP 484). Use `|` for union (3.10+).
 
-**Detection:**
+❌ Bad: `def process(data, options):` (no hints), `Any` to avoid typing, no return type
+✅ Good: Type hints on all params/returns; TypedDict for dicts; `|` for union
+⚠️ Why: Unclear API; no IDE support; runtime type errors; violates "Explicit > implicit"
+🔧 Fix: Add type hints; use TypedDict; use `|` for union; run mypy
+📍 See: PEP 484, section 1.2
 
-- Functions without type hints
-- Using `Any` to avoid proper typing
-- Missing return type annotations
-- No type hints in public APIs
-- Not using modern Python 3.10+ syntax (`|` instead of `Union`)
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: No type hints
-def process_user_data(user_data, options):
-    # What types are user_data and options?
-    result = user_data['name'] + options.get('suffix', '')
-    return result
-```
-
-**Why This Is Wrong:**
-
-- Unclear what types are expected
-- No IDE autocomplete
-- Runtime errors from type mismatches
-- Violates "Explicit is better than implicit"
-- Doesn't follow PEP 484
-
-**Required: Use Type Hints**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Type hints for clarity (PEP 484 compliant)
-from typing import TypedDict
-
-class UserData(TypedDict):
-    name: str
-    email: str
-
-class Options(TypedDict, total=False):
-    suffix: str
-    prefix: str
-
-def process_user_data(
-    user_data: UserData,
-    options: Options | None = None
-) -> str:
-    """Process user data with optional formatting."""
-    if options is None:
-        options = {}
-    suffix = options.get('suffix', '')
-    return user_data['name'] + suffix
-```
-
-**Impact:**
-
-- Unclear APIs
-- No type checking
-- Runtime errors
-- Poor IDE support
-- Doesn't follow PEP 484
-
-**Solution:**
-
-- Add type hints to all function signatures
-- Use `TypedDict` for dictionary structures
-- Use `|` for union types (Python 3.10+) or `Union` (older)
-- Use `None` explicitly for optional parameters
-- Use `typing` module for complex types
-- Run `mypy` for type checking
+**Detect:** Functions without type hints, Any to avoid typing, no return annotation, no hints on public APIs
 
 ---
 
-### 4.4 List Comprehension Abuse
+### 4.4 List Comprehension Abuse (CRIT)
 
-**CRITICAL:** List comprehensions should be readable. If not, use a loop. PEP 8 emphasizes readability.
+**CRITICAL:** If comprehension is unreadable, use a loop. PEP 8 emphasizes readability.
 
-**Detection:**
+❌ Bad: Nested comprehension 3+ levels, complex logic in comprehension, 5+ lines in one comp
+✅ Good: Loop for complex logic; extract to function; limit comprehension to 2 levels
+⚠️ Why: Violates "Readability counts"; hard to debug; violates "Sparse is better than dense"
+🔧 Fix: Use loop when comprehension unclear; extract to function; prefer readability
+📍 See: section 1.3, 1.14, PEP 8
 
-- Nested comprehensions beyond 2 levels
-- Comprehensions with complex logic (multiple if conditions, transformations)
-- Comprehensions that are longer than 5-6 lines
-- Using comprehension when a simple loop would be clearer
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Unreadable nested comprehension
-result = [[[item.upper() if item else 'N/A' for item in row if item != ''] for row in matrix if row] for matrix in data if matrix]
-
-# 4 levels deep, multiple conditions - impossible to read
-```
-
-**Why This Is Wrong:**
-
-- Unreadable (violates "Readability counts")
-- Hard to debug
-- Difficult to modify
-- Violates "Sparse is better than dense"
-- Doesn't follow PEP 8 readability principle
-
-**Required: Prefer Readability**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Clear nested loops (PEP 8 compliant)
-def process_nested_data(
-    data: list[list[list[str]]]
-) -> list[list[list[str]]]:
-    """Process nested string data structures."""
-    result = []
-    for matrix in data:
-        if not matrix:
-            continue
-        processed_matrix = []
-        for row in matrix:
-            if not row:
-                continue
-            processed_row = [
-                item.upper() if item else 'N/A'
-                for item in row
-                if item != ''
-            ]
-            processed_matrix.append(processed_row)
-        result.append(processed_matrix)
-    return result
-```
-
-**Impact:**
-
-- Unreadable code
-- Hard to maintain
-- Violates Python ethos
-- Difficult to debug
-- Violates PEP 8
-
-**Solution:**
-
-- Limit comprehensions to 2 levels of nesting
-- Use loops for complex logic
-- Extract complex comprehensions into functions
-- Prefer readability over brevity
-- Follow PEP 8's emphasis on readability
+**Detect:** Nested comprehension 3+ levels, complex logic in comp, comprehension 5+ lines
 
 ---
 
-### 4.5 Global State and Mutable Defaults
+### 4.5 Global State and Mutable Defaults (CRIT)
 
-**CRITICAL:** Avoid global variables and mutable default arguments. PEP 8 discourages global state.
+**CRITICAL:** Never use mutable defaults (`def f(items=[])`). Avoid global state. Use `None` as default.
 
-**Detection:**
+❌ Bad: `def add_item(item, items=[])`, `global var`, mutable default args
+✅ Good: `def add_item(item, items=None): items = items or []`, pass state explicitly
+⚠️ Why: Mutable defaults shared across calls; global state makes testing impossible
+🔧 Fix: Use `None` as default, create new object inside; pass state; dependency injection
+📍 See: `general-llm-anti-patterns.mdc` section 5.6
 
-- Global variables modified by functions
-- Mutable default arguments (`def func(items=[])`)
-- Module-level mutable state
-- Functions that depend on global state
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Mutable default argument
-def add_item(item, items=[]):
-    # BUG: items is shared across all calls!
-    items.append(item)
-    return items
-
-# ❌ WRONG: Global state
-current_user = None
-
-def set_user(user):
-    global current_user
-    current_user = user  # Mutates global state
-```
-
-**Why This Is Wrong:**
-
-- Mutable defaults are a common Python gotcha
-- Global state makes testing impossible
-- Hidden dependencies
-- Violates "Explicit is better than implicit"
-- PEP 8 discourages global variables
-
-**Required: Avoid Mutable Defaults and Globals**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Immutable default (PEP 8 compliant)
-def add_item(item: str, items: list[str] | None = None) -> list[str]:
-    """Add item to list, creating new list if needed."""
-    if items is None:
-        items = []
-    items.append(item)
-    return items
-
-# ✅ CORRECT: Pass state explicitly
-class UserManager:
-    """Manage user state."""
-    
-    def __init__(self, current_user: User | None = None):
-        self.current_user = current_user  # Instance state, not global
-    
-    def set_user(self, user: User) -> None:
-        """Set current user."""
-        self.current_user = user
-```
-
-**Impact:**
-
-- Subtle bugs (mutable defaults)
-- Testing impossible (global state)
-- Hidden dependencies
-- Violates Python best practices
-- Violates PEP 8
-
-**Solution:**
-
-- Use `None` as default, create new object inside function
-- Pass state explicitly, don't use globals
-- Use dependency injection
-- Make dependencies explicit in function signatures
-- Use class attributes for shared state, not globals
+**Detect:** `def f(items=[])`, `global` keyword, module-level mutable state
 
 ---
 
-### 4.6 Monkey Patching Guidelines (Advanced Technique)
+### 4.6 Monkey Patching Guidelines (CRIT)
 
-**CRITICAL:** Monkey patching (runtime modification of classes/modules) is a powerful but risky technique. Use only when necessary and follow strict guidelines.
+**CRITICAL:** Use monkey patching only when necessary. Prefer pytest `monkeypatch` fixture in tests.
 
-**When to Consider:**
+❌ Bad: Undocumented patch, patch without preserving original, modifying own code
+✅ Good: Use pytest monkeypatch in tests; document why/what/when to remove; store original
+⚠️ Why: Hidden behavior; can break with updates; violates "Explicit > implicit"
+🔧 Fix: Prefer dependency injection; use monkeypatch fixture; document and store original
+📍 See: section 1.10
 
-- Testing/mocking external dependencies (prefer pytest's `monkeypatch` fixture)
-- Fixing bugs in third-party libraries when patching isn't available
-- Adding temporary functionality for debugging/development
-- Integration with legacy systems that cannot be modified
-
-**When to Avoid:**
-
-- When inheritance, composition, or dependency injection would work
-- For core application logic (use proper abstractions)
-- When it makes code harder to understand or maintain
-- When modifying your own code (refactor instead)
-
-**Detection:**
-
-- Runtime modification of classes/modules using `setattr()`
-- Reassigning function or method attributes at runtime
-- Modifying `__dict__` directly
-- Patching without documentation or cleanup
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Undocumented, risky monkey patch
-import somelibrary
-
-# No explanation, no cleanup plan
-somelibrary.some_function = my_custom_function
-
-# ❌ WRONG: Patching without preserving original
-def test_something():
-    mymodule.function = lambda: "test"
-    # Original function lost, cannot restore
-    result = code_under_test()
-    # No cleanup
-```
-
-**Why This Is Wrong:**
-
-- Hidden behavior not obvious to readers
-- Can break with library updates
-- Difficult to debug (modifications not visible in source)
-- Violates "Explicit is better than implicit"
-- No way to restore original functionality
-- Makes code unpredictable
-
-**Required: Follow Best Practices**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: In tests, use pytest's monkeypatch fixture
-import pytest
-
-def test_with_mock(mock_api_call, monkeypatch):
-    """Test that uses monkey patching via pytest fixture."""
-    # pytest automatically restores after test
-    monkeypatch.setattr('mymodule.api_call', mock_api_call)
-    result = function_under_test()
-    assert result == expected_value
-    # Fixture automatically restores original
-
-# ✅ CORRECT: Production monkey patch with clear documentation
-"""
-Monkey patch for third-party library bug fix.
-
-Patching SomeLibrary.broken_method because:
-- Issue: https://github.com/somelib/issues/123
-- Workaround needed until v2.1.0 is released
-- Affects: All API calls in production
-
-TODO: Remove when upgrading to SomeLibrary >= 2.1.0
-"""
-import somelibrary
-
-# Store original for potential restoration
-_original_method = somelibrary.broken_method
-
-def _patched_method(self, *args, **kwargs):
-    """Patched version that fixes edge case in original implementation."""
-    try:
-        result = _original_method(self, *args, **kwargs)
-        # Apply workaround for known bug
-        return _apply_workaround(result)
-    except KnownBugException:
-        # Handle specific bug case
-        return _handle_bug_case(*args, **kwargs)
-
-somelibrary.broken_method = _patched_method
-
-# ✅ CORRECT: Patching class methods
-class OriginalClass:
-    def method(self):
-        return "original"
-
-# Store original
-_original_method = OriginalClass.method
-
-def patched_method(self):
-    """Patched method with added functionality."""
-    result = _original_method(self)
-    return result + " (patched)"
-
-OriginalClass.method = patched_method
-```
-
-**Best Practices:**
-
-- **Scope and Isolation:** Keep patches as local as possible; use pytest fixtures in tests
-- **Documentation:** Always document why, what, and when to remove (use comments/docstrings)
-- **Restoration:** Store original function/method; use pytest fixtures for automatic cleanup
-- **Error Handling:** Ensure patched code handles errors gracefully
-- **Type Safety:** Consider type hints/comments for patched attributes
-- **Version Control:** Track patches in code comments with issue links and TODO dates
-- **Review Process:** Set reminders to review/remove patches periodically
-
-**Impact:**
-
-- Makes code harder to understand (hidden behavior)
-- Can break with library updates (fragile dependencies)
-- Difficult to debug (modifications not obvious in source code)
-- Violates "Explicit is better than implicit" (PEP 20)
-- Can cause unexpected side effects in other parts of codebase
-
-**Solution:**
-
-- Prefer dependency injection, composition, or inheritance over monkey patching
-- Use pytest's `monkeypatch` fixture in tests (don't manually patch)
-- Document all production patches with clear rationale and removal plan
-- Store original functions/methods for potential restoration
-- Set reminders to review/remove patches periodically
-- Consider contributing fixes upstream for third-party libraries
-
-**References:**
-
-- [Monkey Patching in Python: A Comprehensive Guide](https://coderivers.org/blog/monkey-patch-python/)
-- [Pytest monkeypatch fixture documentation](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)
+**Detect:** setattr on modules/classes without doc, no original preserved, own code patched
 
 ---
 
 ## Category 5: Python Standard Library & Idioms
 
-### 5.1 Reinventing Standard Library
+### 5.1 Reinventing Standard Library (CRIT)
 
-**CRITICAL:** Use Python's standard library instead of reinventing functionality. PEP 20: "There should be one obvious way."
+**CRITICAL:** Use standard library. PEP 20: "There should be one obvious way."
 
-**Detection:**
+❌ Bad: Custom Counter implementation, manual JSON parsing when `json` exists, not using pathlib
+✅ Good: `from collections import Counter`, `pathlib.Path`, `json`, `itertools`, `@dataclass`
+⚠️ Why: Reinventing wheel; more code; bugs stdlib solved; violates "one obvious way"
+🔧 Fix: Check stdlib before implementing; use collections, pathlib, json, itertools
+📍 See: section 1.5, `general-llm-anti-patterns.mdc` section 0.4
 
-- Custom implementations of `collections.Counter`, `defaultdict`, etc.
-- Manual file handling instead of `pathlib`
-- Custom JSON parsing when `json` module exists
-- Reimplementing `itertools` functionality
-- Not using `dataclasses` for simple data structures
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Reinventing Counter
-def count_items(items):
-    counts = {}
-    for item in items:
-        if item in counts:
-            counts[item] += 1
-        else:
-            counts[item] = 1
-    return counts
-
-# Standard library already provides this!
-```
-
-**Why This Is Wrong:**
-
-- Reinventing the wheel
-- More code to maintain
-- Likely has bugs standard library solved
-- Violates "There should be one obvious way to do it"
-- Doesn't leverage Python's strengths
-
-**Required: Use Standard Library**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Use standard library (PEP 8 compliant)
-from collections import Counter
-
-def count_items(items: list[str]) -> dict[str, int]:
-    """Count occurrences of items."""
-    return dict(Counter(items))
-```
-
-**Impact:**
-
-- Code duplication
-- Maintenance burden
-- Potential bugs
-- Violates Python ethos
-- Misses standard library benefits
-
-**Solution:**
-
-- Familiarize yourself with standard library
-- Check standard library before implementing
-- Use `collections`, `itertools`, `pathlib`, `dataclasses`
-- Prefer standard library over custom solutions
-- Read Python documentation regularly
+**Detect:** Custom Counter/defaultdict, manual file handling vs pathlib, reimplementing itertools
 
 ---
 
-### 5.2 Not Using Context Managers
+### 5.2 Not Using Context Managers (CRIT)
 
-**CRITICAL:** Use context managers (`with` statements) for resource management. PEP 8 recommends this.
+**CRITICAL:** Use `with` for resources. Use `pathlib.Path` for file operations.
 
-**Detection:**
+❌ Bad: `f=open(f); ...; f.close()` (resource leak), try/finally when `with` works
+✅ Good: `with open(f) as f:`, `with path.open() as f`, context managers for DB
+⚠️ Why: Resource leak on exception; error-prone; violates PEP 8
+🔧 Fix: Always use `with`; use pathlib.Path; create custom context managers when needed
+📍 See: section 2.7, `general-llm-anti-patterns.mdc` section 5.4
 
-- Manual file opening/closing
-- Database connections not using context managers
-- Resources not properly released
-- Try/finally blocks that could use `with`
-- Not using `pathlib.Path` for file operations
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Manual resource management
-def read_file(filename):
-    file = open(filename)
-    data = file.read()
-    file.close()  # What if read() raises exception?
-    return data
-```
-
-**Why This Is Wrong:**
-
-- Resource leak if exception occurs
-- More error-prone
-- Violates Python best practices
-- Not using Python's resource management features
-- Doesn't follow PEP 8 recommendations
-
-**Required: Use Context Managers**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Context manager (PEP 8 compliant)
-from pathlib import Path
-
-def read_file(filename: str | Path) -> str:
-    """Read file contents."""
-    path = Path(filename)
-    with path.open() as file:
-        return file.read()
-    # File automatically closed, even on exception
-```
-
-**Impact:**
-
-- Resource leaks
-- Error-prone code
-- Violates Python idioms
-- More code to maintain
-- Doesn't follow PEP 8
-
-**Solution:**
-
-- Always use `with` for file operations
-- Use context managers for database connections
-- Create custom context managers when needed
-- Prefer `pathlib.Path` for file operations (Python 3.4+)
-- Use `contextlib` for creating context managers
+**Detect:** Manual open/close, DB connections without context manager, try/finally instead of with
 
 ---
 
-### 5.3 Ignoring Modern Python Features
+### 5.3 Ignoring Modern Python Features (CRIT)
 
-**CRITICAL:** Use modern Python features (`dataclasses`, type hints, f-strings, `pathlib`) when appropriate.
+**CRITICAL:** Use `@dataclass`, type hints, f-strings, `pathlib`, `match/case` when appropriate.
 
-**Detection:**
+❌ Bad: Manual `__init__`/`__repr__` when `@dataclass` works, `.format()` instead of f-strings
+✅ Good: `@dataclass`, f-strings, pathlib, match/case (3.10+), type hints
+⚠️ Why: Boilerplate; error-prone; violates "Simple is better than complex"
+🔧 Fix: Use @dataclass; f-strings; pathlib; match/case when appropriate
+📍 See: section 1.5, 4.3, PEP 484
 
-- Manual `__init__`/`__repr__`/`__eq__` when `@dataclass` would work
-- Using `.format()` or `%` formatting instead of f-strings
-- Not using type hints (Python 3.5+)
-- Ignoring `pathlib` in favor of `os.path`
-- Not using `match/case` (Python 3.10+) when appropriate
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Manual boilerplate
-class User:
-    def __init__(self, name: str, email: str, age: int):
-        self.name = name
-        self.email = email
-        self.age = age
-    
-    def __repr__(self):
-        return f"User(name={self.name!r}, email={self.email!r}, age={self.age})"
-    
-    def __eq__(self, other):
-        if not isinstance(other, User):
-            return False
-        return (self.name == other.name and 
-                self.email == other.email and 
-                self.age == other.age)
-```
-
-**Why This Is Wrong:**
-
-- Lots of boilerplate code
-- Easy to make mistakes
-- Violates "Simple is better than complex"
-- Not using modern Python features
-- More code to maintain
-
-**Required: Use Modern Python**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Use dataclass (PEP 8 compliant)
-from dataclasses import dataclass
-
-@dataclass
-class User:
-    """User data model."""
-    name: str
-    email: str
-    age: int
-
-# Automatically gets __init__, __repr__, __eq__, etc.
-```
-
-**Impact:**
-
-- Unnecessary boilerplate
-- Error-prone
-- Not idiomatic Python
-- Violates "Simple is better than complex"
-- More maintenance
-
-**Solution:**
-
-- Use `@dataclass` for simple data classes
-- Use f-strings for string formatting (Python 3.6+)
-- Use `pathlib.Path` for file paths (Python 3.4+)
-- Use `match/case` for pattern matching (Python 3.10+)
-- Adopt modern Python features when available
-- Use type hints throughout (PEP 484)
+**Detect:** Manual __init__ when dataclass works, .format() instead of f-string, os.path vs pathlib
 
 ---
 
 ## Category 6: Documentation & Testing
 
-### 6.1 Missing Docstrings (PEP 257)
+### 6.1 Missing Docstrings (PEP 257) (CRIT)
 
-**CRITICAL:** Public functions, classes, and modules should have docstrings following PEP 257.
+**CRITICAL:** Public functions, classes, modules must have docstrings (PEP 257).
 
-**Detection:**
+❌ Bad: Public function/class without docstring, docstring not PEP 257 format
+✅ Good: Docstring with Args, Returns; wrap at 72 chars; include examples for complex
+⚠️ Why: Unclear API; violates PEP 257; harder to use; no IDE help
+🔧 Fix: Add docstrings; follow PEP 257; include Args/Returns; wrap at 72
+📍 See: PEP 257, PEP 8, `documentation-policy.mdc`
 
-- Functions without docstrings
-- Classes without docstrings
-- Modules without module docstrings
-- Docstrings that don't follow PEP 257 format
-- Docstrings not wrapped at 72 characters
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: No documentation (violates PEP 257)
-def process_data(data, options):
-    result = []
-    for item in data:
-        if item > 0:
-            result.append(item * 2)
-    return result
-```
-
-**Why This Is Wrong:**
-
-- Unclear what function does
-- No information about parameters
-- Violates Python documentation standards (PEP 257)
-- Harder for others to use
-- No examples or usage
-
-**Required: Add Docstrings**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Proper docstring (PEP 257 compliant)
-def process_data(
-    data: list[float],
-    options: dict[str, bool] | None = None
-) -> list[float]:
-    """
-    Process numeric data by filtering and transforming positive values.
-    
-    Filters out non-positive values and multiplies remaining values by 2.
-    
-    Args:
-        data: List of numeric values to process
-        options: Optional dictionary of processing options (currently unused)
-    
-    Returns:
-        List of processed positive values (doubled)
-    
-    Example:
-        >>> process_data([1, -2, 3, 0, 5])
-        [2, 6, 10]
-    """
-    if options is None:
-        options = {}
-    result = []
-    for item in data:
-        if item > 0:
-            result.append(item * 2)
-    return result
-```
-
-**Impact:**
-
-- Unclear APIs
-- Harder to use
-- Violates Python standards
-- Poor documentation
-- No IDE help text
-
-**Solution:**
-
-- Add docstrings to all public functions/classes
-- Follow PEP 257 format
-- Include parameter descriptions
-- Include return value description
-- Add examples for complex functions
-- Wrap docstrings at 72 characters (PEP 8)
-- Use Google or NumPy style for complex functions
+**Detect:** Public function without docstring, class without docstring, module without docstring
 
 ---
 
-### 6.2 PEP 8 Compliance Tools
+### 6.2 PEP 8 Compliance Tools (CRIT)
 
-**CRITICAL:** Use automated tools to enforce PEP 8 compliance.
+**CRITICAL:** Use black, flake8, isort, mypy for automated PEP 8 and type checking.
 
-**Detection:**
+❌ Bad: No linting in CI, manual style enforcement, inconsistent formatting
+✅ Good: Use black (formatter), flake8 (linter), isort (imports), mypy (types)
+⚠️ Why: Inconsistent formatting; manual enforcement error-prone; violates PEP 8
+🔧 Fix: Add black/flake8/isort/mypy to CI; use black for formatting
+📍 See: PEP 8
 
-- No linting in CI/CD
-- Inconsistent formatting
-- Manual style enforcement
-- Not using formatters
+**Detect:** No linting in CI, manual format enforcement, no formatter
 
-**Required: Use Automation**
-
-**Tools:**
-
-- **`black`**: Uncompromising code formatter (recommended)
-- **`autopep8`**: Automatically formats code to PEP 8
-- **`flake8`**: Lints for PEP 8 violations
-- **`pylint`**: More comprehensive linting
-- **`isort`**: Organizes imports according to PEP 8
-- **`mypy`**: Static type checking (PEP 484)
-
-**Solution:**
-
-- Configure `black` for automatic formatting
-- Run `flake8` in CI/CD pipeline
-- Use `isort` for import organization
-- Run `mypy` for type checking
-- Pre-commit hooks for automatic formatting
-- Make formatting part of development workflow
+**Tools:** black (formatter), autopep8 (PEP 8), flake8 (linter), isort (imports), mypy (types)
 
 ---
 
 ## Category 7: Legacy Code Handling
 
-### 7.1 Dealing with Legacy Code (CRITICAL)
+### 7.1 Dealing with Legacy Code (CRIT)
 
-**CRITICAL:** When working with legacy codebases, follow a systematic approach to refactoring and improvement.
+**CRITICAL:** Systematic approach: version control, remove dead code, add tests, run linters, format, refactor gradually.
 
-**Detection:**
+❌ Bad: Commented code in prod, no tests, no linting, inconsistent style
+✅ Good: Delete commented code; add tests before refactoring; use black/flake8/isort; refactor incrementally
+⚠️ Why: Technical debt; risky refactoring; no quality checks
+🔧 Fix: Version control; remove dead code; add tests; run linters; format; refactor one module at a time
+📍 See: `general-llm-anti-patterns.mdc` section 8.2 (Strangler Fig)
 
-- Codebase without version control
-- Commented-out code left in production
-- No tests or low test coverage
-- No linting or code quality tools
-- Inconsistent style and patterns
-- "Everyone who worked on this left years ago"
-
-**Bad Pattern:**
-
-```python
-# ❌ WRONG: Legacy code issues
-# def old_function():
-#     # This was the old way
-#     pass
-
-def current_function():
-    # Mixed styles, no tests, unclear purpose
-    x = get_data()  # What is x?
-    process(x)  # What does process do?
-    return result  # What result?
-```
-
-**Why This Is Wrong:**
-
-- Commented code creates confusion
-- No tests means risky refactoring
-- Unclear code purpose
-- No quality checks
-- Technical debt accumulates
-
-**Required: Systematic Legacy Code Approach**
-
-**Correct Pattern:**
-
-```python
-# ✅ CORRECT: Clean, tested, documented code
-def process_user_data(user_data: dict[str, str]) -> dict[str, str]:
-    """
-    Process and validate user data.
-    
-    Args:
-        user_data: Dictionary containing user information
-    
-    Returns:
-        Processed user data dictionary
-    
-    Raises:
-        ValidationError: If user data is invalid
-    """
-    validate_user_data(user_data)
-    processed = transform_user_data(user_data)
-    return processed
-```
-
-**Legacy Code Refactoring Steps:**
-
-1. **Version Control**
-   - Ensure project is in version control (Git, SVN, etc.)
-   - Create feature branch for refactoring work
-   - Commit frequently with clear messages
-
-2. **Remove Dead Code**
-   - Delete commented-out code
-   - Remove unused functions and variables
-   - Clean up imports
-
-3. **Add Tests**
-   - Aim for at least 80% test coverage
-   - Use `pytest` for testing framework
-   - Use `pytest-cov` to track coverage
-   - Write tests before refactoring (safety net)
-
-4. **Run Linters**
-   - Use `pylint` or `vulture` to find:
-     - Unused variables
-     - Potential bugs
-     - Code quality issues
-   - Address critical issues first
-
-5. **Format Code**
-   - Use `flake8` or `autopep8` for PEP 8 compliance
-   - Use `black` for automatic formatting
-   - Use `isort` for import organization
-
-6. **Write Idiomatic Python**
-   - Apply Pythonic patterns from this guide
-   - Refactor gradually, one module at a time
-   - Maintain backward compatibility during transition
-
-**Impact:**
-
-- Technical debt
-- Risky refactoring
-- Hard to maintain
-- Poor code quality
-- Team productivity issues
-
-**Solution:**
-
-- Follow systematic refactoring approach
-- Add tests before major changes
-- Use automated tools (linters, formatters)
-- Refactor incrementally
-- Document changes and rationale
-- Get team buy-in for style changes
+**Detect:** Commented code in prod, no tests, no linting, no version control, mixed styles
 
 ---
 

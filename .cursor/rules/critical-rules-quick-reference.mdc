@@ -9,6 +9,13 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 
 "compiles", "builds", "zero warnings", "build succeeded" → Must show build output or say "verification pending"
 
+## Output Format
+
+- Code changes: only modified functions/lines, not entire files
+- File paths: backticks, e.g. `src/Service.java`
+- Build/test claims: show output or say "verification pending"
+- Completion: brief summary of what changed and why
+
 ## Top 15 Universal Anti-Patterns
 
 ### 1. Ghost Layer Prevention
@@ -141,6 +148,14 @@ After completing a development phase, run the appropriate brutal audit:
 - When code quality concerns arise
 
 **How to invoke:** Mention "run the audit", "check for anti-patterns", or "verify phase completion"
+
+---
+
+## Positive Behavioral Rules
+
+- Output only changed code; cite file paths in backticks
+- Before claiming build/test success, run the command or say "verification pending"
+- When completing work: brief summary of changes and root cause (if fixing a bug)
 
 ---
 

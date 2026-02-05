@@ -21,6 +21,14 @@ This document explains how Cursor Rules are composed and how to resolve conflict
    - Load when needed
    - Examples: `cursor-integration.mdc` for Cursor-specific optimizations
 
+## Standard Section Order (per file)
+
+1. Persona — Role, Philosophy, Traits
+2. Task/Scope — What this rule governs
+3. Output Format — (if applicable) response structure
+4. Forbidden/Constraints — Prohibited phrases or actions
+5. Rules — Anti-patterns and behavioral rules (Bad/Good, Why, Fix, See, Detect)
+
 ## Rule Conflict Resolution
 
 1. **Specificity wins**: Language-specific overrides universal when in conflict

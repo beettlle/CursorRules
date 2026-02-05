@@ -58,6 +58,8 @@ This file contains OpenSearch-specific anti-patterns and best practices for mana
 ✅ Good: Fine-grained access control enabled with IAM (`AdvancedSecurityOptions.Enabled: true, InternalUserDatabaseEnabled: false`), IAM-based access for OpenSearch, separate IAM roles for web service (read-only) and crawler service (read-write), index-level permissions configured
 ⚠️ Why: Without FGAC, all users with domain access can read/write all indices; FGAC provides granular permissions; separate roles enable least privilege
 🔧 Fix: Enable fine-grained access control, configure IAM roles for access, create roles with specific index permissions, use IAM roles instead of master user
+📍 See: `aws-general-best-practices.mdc` section 1.1
+
 **Detect:** OpenSearch domains with `AdvancedSecurityOptions.Enabled = false`, no IAM master user configuration, missing role mappings, master user credentials in code, same IAM role used for read and write operations, no distinction between service roles
 
 ---

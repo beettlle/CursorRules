@@ -92,6 +92,9 @@ alwaysApply: true
 ✅ Good: User-requested `docs/` structure for complex subsystems, using "read docs/feature-name.md" pattern, maintain `docs/` folder with subsystem/feature docs, use scripts to force model to read relevant docs, keep docs up-to-date
 ⚠️ Why: Strategic docs help agents understand complex systems; automatic docs waste effort; reduces context window usage, provides focused context, enables faster agent work on large projects
 🔧 Fix: Only create `docs/` when user requests; structure for agent consumption; use clear filenames; use scripts/instructions to force models to read relevant docs for large projects; maintain docs in `docs/` folder
+📍 See: `cursor-integration.mdc` section 1.2 (Context Loading)
+
+**Detect:** Creating docs without user request, documenting obvious code, no docs/ structure, context only in code
 
 **Pattern:** When user says "write docs to docs/*.md" or explicitly requests documentation, create appropriately named documentation file following Diátaxis framework.
 

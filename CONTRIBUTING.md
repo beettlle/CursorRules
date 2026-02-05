@@ -11,6 +11,7 @@
 3. **Cross-Reference, Don't Duplicate**: Link to other sections instead of repeating content.
 4. **Minimal But Complete Examples**: Code examples should be the smallest possible that still demonstrates the pattern.
 5. **Detection Over Explanation**: Focus on how to detect the problem, not lengthy explanations of why it's a problem.
+6. **Positive Framing**: Include "do X" rules alongside anti-patterns; show good examples.
 
 ## Required Format Structure
 
@@ -29,6 +30,10 @@ Each anti-pattern or rule MUST follow this exact structure:
 
 **Detect:** Comma-separated list of detection criteria (no full sentences)
 ```
+
+### Task-Hint Rules
+
+For task-aware behavior (debugging, architecture, coding), add compact tables or rules that instruct the model to adapt: trace before fix (debugging), discuss tradeoffs before changes (architecture), verify before claiming done (coding).
 
 ### Format Requirements
 

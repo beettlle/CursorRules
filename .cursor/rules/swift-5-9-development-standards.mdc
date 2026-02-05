@@ -131,257 +131,123 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 
 **CRITICAL: These patterns violate architectural principles and must be avoided**
 
-### ❌ DON'T: Pass SwiftData Models to Domain Layer
+### Pass SwiftData Models to Domain Layer (CRIT)
 
-**Bad:**
+❌ Bad: `func fetchSongs() async throws -> [SongModel] { return models }` (SwiftData @Model returned)
+✅ Good: `return models.map { MediaItem(from: $0) }` (convert to Sendable DTO in Repository)
+⚠️ Why: SwiftData @Model is MainActor-isolated; Domain must remain pure Swift
+🔧 Fix: Convert to Sendable DTO in Repository before returning to Use Cases
+📍 See: DTO Pattern above, `general-llm-anti-patterns.mdc` section 1.4
 
-```swift
-// ❌ WRONG: Passing SwiftData @Model to Use Case
-func fetchSongs() async throws -> [SongModel] {
-    let models = try context.fetch(...) // SongModel is a SwiftData @Model class
-    return models // Violates DTO pattern
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Convert to DTO in Repository
-func fetchSongs() async throws -> [MediaItem] {
-    let models = try context.fetch(...) // SwiftData @Model objects
-    return models.map { MediaItem(from: $0) } // Convert to Sendable DTO
-}
-```
-
-**Why:** SwiftData models are MainActor-isolated and contain framework dependencies. Domain layer must remain pure Swift with Sendable DTOs.
+**Detect:** SwiftData @Model returned from Repository, @Model in Use Case signatures
 
 ---
 
-### ❌ DON'T: Import SwiftData in Domain Layer
+### Import SwiftData in Domain Layer (CRIT)
 
-**Bad:**
+❌ Bad: `import SwiftData` in Core/Domain/
+✅ Good: `import Foundation` only in Domain layer
+⚠️ Why: Domain must have zero framework dependencies
+🔧 Fix: SwiftData only in Data layer; Domain uses Pure Swift
+📍 See: Architectural Layers above
 
-```swift
-// ❌ WRONG: In Core/Domain/Models/MediaItem.swift
-import SwiftData // ❌ Forbidden!
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: In Core/Domain/Models/MediaItem.swift
-import Foundation // ✅ Pure Swift only
-```
-
-**Why:** Domain layer must have zero framework dependencies. SwiftData belongs only in Data layer.
+**Detect:** SwiftData import in Domain, MusicKit import in Domain
 
 ---
 
-### ❌ DON'T: Use Task.sleep for Synchronization
+### Use Task.sleep for Synchronization (CRIT)
 
-**Bad:**
+❌ Bad: `try await Task.sleep(...); let data = await someAsyncValue` (may still not be ready)
+✅ Good: Wait for actual condition or use proper async/await
+⚠️ Why: Task.sleep creates race conditions, unreliable timing
+🔧 Fix: Use async streams, asyncPublisher.values, or proper async/await
+📍 See: `general-llm-anti-patterns.mdc` section 6.5
 
-```swift
-// ❌ WRONG: Hoping data is ready
-try await Task.sleep(nanoseconds: 100_000_000)
-let data = await someAsyncValue // May still not be ready
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Wait for actual condition
-let data = await asyncPublisher.values.first { $0.isReady }
-// Or use proper async/await
-let data = try await fetchData()
-```
-
-**Why:** Task.sleep creates race conditions and unreliable timing. Always wait for actual conditions or use proper async/await.
+**Detect:** Task.sleep for synchronization, sleep instead of proper async wait
 
 ---
 
-### ❌ DON'T: Pass Entire Container to ViewModels
+### Pass Entire Container to ViewModels (CRIT)
 
-**Bad:**
+❌ Bad: `init(container: AppContainer)` (ViewModel has access to everything)
+✅ Good: `init(playMusicUseCase: PlayMusicUseCaseProtocol)` (only what it needs)
+⚠️ Why: Violates Interface Segregation Principle; creates God object dependency
+🔧 Fix: Inject only required Use Cases/protocols
+📍 See: `general-llm-anti-patterns.mdc` section 1.6
 
-```swift
-// ❌ WRONG: God object dependency
-init(container: AppContainer) {
-    self.container = container
-    // ViewModel now has access to everything
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Interface Segregation Principle
-init(playMusicUseCase: PlayMusicUseCaseProtocol) {
-    self.playMusicUseCase = playMusicUseCase
-    // ViewModel only has what it needs
-}
-```
-
-**Why:** Violates Interface Segregation Principle. ViewModels should only depend on what they actually use.
+**Detect:** Container/Environment passed to ViewModel, ViewModel with access to all services
 
 ---
 
-### ❌ DON'T: Access SwiftData Directly from ViewModels
+### Access SwiftData Directly from ViewModels (CRIT)
 
-**Bad:**
+❌ Bad: `@Query var playlists: [Playlist]` (SwiftData in ViewModel)
+✅ Good: `@Published var playlists: [MediaItem]`; load via Use Case
+⚠️ Why: Presentation must not import SwiftData; violates layer separation
+🔧 Fix: Use Cases/Repositories handle data; ViewModel uses DTOs
+📍 See: Architectural Layers above
 
-```swift
-// ❌ WRONG: ViewModel accessing SwiftData directly
-@Query var playlists: [Playlist] // SwiftData in ViewModel
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: ViewModel uses Use Case
-@Published var playlists: [MediaItem] = [] // DTOs, not SwiftData models
-func loadPlaylists() async {
-    playlists = try await playlistUseCase.fetchPlaylists()
-}
-```
-
-**Why:** Presentation layer must not import SwiftData. Use Cases and Repositories handle data access.
+**Detect:** @Query in ViewModel, SwiftData import in Presentation
 
 ---
 
-### ❌ DON'T: Create Custom UI Components That Duplicate System Functionality
+### Create Custom UI Components That Duplicate System (CRIT)
 
-**Bad:**
+❌ Bad: Custom sheet overlay in ZStack (breaks keyboard, accessibility)
+✅ Good: `.sheet(item: $sheetItem)`, `.presentationDetents([.medium, .large])`
+⚠️ Why: System components handle keyboard, accessibility, platform conventions
+🔧 Fix: Use native SwiftUI presentation APIs; avoid custom overlays
+📍 See: `general-llm-anti-patterns.mdc` section 4.3
 
-```swift
-// ❌ WRONG: Custom sheet overlay
-ZStack {
-    content
-    if showSheet {
-        CustomSheetOverlay { ... } // Breaks keyboard handling
-    }
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Use native SwiftUI presentation
-.sheet(item: $sheetItem) { item in
-    SheetContent(item: item)
-}
-.presentationDetents([.medium, .large])
-```
-
-**Why:** System components handle keyboard, accessibility, and platform conventions correctly.
+**Detect:** Custom overlay when .sheet exists, custom modal instead of native
 
 ---
 
-### ❌ DON'T: Use MainActor for Actor-Isolated Services
+### Use MainActor for Actor-Isolated Services (CRIT)
 
-**Bad:**
+❌ Bad: `@MainActor actor MusicService` (conflicting isolation)
+✅ Good: `actor MusicService` (no MainActor for background services)
+⚠️ Why: MainActor for UI/SwiftData; actor for services; mixing defeats isolation
+🔧 Fix: Use actor for services; MainActor only for UI/SwiftData types
+📍 See: `general-llm-anti-patterns.mdc` section 1.2
 
-```swift
-// ❌ WRONG: Mixing MainActor with actor isolation
-@MainActor
-actor MusicService { // Conflicting isolation
-    // ...
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Use actor for services
-actor MusicService {
-    // Actor isolation provides thread safety
-}
-```
-
-**Why:** Actors provide thread safety. MainActor is for UI and SwiftData. Don't mix them.
+**Detect:** @MainActor on actor for non-UI service, conflicting isolation
 
 ---
 
-### ❌ DON'T: Skip DTO Conversion in Repositories
+### Skip DTO Conversion in Repositories (CRIT)
 
-**Bad:**
+❌ Bad: `func fetchSongs() async throws -> [MusicItem] { return try context.fetch(...) }`
+✅ Good: `return models.map { MediaItem(from: $0) }` in Repository
+⚠️ Why: Domain must be framework-agnostic; DTOs enable safe concurrent access
+🔧 Fix: Always convert @Model to Sendable DTO in Repository before return
+📍 See: DTO Pattern above, SwiftData Models in Domain above
 
-```swift
-// ❌ WRONG: Returning SwiftData models directly
-func fetchSongs() async throws -> [MusicItem] { // SwiftData @Model
-    return try context.fetch(...)
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Always convert to DTO
-func fetchSongs() async throws -> [MediaItem] { // Domain DTO
-    let models = try context.fetch(...)
-    return models.map { MediaItem(from: $0) }
-}
-```
-
-**Why:** Domain layer must be framework-agnostic. DTOs enable safe concurrent access.
+**Detect:** @Model return type from Repository, no DTO conversion in fetch methods
 
 ---
 
-### ❌ DON'T: Create God Objects (Services That Do Everything)
+### Create God Objects (Services That Do Everything) (CRIT)
 
-**Bad:**
+❌ Bad: `class AppService` with playMusic, fetchPodcasts, managePlaylists, handleSearch (50+ methods)
+✅ Good: Separate actors — MusicService, PodcastService, PlaylistService, SearchService
+⚠️ Why: Violates SRP; harder to test, maintain, and understand
+🔧 Fix: One actor per domain concern; split God Objects into focused services
+📍 See: `general-llm-anti-patterns.mdc` section 1.6
 
-```swift
-// ❌ WRONG: One service handling everything
-class AppService {
-    func playMusic() { }
-    func fetchPodcasts() { }
-    func managePlaylists() { }
-    func handleSearch() { }
-    // ... 50 more methods
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Single Responsibility Principle
-actor MusicService { func play() { } }
-actor PodcastService { func fetch() { } }
-actor PlaylistService { func manage() { } }
-actor SearchService { func search() { } }
-```
-
-**Why:** Each service has one responsibility. Easier to test, maintain, and understand.
+**Detect:** Single class/actor with 50+ methods, unrelated responsibilities in one service
 
 ---
 
-### ❌ DON'T: Use String-Based Logic Instead of Type Safety
+### Use String-Based Logic Instead of Type Safety (CRIT)
 
-**Bad:**
+❌ Bad: `if item.source == "appleMusic"` (string comparison)
+✅ Good: `switch item.id.source { case .appleMusic: ... case .localLibrary: ... }`
+⚠️ Why: Strings allow typos and runtime errors; enums give compile-time safety
+🔧 Fix: Use enums for source/type discriminations; avoid string literals
+📍 See: `engineering-philosophy.mdc` section 2.1
 
-```swift
-// ❌ WRONG: String-based source identification
-if item.source == "appleMusic" { // String comparison
-    // ...
-}
-```
-
-**Good:**
-
-```swift
-// ✅ CORRECT: Enum-based type safety
-switch item.id.source {
-case .appleMusic:
-    // ...
-case .localLibrary:
-    // ...
-case .podcast:
-    // ...
-}
-```
-
-**Why:** Enums provide compile-time safety. Strings can have typos and runtime errors.
+**Detect:** String comparisons for type/source, magic string literals instead of enums
 
 ---
 
