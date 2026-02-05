@@ -27,6 +27,10 @@ You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines
 - Structure: Features/, Core/, UI/, Resources/
 - Follow Apple's Human Interface Guidelines
 
+### Source File Naming (Guidance)
+
+PascalCase matching primary type (`UserProfileViewModel.swift`). Extensions: `Type+ExtensionPurpose.swift`. 📍 See: `general-llm-anti-patterns.mdc` Category 12.
+
 ## Architectural Layers (CRITICAL)
 
 To prevent "God Objects" and "Smart UI", strict layer separation is enforced:

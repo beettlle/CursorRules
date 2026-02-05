@@ -966,6 +966,102 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+## Category 12: File and Directory Naming (Guidance)
+
+**Scope:** Applies to source files, test files, and project-controlled artifacts (logs, exports, generated files in repo or tooling). Industry standard (Google, Maven, NASA): same principles for source and artifacts—lowercase, alphanumeric + hyphen/underscore, descriptive, version when relevant. **Guidance:** Prefer these rules; if project already has a convention, keep it; new projects follow below.
+
+### 12.1 No Spaces in File or Directory Names (Guidance)
+
+**Guidance:** Use underscores, hyphens, or language-appropriate case instead of spaces.
+
+❌ Bad: `my project file.py`, `Reports/2024 Q1/`
+✅ Good: `my_project_file.py`, `reports/2024-q1/` (or language convention)
+⚠️ Why: Spaces break shell commands, scripts, URLs; require escaping or quoting
+🔧 Fix: Replace spaces with underscores, hyphens, or camelCase/PascalCase per language
+📍 See: Language-specific rules for source file naming
+
+**Detect:** Spaces in file/dir names, names requiring quotes in commands
+
+---
+
+### 12.2 Safe Characters Only (Guidance)
+
+**Guidance:** Restrict to letters (A–Z, a–z), digits (0–9), underscore, hyphen. Dot only for extensions or hidden files.
+
+❌ Bad: `report!final$.txt`, `data#1.xlsx`
+✅ Good: `report_final.txt`, `data-1.xlsx`
+⚠️ Why: Special chars cause tool/script/URL issues across platforms
+🔧 Fix: Use only [a-zA-Z0-9_.-]; avoid !$&*?#%
+
+**Detect:** Special characters in file/dir names, punctuation other than . - _
+
+---
+
+### 12.3 Descriptively Concise (Guidance)
+
+**Guidance:** Names clear and as short as reasonable; avoid cryptic or overly long.
+
+❌ Bad: `x.py`, `the_file_that_contains_the_user_authentication_logic.java`
+✅ Good: `auth_helper.py`, `UserAuthService.java`
+⚠️ Why: Unclear names waste time; excessive length hurts typing and readability
+🔧 Fix: Describe content/purpose in minimal words
+
+**Detect:** Single-letter or cryptic names, names over ~40 chars without clear benefit
+
+---
+
+### 12.4 Case and Consistency (Guidance)
+
+**Guidance:** Assume case sensitivity. Prefer lowercase unless language convention is PascalCase (e.g. Java/Swift source files). Use one convention per project.
+
+❌ Bad: `Report.PY` and `report.py` in same project, mixing camelCase and snake_case for same file type
+✅ Good: Lowercase for modules/dirs where language allows; match existing project convention
+⚠️ Why: Case-insensitive filesystems cause collisions; inconsistency annoys tooling and peers
+🔧 Fix: Prefer lowercase; follow existing project style; document convention
+
+**Detect:** Mixed casing for same artifact type, inconsistent word separators in one project
+
+---
+
+### 12.5 Dates in Names (Guidance)
+
+**Guidance:** Use YYYY-MM-DD or YYYYMMDD (with leading zeros) so lexicographic sort matches chronological order.
+
+❌ Bad: `report_12_1_2024.txt`, `log-3-15-2024`
+✅ Good: `report_2024-12-01.txt`, `log_20240315`
+⚠️ Why: MM-DD-YYYY or DD-MM-YYYY sorts incorrectly
+🔧 Fix: Year first, then month, then day; zero-pad month/day
+
+**Detect:** Dates in file names not in ISO order, missing leading zeros
+
+---
+
+### 12.6 Version Suffixes (Guidance)
+
+**Guidance:** Use zero-padded version numbers (e.g. v01, v02) so v10+ sorts correctly.
+
+❌ Bad: `draft_v1`, `draft_v2`, `draft_v10` (sorts v1, v10, v2)
+✅ Good: `draft_v01`, `draft_v02`, `draft_v10`
+⚠️ Why: Lexicographic sort puts v10 before v2 without zero-padding
+🔧 Fix: Zero-pad numeric suffixes (at least two digits if versions may reach 10+)
+
+**Detect:** Version numbers in names without zero-padding, sort order broken at v10+
+
+---
+
+### 12.7 Productivity Pattern for Non-Source Assets (Guidance)
+
+**Guidance:** For docs, exports, logs, or other non-source artifacts: optional three-part pattern **subject_date_code** (order flexible). Use **dashes** where spaces would go in subject; use **underscores** to separate the three parts. Code can be version (v01), initials, or draft/final.
+
+❌ Bad: `New Hire Process 12-1-24 v1.docx` (spaces, ambiguous date)
+✅ Good: `new-hire-process_20241201_V01.docx`, `20241201_report_DRAFT.pdf`
+⚠️ Why: Sortable, script-friendly, consistent with industry (descriptive + date + identifier)
+🔧 Fix: `subject-part-with-dashes_YYYYMMDD_CODE`; keep code segment distinct (e.g. caps for code)
+
+**Detect:** Multi-word subjects with spaces, dates not YYYYMMDD, no separator between subject/date/code
+
+---
+
 ## Summary: Critical Rules
 
 These six patterns represent the most critical "making it work vs. making it right" violations:
@@ -977,7 +1073,7 @@ These six patterns represent the most critical "making it work vs. making it rig
 5. **Zero-Hallucination Policy** - Verify all APIs
 6. **Hardcoded Secrets** - Use environment variables
 
-**Quick Ref:** Arch: Ghost layers, fake abstractions, dead code, logic leakage, state confusion, god objects, file size limit, Strangler Fig | Perf: O(N²), unoptimized hot paths, performance blindness | Quality: Duplication, defensive comments, context blindness, over/under-engineering, formatting, magic values, warning dismissal | API: Hallucination, dependency issues, workaround-first | Security: Hardcoded secrets, missing validation, silent failures, resource leaks, error handling, global state | Testing: Mock mismatches, missing error paths, incomplete coverage, flaky tests | Context: Ignoring patterns, context window limitations, ambiguity intolerance, large context strategies, exhaustion patterns | Process: Pre-execution planning, AST-based detection | Agent: UI-first, verbose prompts, pattern propagation, multi-agent coordination, feedback loops | Modern LLM: Reasoning mode misuse, long context waste, multimodal misuse, structured output overuse, tool use anti-patterns, extended reasoning, large context misuse | Operations: Logging anti-patterns, metrics anti-patterns, error tracking, observability blindness
+**Quick Ref:** Arch: Ghost layers, fake abstractions, dead code, logic leakage, state confusion, god objects, file size limit, Strangler Fig | Perf: O(N²), unoptimized hot paths, performance blindness | Quality: Duplication, defensive comments, context blindness, over/under-engineering, formatting, magic values, warning dismissal | API: Hallucination, dependency issues, workaround-first | Security: Hardcoded secrets, missing validation, silent failures, resource leaks, error handling, global state | Testing: Mock mismatches, missing error paths, incomplete coverage, flaky tests | Context: Ignoring patterns, context window limitations, ambiguity intolerance, large context strategies, exhaustion patterns | Process: Pre-execution planning, AST-based detection | Agent: UI-first, verbose prompts, pattern propagation, multi-agent coordination, feedback loops | Modern LLM: Reasoning mode misuse, long context waste, multimodal misuse, structured output overuse, tool use anti-patterns, extended reasoning, large context misuse | Operations: Logging anti-patterns, metrics anti-patterns, error tracking, observability blindness | File naming: no spaces, safe chars, dates YYYY-MM-DD, consistency, productivity pattern (subject_date_code)
 
 **For language-specific implementations:** See your project's language-specific anti-trap rules file for concrete detection patterns and code examples in your target language.
 
