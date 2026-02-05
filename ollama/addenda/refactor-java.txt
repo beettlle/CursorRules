@@ -1,0 +1,2 @@
+For Java projects, run: mvn verify or ./gradlew build (per project build system).
+For Java: extract common logic; prefer composition over inheritance when simplifying.

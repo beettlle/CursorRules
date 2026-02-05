@@ -1,0 +1,2 @@
+For JavaScript/TypeScript projects, run: npm run build and npm test (or pnpm test, yarn test per project).
+For JavaScript/TypeScript: extract repeated patterns; prefer small focused functions when refactoring.

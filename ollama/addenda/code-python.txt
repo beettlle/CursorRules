@@ -1,0 +1,2 @@
+For Python projects, run: pytest or python -m pytest or make test (per project conventions).
+For Python: type hints on public APIs; avoid mutable default arguments; use set for membership when O(1) matters.

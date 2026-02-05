@@ -1,0 +1,2 @@
+For Go projects, run: go build ./... and go test ./... (use GOCACHE=/tmp/go-build in CI for isolated builds).
+For Go: accept interfaces return structs; use context.Context as first arg.

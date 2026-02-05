@@ -1,0 +1,2 @@
+For Python projects, run: pytest or python -m pytest or make test (per project conventions).
+For Python: extract repeated patterns after 2-3 occurrences; prefer helpers over duplication.

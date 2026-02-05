@@ -1,0 +1,2 @@
+For Java projects, run: mvn verify or ./gradlew build (per project build system).
+For Java: prefer immutable types; use Optional for optional returns; validate at API boundaries.

@@ -1,0 +1,2 @@
+For Swift projects, run: xcodebuild -scheme YourScheme build test or swift build && swift test (per project setup).
+For Swift: extract view helpers; keep domain logic in pure Swift; simplify optional handling.
