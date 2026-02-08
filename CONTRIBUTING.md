@@ -275,4 +275,4 @@ These files represent the target density and structure for all contributions.
 ## See Also
 
 - `RULE_COMPOSITION.md` - Rule dependencies and conflict resolution
-
+- `.cursor/rules/git-workflow-and-pr.mdc` - Commit and PR standards for contributions to this repo

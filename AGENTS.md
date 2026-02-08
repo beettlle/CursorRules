@@ -155,7 +155,7 @@ When contributing to CursorRules itself, see [CONTRIBUTING.md](CONTRIBUTING.md) 
 
 ### PR/commit instructions
 
-- Title format, pre-merge checks
+- Follow [.cursor/rules/git-workflow-and-pr.mdc](.cursor/rules/git-workflow-and-pr.mdc) for commit messages (Conventional Commits), branch naming, rebase/merge safety, and PR titles/descriptions.
 
 ## Nested AGENTS.md (optional)
 

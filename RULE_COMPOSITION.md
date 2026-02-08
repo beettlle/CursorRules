@@ -19,7 +19,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 4. **Integration rules** (`alwaysApply: false`)
    - Load when needed
-   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations
+   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks)
 
 ## Standard Section Order (per file)
 
@@ -59,5 +59,6 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 ## See Also
 
 - `cursor-integration.mdc` - Cursor-specific rule composition strategies
+- `git-workflow-and-pr.mdc` - Git/PR workflow; overlaps with audit-workflow only in "verify before claiming done" (this rule governs Git/PR text; audit governs phase verification)
 - `general-llm-anti-patterns.mdc` section 7.2b - Context window exhaustion prevention
 - CONTRIBUTING.md - Rule authoring guidelines
