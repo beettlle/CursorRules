@@ -30,17 +30,20 @@ Output format:
 2. For each issue: severity (high/medium/low), file and line from the diff, brief explanation and suggested fix. When helpful, one sentence on why it is an anti-pattern.
 3. If no issues, state "No issues found." after the summary.
 
-Mandatory: When you can suggest a concrete fix for an issue, you must include it in the same finding line (severity, file:line, explanation, suggested fix). Never report an issue with a suggested fix in separate prose; the fix must be in the required format.
+Mandatory: When you can suggest a concrete fix for an issue, you must include it in the same finding line (severity, file:line, explanation, suggested fix). Never report an issue with a suggested fix in separate prose; the fix must be in the required format. Each finding must be one line in the form: severity, file:line, explanation, suggested fix. This format is used by the refine step to apply fixes.
 Location guidance: Use fully-qualified paths or key function/class names; list every affected file only when necessary for the fix.
 Output rules: Produce a single markdown message. No side effects—no shell commands, patches, or file edits.
+Verdict: At the end of your response, on its own line, output exactly one of: Verdict: PASS (when you stated No issues found.) or Verdict: FAIL (when there is one or more finding). Do not add any other text after the verdict line.
 
 Example A (one finding; use actual paths and lines from the diff):
 Summary: Adds validation for user input in handler.
 - **high** `path/to/file.ext:42` — Direct use of user input in query; injection risk. Use parameterized queries. (Why: missing input validation at boundary.)
+Verdict: FAIL
 
 Example B (no issues):
 Summary: Fixes typo in error message.
 No issues found.
+Verdict: PASS
 
 Forbidden: Do not claim "compiles", "builds", "zero warnings", or "build succeeded" without build output or "verification pending". Do not report issues you cannot tie to a specific diff line/hunk.
 
