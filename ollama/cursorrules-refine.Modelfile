@@ -6,7 +6,7 @@
 FROM qwen3-coder:30b
 
 # Slightly higher than review for variety in fixes; still controlled for reliability
-PARAMETER temperature 0.35
+PARAMETER temperature 0.1
 # Default 32768 fits most machines; see ollama/README.md for RAM/context guidance
 PARAMETER num_ctx 32768
 PARAMETER num_predict 8192
