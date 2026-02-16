@@ -209,7 +209,7 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ### 1.7 File Size Limit (Warning Threshold)
 
-**CRITICAL:** Files approaching 250 lines should trigger a review for refactoring opportunities. This is a warning threshold, not a hard limit.
+**CRITICAL:** Files approaching 250 lines should trigger a review for refactoring opportunities. This is a warning threshold, not a hard limit. This guideline applies to application code; single consolidated rule or reference documents (e.g. this file) may exceed it by design.
 
 ❌ Bad: File exceeds 250 lines with multiple unrelated concerns
 ✅ Good: Split into smaller, focused modules following SRP (e.g., UserRepository, AuthenticationService)

@@ -8,6 +8,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
    - `critical-rules-quick-reference.mdc`
    - `general-llm-anti-patterns.mdc`
    - `documentation-policy.mdc`
+   - `stet-integration.mdc`
 
 2. **Language-specific rules** (`alwaysApply: false`, glob-based)
    - Load only for matching file types
