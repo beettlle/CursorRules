@@ -6,6 +6,8 @@ alwaysApply: false
 
 # Engineering Philosophy
 
+**Design goals:** Priority is Safety, then Performance, then Developer Experience.
+
 ## Core Beliefs
 
 ### 1.1 Simplicity is a Feature (CRIT)
@@ -19,6 +21,34 @@ alwaysApply: false
 📍 See: `general-llm-anti-patterns.mdc` section 1.1 (Ghost Layer Prevention)
 
 **Detect:** Unnecessary abstractions, wrapper classes, code that adds no value
+
+---
+
+### 1.1a Simplicity is the Hardest Revision
+
+**CRITICAL:** Real simplicity comes from iteration and "throw one away," not from the first attempt.
+
+❌ Bad: Shipping first draft as "simple", no revision passes, assuming simple = quick
+✅ Good: Multiple passes to simplify; revise until design is minimal and clear
+⚠️ Why: First attempt is rarely simplest; iteration reveals the super idea that solves axes together
+🔧 Fix: Budget revision time; simplify after it works
+📍 See: `engineering-philosophy.mdc` section 1.3 (Make it Work, Make it Right, Make it Fast)
+
+**Detect:** One-pass "simple" solutions, no design revision, complexity defended as "good enough"
+
+---
+
+### 1.1b Zero Showstopper Policy
+
+**CRITICAL:** Don't ship known critical bugs or unbounded risks; fix showstoppers before merge.
+
+❌ Bad: Merging with known unbounded loops, unbounded queues, or critical correctness bugs "to fix later"
+✅ Good: Bounded loops/queues, fail-fast on limits, fix showstoppers in design or implementation before merge
+⚠️ Why: The second time may not transpire; shipping known critical debt undermines progress
+🔧 Fix: Enforce bounded iteration and fail-fast; resolve critical issues before merge
+📍 See: `general-llm-anti-patterns.mdc` section 2.4 (Bounded loops and queues)
+
+**Detect:** Unbounded loops or queues, known critical bugs deferred, merge with "we'll fix later" on showstoppers
 
 ---
 
@@ -126,6 +156,20 @@ alwaysApply: false
 
 ---
 
+### 2.1a Naming Conventions (Units and Alignment)
+
+**CRITICAL:** Put units or qualifiers last in names; use same-length related names for alignment.
+
+❌ Bad: `max_latency_ms`, `min_latency_ms` (qualifier first); `src` and `destination` (misaligned)
+✅ Good: `latency_ms_max`, `latency_ms_min` (grouping); `source` and `target` (same length, align in code)
+⚠️ Why: Qualifier-last groups related vars; same-length names line up and reduce symmetry bugs
+🔧 Fix: Put units/qualifiers last; choose related names with same character count where it helps readability
+📍 See: `engineering-philosophy.mdc` section 2.1 (Intention-Revealing Names)
+
+**Detect:** Qualifier-first naming (max_*), mismatched lengths for related pairs (src/dest), no units in names
+
+---
+
 ### 2.2 Consistent Abstraction Levels
 
 **CRITICAL:** Don't mix high-level strategy with low-level tactics.
@@ -165,6 +209,34 @@ alwaysApply: false
 
 ---
 
+### 2.5 Function Shape and Control Flow
+
+**CRITICAL:** Prefer small functions; centralize branching in the caller; keep leaf logic non-branchy ("push ifs up and fors down").
+
+❌ Bad: Leaf functions full of if/else; caller does only one thing; control flow scattered
+✅ Good: Parent handles all switch/if; leaf functions compute or transform without branching
+⚠️ Why: Centralized control flow is easier to reason about; leaf functions are testable and reusable
+🔧 Fix: Move conditionals to caller; extract non-branchy logic to helpers; one function owns control flow
+📍 See: `general-llm-anti-patterns.mdc` Category 1 (Architectural Anti-Patterns)
+
+**Detect:** Leaf functions with many branches, control flow duplicated across layers, callers that only forward
+
+---
+
+### 2.6 Always Say Why
+
+**CRITICAL:** Motivate decisions in comments and docs so readers can evaluate and comply.
+
+❌ Bad: Comments that only state what the code does; decisions with no rationale
+✅ Good: Brief "why" for non-obvious decisions; rationale in commit body and key comments
+⚠️ Why: Rationale increases understanding and adherence; shares criteria for evaluating the decision
+🔧 Fix: Add why for non-obvious choices; keep rationale brief; cross-ref documentation-policy for comment style
+📍 See: `documentation-policy.mdc` (Inline comments: say why and how)
+
+**Detect:** No rationale for non-obvious code, comments only describe what, decisions unexplained
+
+---
+
 ## Optimization Priorities
 
 | Priority | Detect |
@@ -173,6 +245,8 @@ alwaysApply: false
 | Debuggability | Silent failures, no logging, unclear errors |
 | Operability | No health checks, no graceful shutdown, no metrics |
 | Simplicity | Complex solutions, over-engineering, premature abstraction
+
+**Performance from design:** Consider network, disk, memory, and CPU early; do back-of-the-envelope sketches for hot paths. The biggest performance wins come in the design phase. See `general-llm-anti-patterns.mdc` Category 2 (Performance Anti-Patterns).
 
 ---
 

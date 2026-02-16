@@ -157,9 +157,11 @@ The `general-llm-anti-patterns.mdc` file is language-agnostic and enforces:
 
 - **Zero-Hallucination Policy**: Verify every API call; no "imaginary" libraries.
 - **No Ghost Layers**: Services must add value, not just pass calls through.
-- **Performance-First**: No database or network calls inside loops.
+- **Performance-First**: No database or network calls inside loops; bounded loops and queues with fail-fast.
 - **Security**: No hardcoded secrets; strict input validation.
-- **Code Quality**: No commented-out dead code; no "Shut Up, Compiler" warning suppressions.
+- **Code Quality**: No commented-out dead code; no "Shut Up, Compiler" warning suppressions; split compound conditions and state invariants positively; smallest scope; explicit options at call site (not library defaults).
+- **Testing**: Test positive and negative space (valid and invalid data, boundaries, valid→invalid transitions); see `general-llm-anti-patterns.mdc` 6.2.
+- **Documentation**: Comments explain why and how; commit body carries "why" (PR description is not stored in git).
 
 ## Python Standards
 

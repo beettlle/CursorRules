@@ -35,6 +35,18 @@ Use when performing Git operations or drafting PRs. Ensures clean history, revie
 
 **Detect:** No type prefix, past tense, subject >72 chars, period at end, generic "fix"/"update"/"WIP"
 
+### 1.2 Commit Body Over PR Description (CRIT)
+
+**CRITICAL:** Commit messages are stored in the repository (e.g. visible in blame); PR description is not. Put "why" in the commit body so the lasting record is complete.
+
+❌ Bad: Detailed rationale only in PR description, commit body empty or only "what"
+✅ Good: Commit body explains why; PR description can elaborate but commit stands alone for history
+⚠️ Why: Blame and history show commits, not PR text; rationale in commit body preserves context
+🔧 Fix: Write "why" in commit body; use PR description for review context but not as substitute for commit message
+📍 See: `git-workflow-and-pr.mdc` section 1.1 (Conventional Commit Format)
+
+**Detect:** Rationale only in PR, empty commit body, commit message not self-contained for blame readers
+
 ---
 
 ## 2. Branch Naming

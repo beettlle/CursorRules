@@ -262,6 +262,20 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ---
 
+### 2.4 Bounded Loops and Queues (CRIT)
+
+**CRITICAL:** Loops and queues must have fixed upper bounds or fail-fast when exceeded; event loops must be explicitly documented as non-terminating.
+
+❌ Bad: Unbounded loop over user input, queue with no max size, event loop with no comment that it never terminates
+✅ Good: Fixed upper bound on iterations, max queue size with fail-fast, event loop documented as intentionally non-terminating
+⚠️ Why: Unbounded loops/queues cause tail latency spikes and resource exhaustion; fail-fast detects violations early
+🔧 Fix: Put a limit on every loop and queue; fail fast when exceeded; document non-terminating loops explicitly
+📍 See: `general-llm-anti-patterns.mdc` section 2.1, `engineering-philosophy.mdc` section 1.1b (Zero Showstopper Policy)
+
+**Detect:** Loops with no max iteration, queues without size limits, no fail-fast on limit breach, event loops not documented
+
+---
+
 ## Category 3: Code Quality Anti-Patterns
 
 ### 3.1 Extract Repeated Patterns
@@ -339,6 +353,62 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 🔧 Fix: Extract magic values to named constants; use configuration files for environment-specific values; group related constants
 
 **Detect:** Hardcoded numbers/strings, repeated magic values throughout code, no constants file or configuration
+
+---
+
+### 3.6a Explicit Options at Call Site (CRIT)
+
+**CRITICAL:** Pass options to library/API calls explicitly at the call site; avoid relying on default behavior so behavior is visible and stable across versions.
+
+❌ Bad: `client.connect()`, `parse(data)` (relying on library defaults)
+✅ Good: `client.connect({ timeout: 5000, retries: 3 })`, `parse(data, { strict: true })` (options explicit)
+⚠️ Why: Defaults can change; explicit options document intent and avoid latent bugs when dependencies update
+🔧 Fix: Pass configuration/options explicitly; avoid overloads that depend on default behavior
+📍 See: `general-llm-anti-patterns.mdc` section 4.2 (Dependency Management)
+
+**Detect:** Library calls with no options, reliance on default behavior, options not visible at call site
+
+---
+
+### 3.6b Compound Conditions and State Invariants Positively
+
+**CRITICAL:** Split compound conditions into simple branches; state invariants in positive form; split long else-if chains.
+
+❌ Bad: `if (a && b && c) { }`, `if (index >= length) { /* invariant doesn't hold */ }`, long else-if chains
+✅ Good: Nested if/else with simple conditions; `if (index < length) { /* invariant holds */ } else { }`; split into else { if { } } trees
+⚠️ Why: Compound booleans are hard to verify; positive invariants (e.g. index < length) reduce off-by-one reasoning errors
+🔧 Fix: Split compound conditions into simple branches; state what you expect positively; break long else-if into trees
+📍 See: `general-llm-anti-patterns.mdc` section 0.1 (Cleverness Over Clarity)
+
+**Detect:** Compound boolean conditions, negated invariant checks (index >= length), long else-if chains, branches not explicit
+
+---
+
+### 3.6c Index vs Count vs Size (Off-By-One)
+
+**CRITICAL:** Treat index (0-based), count (1-based), and size (bytes/units) as distinct; put units in names; show rounding intent.
+
+❌ Bad: Mixing index and count without conversion, `n` for both count and size, integer division without stating floor/ceil
+✅ Good: `index`/`count`/`size_bytes` distinct; `divFloor`, `divCeil`, or language equivalent to show rounding intent
+⚠️ Why: Index→count is +1; count→size is ×unit; confusion causes off-by-one and buffer errors
+🔧 Fix: Use distinct names for index, count, size; include units in names; use explicit divFloor/divCeil/divExact where relevant
+📍 See: `general-llm-anti-patterns.mdc` section 3.6 (Magic Number/String Proliferation)
+
+**Detect:** index/count/size conflated, no units in names, implicit rounding in division, off-by-one in loops or slices
+
+---
+
+### 3.6d Smallest Scope and Variables in Scope
+
+**CRITICAL:** Declare variables at the smallest possible scope; minimize variables in scope; declare close to use to reduce misuse and POCPOU bugs.
+
+❌ Bad: Declaring at top of function, many variables in scope, check far from use
+✅ Good: Declare where first used, smallest enclosing block, check and use close together
+⚠️ Why: Large scope increases misuse; place-of-check to place-of-use gaps cause semantic bugs
+🔧 Fix: Declare at smallest scope; declare close to use; minimize variables in scope at any point
+📍 See: `general-llm-anti-patterns.mdc` section 5.6 (Global State)
+
+**Detect:** Variables declared far from use, many variables in scope, check and use separated by many lines
 
 ---
 
@@ -577,14 +647,15 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ### 6.2 Missing Error Path Tests
 
-**CRITICAL:** Test error conditions and edge cases, not just happy paths.
+**CRITICAL:** Test error conditions and edge cases, not just happy paths. Test both positive and negative space: valid data, invalid data, boundaries, and valid→invalid transitions.
 
-❌ Bad: Only testing happy paths, no tests for error conditions, missing edge case tests, no boundary condition tests
-✅ Good: Test error conditions explicitly, test boundary conditions (0, -1, max, empty, null), test edge cases, use negative testing
-⚠️ Why: Undiscovered bugs in error paths, system fails in production on edge cases, no confidence in error handling
-🔧 Fix: Test error conditions explicitly; test boundary conditions; test edge cases (duplicates, conflicts, limits); aim for high code coverage on error paths
+❌ Bad: Only testing happy paths, no tests for error conditions, missing edge case tests, no boundary condition tests, only valid inputs
+✅ Good: Test error conditions explicitly; test boundary conditions (0, -1, max, empty, null); test valid and invalid data; test valid→invalid transitions; use negative testing
+⚠️ Why: Undiscovered bugs in error paths, system fails in production on edge cases, no confidence in error handling. An analysis of production failures in distributed systems found that most catastrophic failures stem from incorrect handling of non-fatal errors.
+🔧 Fix: Test error conditions explicitly; test boundary conditions; test positive and negative space (valid, invalid, boundaries, transitions); aim for high code coverage on error paths
+📍 See: OSDI'14 "Simple Testing Can Prevent Most Critical Failures" (error-handling code causes majority of catastrophic failures)
 
-**Detect:** Only testing happy paths, no tests for error conditions, missing edge case tests, no boundary condition tests
+**Detect:** Only testing happy paths, no tests for error conditions, missing edge case tests, no boundary condition tests, no invalid-data tests, no valid→invalid boundary tests
 
 ---
 

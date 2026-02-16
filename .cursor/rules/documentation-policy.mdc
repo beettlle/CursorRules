@@ -29,6 +29,10 @@ alwaysApply: true
    - You may read and reference existing markdown files
    - Do not modify existing markdown files unless explicitly asked
 
+## Inline Comments: Say Why and How
+
+When writing in-code comments: say **why** and **how**, not only what. Code alone is not documentation. Write comments as full sentences (capital letter, period); end-of-line comments may be short phrases. See `engineering-philosophy.mdc` section 2.6 (Always Say Why).
+
 ## Examples
 
 ❌ **DON'T do this:**
