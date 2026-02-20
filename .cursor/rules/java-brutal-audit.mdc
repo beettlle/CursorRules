@@ -51,6 +51,7 @@ We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't sl
 - No >80% single-line delegation in Service/Manager classes (`return repo.method()`)
 - No hardcoded secrets (API keys, passwords, connection strings)
 - No silent failures: `catch (Exception e) { }`, `catch (Exception e) { e.printStackTrace(); }`, or empty catch
+- Security (OWASP): see `owasp-secure-coding-practices.mdc` for full checklist
 
 **Tool:** Use `grep` with patterns such as: `TODO|FIXME`, `catch\s*\(\s*Exception`, `\.printStackTrace\s*\(`, `return null;` (in methods returning collections), `\.get\s*\(\s*0\s*\)`, `\.get\s*\([^)]*\.size\s*\(\s*\)\s*-\s*1\s*\)`, etc.
 

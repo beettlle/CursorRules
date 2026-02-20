@@ -40,6 +40,7 @@ We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't sl
 - No >80% delegation methods
 - No hardcoded secrets
 - No silent failures
+- Security (OWASP): see `owasp-secure-coding-practices.mdc` for full checklist
 
 **Tool:** Use `grep` to verify before detailed audit.
 
@@ -332,7 +333,7 @@ Check React specific patterns:
 
 ### F3. Security Patterns
 
-Check security-related code:
+Check security-related code (full OWASP checklist: `owasp-secure-coding-practices.mdc`):
 
 - ✅ Input validation at boundaries
 - ✅ Output sanitization (XSS prevention)

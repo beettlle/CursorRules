@@ -129,6 +129,26 @@ description: "Critical anti-patterns quick reference - condensed rules for fast 
 
 **Detect:** Example code used verbatim, example code not adapted to project patterns, copy-paste without modification
 
+### OWASP Security (Quick Reference)
+
+**16. Output Encoding**
+❌ Bad: `element.innerHTML = userInput`, untrusted data in SQL/command without encoding
+✅ Good: Context-specific encoding (HTML, SQL, OS) on server; parameterized queries; safe APIs
+⚠️ Why: XSS, injection, log injection
+📍 Details: `owasp-secure-coding-practices.mdc` section 2
+
+**17. Fail Secure / Deny by Default**
+❌ Bad: Access control or error path that allows access when check fails or errors
+✅ Good: Authorization and error handlers deny access by default; explicit allow only after validation
+⚠️ Why: Privilege escalation, unauthorized access when misconfigured or on error
+📍 Details: `owasp-secure-coding-practices.mdc` sections 5, 7
+
+**18. No User Input to Dynamic Execution**
+❌ Bad: `eval(userInput)`, `exec(userInput)`, user-supplied path to dynamic include/redirect
+✅ Good: No user-controlled data to eval/exec/dynamic include; allow-list for paths; task-specific APIs
+⚠️ Why: Remote code execution, arbitrary command execution
+📍 Details: `owasp-secure-coding-practices.mdc` section 14
+
 ### File and Directory Naming (Guidance)
 
 No spaces; safe chars [a-zA-Z0-9_.-]; dates YYYY-MM-DD or YYYYMMDD; zero-pad versions (v01, v02); one convention per project. Optional for non-source assets: subject_date_code with dashes in subject, underscores between parts. If project has a convention, keep it; new projects use industry standard. Details: `general-llm-anti-patterns.mdc` Category 12

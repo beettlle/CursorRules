@@ -548,6 +548,8 @@ This file contains universal, language-agnostic rules to prevent common LLM-indu
 
 ## Category 5: Security & Reliability Anti-Patterns
 
+**OWASP alignment:** Security practices below align with [OWASP Secure Coding Practices - Quick Reference](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/stable-en/02-checklist/05-checklist.html) (input validation, output encoding, auth, session, access control, crypto, error/logging, data protection, communication, system config, database, file, memory, general). Extended checklist: `owasp-secure-coding-practices.mdc`.
+
 ### 5.1 Hardcoded Secrets (CRIT)
 
 **CRITICAL:** Never hardcode API keys, tokens, passwords, or credentials in source code, even placeholders.

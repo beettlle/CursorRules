@@ -123,6 +123,8 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 
 **Detect:** Example code used verbatim, example code not adapted to project patterns, copy-paste without modification
 
+**Security (OWASP):** Security practices align with the [OWASP Secure Coding Practices Quick Reference](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/stable-en/02-checklist/05-checklist.html). Full checklist and detection criteria: `.cursor/rules/owasp-secure-coding-practices.mdc`.
+
 ## Phase Verification Workflows
 
 After completing a development phase, run the appropriate brutal audit from `.cursor/rules/`:
