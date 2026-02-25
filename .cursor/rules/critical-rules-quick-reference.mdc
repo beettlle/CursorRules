@@ -164,6 +164,7 @@ After completing a development phase, run the appropriate brutal audit:
 - **Java projects**: Use `java-brutal-audit.mdc` for comprehensive architectural review (Java 17/21)
 - **Go projects**: Use `go-1-21-brutal-audit.mdc` for comprehensive architectural review
 - **JavaScript/TypeScript projects**: Use `javascript-3-brutal-audit.mdc` for comprehensive architectural review
+- **Rust projects**: Use `rust-brutal-audit.mdc` for comprehensive architectural review
 
 **When to run:**
 

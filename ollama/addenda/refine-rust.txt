@@ -1,0 +1,1 @@
+For Rust projects, run: cargo build and cargo test (and cargo clippy). Use cargo fmt -- --check for format.

@@ -51,14 +51,20 @@ The repository includes comprehensive brutal audit workflows:
 - **Use when:** Working on JavaScript/TypeScript projects
 - **Covers:** Modern ES, tooling, testing
 
+### Rust Projects
+
+- **File:** `rust-brutal-audit.mdc`
+- **Use when:** Working on Rust (edition 2021 or 2024) projects
+- **Covers:** Error handling, ownership, async/concurrency, testing, API guidelines, unsafe
+
 ## Workflow Steps
 
-1. **Identify the project type** (Swift/iOS, Python, Java, Go, or JavaScript/TypeScript)
+1. **Identify the project type** (Swift/iOS, Python, Java, Go, JavaScript/TypeScript, or Rust)
 2. **Invoke the appropriate audit** by mentioning:
    - "run the audit"
    - "check for anti-patterns"
    - "verify phase completion"
-   - "run the Swift audit", "run the Python audit", or "run the Java audit"
+   - "run the Swift audit", "run the Python audit", "run the Java audit", "run the Go audit", "run the Rust audit", or "run the JavaScript audit"
 3. **Review the audit results** - The audit will provide:
    - Critical violations with file locations
    - Severity ratings (CRITICAL/HIGH/MEDIUM/LOW)
@@ -97,5 +103,6 @@ Both work together to ensure code quality throughout the development lifecycle.
 - `java-brutal-audit.mdc` - Java 17/21 comprehensive audit
 - `go-1-21-brutal-audit.mdc` - Go 1.21+ comprehensive audit
 - `javascript-3-brutal-audit.mdc` - JavaScript/TypeScript comprehensive audit
+- `rust-brutal-audit.mdc` - Rust comprehensive audit
 - `critical-rules-quick-reference.mdc` - Quick reference for when to run audits
 - Language-specific development standards files for ongoing guidance

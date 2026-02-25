@@ -8,7 +8,7 @@ This project uses CursorRules—a collection of development standards and anti-p
 
 ## File and Directory Naming
 
-No spaces in file or directory names; use underscores, hyphens, or language-appropriate case. Use only safe characters (letters, digits, underscore, hyphen). Dates in names: YYYY-MM-DD or YYYYMMDD. Zero-pad version suffixes (v01, v02). One convention per project; if the project already has one, keep it. For non-source assets (docs, exports, logs), optional pattern: subject_date_code with dashes in subject and underscores between parts. Source file naming per language: Python snake_case modules; Java one public class per file, filename = class name; Go lowercase + underscores; Swift PascalCase; JavaScript/TypeScript follow project or use kebab-case. Full rules: `.cursor/rules/general-llm-anti-patterns.mdc` Category 12.
+No spaces in file or directory names; use underscores, hyphens, or language-appropriate case. Use only safe characters (letters, digits, underscore, hyphen). Dates in names: YYYY-MM-DD or YYYYMMDD. Zero-pad version suffixes (v01, v02). One convention per project; if the project already has one, keep it. For non-source assets (docs, exports, logs), optional pattern: subject_date_code with dashes in subject and underscores between parts. Source file naming per language: Python snake_case modules; Java one public class per file, filename = class name; Go lowercase + underscores; Swift PascalCase; Rust snake_case for modules and files; JavaScript/TypeScript follow project or use kebab-case. Full rules: `.cursor/rules/general-llm-anti-patterns.mdc` Category 12.
 
 ## Top 15 Universal Anti-Patterns
 
@@ -134,6 +134,7 @@ After completing a development phase, run the appropriate brutal audit from `.cu
 - **Java projects**: `java-brutal-audit.mdc` (Java 17/21)
 - **Go projects**: `go-1-21-brutal-audit.mdc`
 - **JavaScript/TypeScript projects**: `javascript-3-brutal-audit.mdc`
+- **Rust projects**: `rust-brutal-audit.mdc`
 
 **When to run:** After each development phase, before marking work "ready for next phase," or when code quality concerns arise.
 

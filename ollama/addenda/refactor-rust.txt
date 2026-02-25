@@ -1,0 +1,2 @@
+For Rust projects, run: cargo build and cargo test (and cargo clippy).
+For Rust: prefer ? and references over unwrap/clone; follow API Guidelines (naming, constructors, Debug); use Vec::with_capacity when size known.

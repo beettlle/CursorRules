@@ -1,6 +1,6 @@
 ---
 description: "OWASP-aligned secure coding: input validation, output encoding, auth, session, access control, crypto, logging, data protection, DB, file, memory"
-globs: ["**/*auth*", "**/api/**", "**/handlers/**", "**/*controller*", "**/*.go", "**/*.py", "**/*.ts", "**/*.tsx", "**/*.java", "**/*.swift", "**/*.js"]
+globs: ["**/*auth*", "**/api/**", "**/handlers/**", "**/*controller*", "**/*.go", "**/*.py", "**/*.ts", "**/*.tsx", "**/*.java", "**/*.swift", "**/*.js", "**/*.rs"]
 alwaysApply: false
 ---
 

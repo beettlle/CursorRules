@@ -1,0 +1,2 @@
+For Rust projects, run: cargo build and cargo test (and cargo clippy for lint). Use --no-default-features in CI if needed.
+For Rust: prefer Result/? over unwrap/expect in library code; prefer &T over clone; use rustfmt; verify crates on crates.io.

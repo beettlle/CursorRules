@@ -11,7 +11,7 @@ This repository provides a centralized collection of **Cursor Rules** (`.mdc` fi
 - [Local Model Integrations](#local-model-integrations)
 - [Project-Specific Rules](#project-specific-rules)
 - [Core Principles](#core-principles-universal)
-- [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript)
+- [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript, Rust)
 - [Extending](#extending)
 - [Phase-Based Audit Workflows](#phase-based-audit-workflows)
 - [Contributing](#contributing)
@@ -52,6 +52,8 @@ The core rules live in `.cursor/rules/`.
 ├── go-1-21-brutal-audit.mdc            # Go 1.21+ comprehensive phase audit
 ├── javascript-3-development-standards.mdc  # JavaScript/TypeScript standards
 ├── javascript-3-brutal-audit.mdc       # JavaScript/TypeScript comprehensive phase audit
+├── rust-development-standards.mdc      # Rust idioms, style, anti-patterns
+├── rust-brutal-audit.mdc              # Rust comprehensive phase audit
 └── ...                                 # Other rules: ai-ml-development-standards.mdc, aws-*.mdc (5), cursor-integration.mdc, engineering-philosophy.mdc. See .cursor/rules/ for the full list.
 ```
 
@@ -93,6 +95,7 @@ Produce an AGENTS.md with:
    - Java: java-17-development-standards.mdc or java-21-development-standards.mdc, java-brutal-audit.mdc
    - Swift/iOS: swift-5-9-development-standards.mdc, swift-5-9-brutal-audit.mdc
    - JavaScript/TypeScript: javascript-3-development-standards.mdc, javascript-3-brutal-audit.mdc
+   - Rust: rust-development-standards.mdc, rust-brutal-audit.mdc
 
 4. **Project-Specific Sections**: Add placeholders or fill in from project files:
    - Dev environment tips (setup commands, build, run)
@@ -211,6 +214,16 @@ The `javascript-3-development-standards.mdc` file enforces:
 - **Security**: Input validation; no `eval()`; sanitize user input.
 - **Modular**: ES6 modules; functional over imperative where appropriate.
 
+## Rust Standards
+
+The `rust-development-standards.mdc` file enforces:
+
+- **Errors as values**: Result/Option; propagate with ?; no unwrap/expect in library code; propagate errors with context.
+- **Ownership and borrowing**: Prefer references over clone; flexible API boundaries (impl AsRef, &[T]); no unbounded collects when streaming is possible.
+- **Unsafe and concurrency**: unsafe only with // SAFETY: comment; Send/Sync correct; no blocking in async; no shared mutable state without sync (Arc<Mutex<T>>, channels).
+- **API design**: Rust API Guidelines (naming as_/to_/into_, iter/iter_mut/into_iter, Debug and common traits); constructors and documentation.
+- **Tooling**: rustfmt, clippy; run cargo build / cargo test before claiming success; verify crates (slopsquatting prevention).
+
 ## Extending
 
 To add support for a new language (e.g., TypeScript/React):
@@ -237,6 +250,7 @@ The repository includes on-demand brutal audit workflows for comprehensive archi
 - **Java**: `.cursor/rules/java-brutal-audit.mdc` - Comprehensive audit for Java 17/21 LTS projects
 - **Go**: `.cursor/rules/go-1-21-brutal-audit.mdc` - Comprehensive audit for Go 1.21+ projects (Effective Go, concurrency, testing)
 - **JavaScript/TypeScript**: `.cursor/rules/javascript-3-brutal-audit.mdc` - Comprehensive audit for JS/TS projects (modern ES, tooling, testing)
+- **Rust**: `.cursor/rules/rust-brutal-audit.mdc` - Comprehensive audit for Rust (edition 2021/2024) projects (error handling, ownership, concurrency, testing)
 
 These audits are designed to run after phase completion to ensure code quality and architectural compliance. They complement the always-on rules by providing deep, milestone-based validation.
 

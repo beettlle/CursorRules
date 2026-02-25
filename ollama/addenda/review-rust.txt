@@ -1,0 +1,1 @@
+For Rust: unwrap/expect in library code, unsafe without // SAFETY: comment, Rc/RefCell across threads, I/O or heavy work in loops, ghost layers, let _ = on Result, missing error context (map_err), panic in libs, unverified crates, missing Debug on public types, API naming (as_/to_/into_).

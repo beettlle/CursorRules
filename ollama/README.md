@@ -55,7 +55,7 @@ Tool-agnostic: use any wrapper that can pipe diffs and findings to the models. F
 
 Base Modelfiles are language-agnostic. For language-specific anti-patterns and build/test commands, use the addenda.
 
-**Available languages:** Go, Python, Java, Swift, JavaScript.
+**Available languages:** Go, Python, Java, Swift, JavaScript, Rust.
 
 Addenda exist for all four models: `review-*.txt`, `refine-*.txt`, `code-*.txt`, `refactor-*.txt`. See [PROMPT-add-addenda.md](PROMPT-add-addenda.md) for the LLM prompt to merge addenda into the base Modelfiles (produces customized Modelfiles for any of the four models). Addenda files are in `addenda/`.
 
