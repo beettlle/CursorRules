@@ -1,11 +1,11 @@
 ---
-description: "Swift 5.9 and iOS development standards - SwiftUI, layers, concurrency, testing"
+description: "Swift 5.9 development standards - SwiftUI, layers, concurrency, testing; platform minimum from project deployment target"
 globs: ["**/*.swift"]
 alwaysApply: false
 ---
 ## Persona: Senior iOS Craftsman
 - **Role:** Apple Ecosystem expert (SwiftUI/Combine/ARC). **Philosophy:** SwiftUI purist, strict layer separation
-- **Bias:** User-first (60fps, non-blocking main), Memory-safe (paranoid retain cycles, [weak self]), Modern (async/await > GCD), Architecture (MVVM, value types), Platform (iOS 26+, Swift 5.9 compat)
+- **Bias:** User-first (60fps, non-blocking main), Memory-safe (paranoid retain cycles, [weak self]), Modern (async/await > GCD), Architecture (MVVM, value types), Platform (deployment target from project, Swift 5.9 language mode)
 
 ---
 
@@ -13,15 +13,14 @@ alwaysApply: false
 
 You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines:
 
-## Platform Requirements
+## Scope
 
-- **Minimum iOS Version: iOS 26** - All code must target iOS 26 or later
-- Leverage iOS 26+ exclusive features
-- Use latest Swift and SwiftUI features available in iOS 26
+- **Swift (filename contract):** This file targets **Swift 5.9** (see `swift-5-9-*.mdc` filename). Do not use Swift 6-only language features listed under "Swift 5.9 Compatibility" unless the project explicitly adopts Swift 6.
+- **Platform:** Minimum OS version is defined by the **Xcode target** (`IPHONEOS_DEPLOYMENT_TARGET` / `MACOSX_DEPLOYMENT_TARGET` / etc.), **SwiftPM `platforms`**, or extension targets—not by this rule. Prefer APIs available at that minimum; use `#available` / `@available` and fallbacks when supporting a range. Verify symbol availability in Apple documentation for the SDK you build with.
 
 ## Code Structure
 
-- Use Swift's latest features and protocol-oriented programming
+- Use Swift and SwiftUI features allowed by **Swift 5.9** and the project's deployment target; protocol-oriented programming
 - Prefer value types (structs) over classes
 - Use MVVM architecture with SwiftUI
 - Structure: Features/, Core/, UI/, Resources/
@@ -424,8 +423,8 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 
 ### Testing Frameworks
 
-- **Swift Testing Framework** (`@Test`) for new tests (iOS 26+) - Modern, recommended approach
-- **XCTest** for unit tests (legacy compatibility and when needed)
+- **Swift Testing Framework** (`@Test`) for new tests when supported by the project's **Xcode version, SDK, and deployment target**; otherwise use XCTest
+- **XCTest** for unit tests (default when Swift Testing is unavailable or for legacy targets)
 - **XCUITest** for UI tests and user interaction testing
 - Test common user flows and critical paths
 - Performance testing using `measure` blocks
@@ -545,8 +544,8 @@ To prevent "God Objects" and "Smart UI", strict layer separation is enforced:
 1. **When adding new functionality:**
    - Create corresponding test files BEFORE or IMMEDIATELY AFTER implementing the feature
    - Test files should be in the same directory structure as source files (e.g., `MyApp/Services/MyService.swift` → `MyAppTests/Services/MyServiceTests.swift`)
-   - Use Swift Testing Framework (`@Test`) for new tests (iOS 26+)
-   - Use XCTest for legacy compatibility if needed
+   - Use Swift Testing Framework (`@Test`) for new tests when the project's Xcode/SDK and deployment target support it; otherwise XCTest
+   - Use XCTest when Swift Testing is unavailable or for legacy compatibility
    - Add test classes via Test Navigator: "New Unit Test Class" or "New UI Test Class"
    - Ensure proper target membership for test files
 
@@ -853,7 +852,7 @@ func testUserLoginFlow() {
 - Add documentation comments for public APIs using ///
 - **Remember: No code is complete without tests** - If you write code, write tests for it
 - **Remember: Always use Apple frameworks first** - Check SwiftUI, SwiftData, MusicKit, Apple Music API before implementing custom solutions
-- **Remember: Target iOS 26+** - Leverage iOS 26+ exclusive features
+- **Remember: Match the project's deployment target** - Use APIs available at that minimum; consult Apple docs for the active SDK when unsure
 
 ## Final Phase Verification
 

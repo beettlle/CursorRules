@@ -40,7 +40,7 @@ The core rules live in `.cursor/rules/`.
 ├── go-1-21-development-standards.mdc   # Go-specific standards (Effective Go, Uber Style Guide)
 ├── java-17-development-standards.mdc   # Java 17 LTS (Effective Java, ExecutorService, Records)
 ├── java-21-development-standards.mdc   # Java 21 LTS (Effective Java, Virtual Threads, Records)
-├── swift-5-9-development-standards.mdc # iOS/Swift 5.9 development standards
+├── swift-5-9-development-standards.mdc # Swift 5.9; Apple platform minimum from project target
 ├── ios-ui-development-focus.mdc        # UI/UX best practices
 ├── ios-build-automation.mdc            # CI/CD and build automation rules
 ├── documentation-policy.mdc            # Rules for creating/editing documentation
@@ -180,7 +180,7 @@ The `python-3-development-standards.mdc` file enforces:
 
 The `swift-5-9-development-standards.mdc` file focuses on:
 
-- **Swift 5+** modern concurrency features.
+- **Swift 5.9** language mode and concurrency features (filename encodes version; platform minimum is project-defined).
 - **Architecture**: Clean separation of UI, Domain, and Data layers.
 - **UI**: SwiftUI/UIKit best practices.
 
@@ -245,7 +245,7 @@ To add support for a new language (e.g., TypeScript/React):
 
 The repository includes on-demand brutal audit workflows for comprehensive architectural reviews:
 
-- **Swift/iOS**: `.cursor/rules/swift-5-9-brutal-audit.mdc` - Comprehensive audit for Swift 5.9/iOS 26 projects
+- **Swift/iOS**: `.cursor/rules/swift-5-9-brutal-audit.mdc` - Comprehensive audit for Swift 5.9 projects (deployment target is project-defined)
 - **Python**: `.cursor/rules/python-3-brutal-audit.mdc` - Comprehensive audit for Python 3.13 projects
 - **Java**: `.cursor/rules/java-brutal-audit.mdc` - Comprehensive audit for Java 17/21 LTS projects
 - **Go**: `.cursor/rules/go-1-21-brutal-audit.mdc` - Comprehensive audit for Go 1.21+ projects (Effective Go, concurrency, testing)

@@ -10,6 +10,11 @@ This rule defines the workflow for conducting a "Brutal Audit" of the Swift/iOS 
 
 Apply this rule when the user asks to "run the audit", "check for anti-patterns", "verify phase completion", or mentions completing a Phase.
 
+## Scope
+
+- **Swift:** Audits **Swift 5.9** language-mode expectations (see `swift-5-9-*.mdc` filename). Swift 6-only syntax remains a finding unless the project has moved to Swift 6.
+- **Platform:** Minimum OS is **project-defined** (Xcode deployment targets / SwiftPM `platforms`). Do not assume a fixed iOS version; verify Liquid Glass (or successor) APIs against the project's SDK and Apple documentation.
+
 ## Auditor Role & Behavior
 
 You are the **Lead Architectural Auditor**. Your goal is to be critical, rigorous, and honest. Do not be polite about bad code. Flag "Vibe Coding" and "AI Garbage" relentlessly.
@@ -24,7 +29,7 @@ You are the **Lead Architectural Auditor**. Your goal is to be critical, rigorou
 
 **Role:** Lead Architectural Auditor  
 **Context:** Phase [X] Implementation Review  
-**Version:** 2.0 (Updated for iOS 26, Swift 5.9, Swift Testing Framework)
+**Version:** 2.1 (Swift 5.9; platform minimum from project; Swift Testing when supported by project SDK)
 
 We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't slipped back into "Vibe Coding" or created "AI Garbage." Analyze the current codebase against `.cursor/rules/swift-5-9-development-standards.mdc`, `.cursor/rules/general-llm-anti-patterns.mdc`, and `PRODUCT_SPECIFICATION.md` (if present).
 
@@ -228,12 +233,13 @@ Search for Swift 6-only keywords (we target Swift 5.9):
 
 ---
 
-## 🟣 SECTION F: UI/UX Compliance (iOS 26)
+## 🟣 SECTION F: UI/UX Compliance (HIG / project design system)
 
 ### F1. Liquid Glass Compliance
 
-- Are new UI components using Liquid Glass materials?
-- Check for proper modifier syntax: `.liquidGlass(material:refraction:)`
+- Liquid Glass (or current Apple materials per HIG) must match the **project deployment target and SDK**; verify names and availability in Apple documentation—do not flag APIs that are correctly guarded with `#available` / project wrappers.
+- Are new UI components using Liquid Glass materials (when required by project design system)?
+- Check for proper modifier syntax per project (e.g. `.liquidGlass(material:refraction:)` if that is the project API)
 
 ### F2. UI Anti-Patterns
 

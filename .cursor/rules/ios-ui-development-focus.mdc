@@ -29,26 +29,25 @@ alwaysApply: false
 **CRITICAL: All UI and UX features MUST follow Apple's Human Interface Guidelines (HIG) and Liquid Glass design system**
 
 - Always consult Apple HIG documentation (locally indexed) for component usage, design patterns, and accessibility requirements
-- Integrate Liquid Glass materials throughout the UI for all new components (iOS 26+)
+- Integrate **current Apple design materials** (e.g. Liquid Glass per HIG) for new components **when available on the project's deployment target**; verify API names and availability in Apple docs for the SDK in use
 
-## Liquid Glass Design System (iOS 26+)
+## Liquid Glass Design System (project + SDK)
 
-**CRITICAL: All new UI development must use Apple's Liquid Glass design system**
+**CRITICAL: New UI must follow Apple's Human Interface Guidelines and current materials documentation (e.g. Liquid Glass where applicable).**
 
 ### Implementation Requirements
 
-- **Mandatory Usage:** All new UI components must use Liquid Glass materials (buttons, switches, sliders, media controls, navigation, app icons, widgets)
-- **Materials:** Use Apple's provided Liquid Glass APIs; leverage customization options (clear, tinted, dark appearances)
+- **Mandatory Usage (when supported):** Use Liquid Glass (or successor) materials for new components when the **project's minimum deployment target and SDK** support them—use `#available` / project design-system wrappers when supporting multiple OS versions.
+- **Materials:** Use Apple's documented APIs for the active SDK; leverage customization options (clear, tinted, dark appearances) as documented.
 - **Accessibility:** Test for readability, verify VoiceOver/Dynamic Type support, ensure WCAG contrast ratios
-- **Reference:** Always consult <https://developer.apple.com/documentation/technologyoverviews/liquid-glass>
+- **Reference:** Always consult <https://developer.apple.com/documentation/technologyoverviews/liquid-glass> and HIG for the SDK you build with.
 
 ### Liquid Glass Implementation Signature
 
-Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
+Modifier names and parameters are **SDK-specific**. When the project provides wrappers (e.g. `Core/UI/DesignSystem/LiquidGlass.swift`), use those consistently—**do not invent modifiers.** Example shapes only (verify against docs and project code):
 
-- **Modifier:** `.liquidGlass(material: .thick, refraction: 0.8)`
-- **Background:** `.background(.liquidMaterial(.sidebar))`
-- **Do not invent new modifiers.** Use only the wrappers defined in `Core/UI/DesignSystem/LiquidGlass.swift`.
+- **Modifier (example):** `.liquidGlass(material: .thick, refraction: 0.8)`
+- **Background (example):** `.background(.liquidMaterial(.sidebar))`
 
 ### When to Use Liquid Glass
 
@@ -82,7 +81,7 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 
 ### HIG Compliance Checklist (Project-Specific Requirements)
 
-- ✅ Uses Liquid Glass materials and design patterns (iOS 26+)
+- ✅ Uses Liquid Glass (or current HIG materials) per project deployment target and design system
 - ✅ **Text on materials uses semantic foreground styles (not blend modes)**
 - ✅ **ScrollViews use `.safeAreaInset(edge: .top)` to prevent content from scrolling under Dynamic Island/notch**
 - ✅ **ScrollViews use `.safeAreaInset(edge: .bottom)` for pinned footers (preferred over ZStack pattern)**
@@ -112,13 +111,13 @@ Since this relies on iOS 26+ features, ALWAYS use this exact syntax:
 **CRITICAL HIG:** Media playback screens require fixed controls that never scroll.
 
 - ✅ Primary controls (play/pause, skip, navigation) must be FIXED (outside `ScrollView`)
-- ✅ **PREFERRED:** Use `.safeAreaInset(edge: .bottom)` on ScrollView for pinned footers (iOS 15+)
-- ✅ **FALLBACK:** Use `ZStack(alignment: .bottom)` with pinned footer pattern for older iOS versions
+- ✅ **PREFERRED:** Use `.safeAreaInset(edge: .bottom)` on ScrollView for pinned footers when supported by the project's minimum deployment target
+- ✅ **FALLBACK:** Use `ZStack(alignment: .bottom)` with pinned footer pattern when `safeAreaInset` is unavailable
 - ❌ NEVER place primary playback controls inside `ScrollView`
 - ❌ NEVER use manual spacers (e.g., `Color.clear.frame(height: 200)`) - unreliable across device sizes
 - *Why:* HIG requires primary actions to be always accessible. Scrolling controls away violates this principle.
 
-**Preferred Pattern (iOS 15+):**
+**Preferred Pattern (when `safeAreaInset` is available at deployment target):**
 
 ```swift
 ScrollView {
@@ -183,5 +182,5 @@ ScrollView {
 ## Remember
 
 - **All UI must follow Apple HIG and Liquid Glass design system** - Consult locally indexed HIG and Liquid Glass documentation for every UI feature
-- **Target iOS 26+** - Leverage Liquid Glass and other iOS 26+ exclusive features
+- **Match project deployment target** - Use HIG-aligned materials and APIs available at that minimum; verify in Apple documentation
 - **See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section** - For native SwiftUI presentation API requirements

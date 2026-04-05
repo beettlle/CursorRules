@@ -24,7 +24,7 @@ The repository includes comprehensive brutal audit workflows:
 ### Swift/iOS Projects
 
 - **File:** `swift-5-9-brutal-audit.mdc`
-- **Use when:** Working on Swift 5.9/iOS 26+ projects
+- **Use when:** Working on Swift 5.9 projects (platform minimum is project-defined)
 - **Covers:** Architectural patterns, concurrency, performance, test quality, Swift 6 readiness, UI compliance
 
 ### Python Projects

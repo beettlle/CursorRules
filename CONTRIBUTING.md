@@ -190,6 +190,8 @@ When adding language-specific rules:
 2. **Focus on language idioms**: Only include patterns specific to that language
 3. **Use language examples**: Code examples must be in the target language
 4. **Link to standards**: Reference official style guides (PEP 8, Swift API Guidelines, etc.)
+5. **Swift filename = Swift version**: Names like `swift-5-9-*.mdc` encode the **Swift language mode**; rule body must stay consistent with that version (forbidden keywords, concurrency notes).
+6. **No hard-coded Apple OS floors in shared rules**: Point to **Xcode/SwiftPM deployment targets** and `#available` / `@available`; teams needing a numeric minimum should add a **project-specific** `.mdc` or `AGENTS.md` snippet.
 
 ## Contributing Modelfiles
 
