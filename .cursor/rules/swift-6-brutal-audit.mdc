@@ -1,19 +1,18 @@
 ---
-description: "Phase-based brutal audit workflow for Swift/iOS projects - on-demand architectural review"
+description: "Phase-based brutal audit workflow for Swift 6 / iOS projects - on-demand architectural review"
 globs: ["**/*.swift"]
 alwaysApply: false
 ---
 
-# Swift/iOS Brutal Audit Workflow
+# Swift/iOS Brutal Audit Workflow (Swift 6)
 
-This rule defines the workflow for conducting a "Brutal Audit" of the Swift/iOS codebase.
+This rule defines the workflow for conducting a "Brutal Audit" of the Swift/iOS codebase in **Swift 6 language mode**.
 
 Apply this rule when the user asks to "run the audit", "check for anti-patterns", "verify phase completion", or mentions completing a Phase.
 
 ## Scope
 
-- **Swift:** Audits **Swift 5.9** language-mode expectations (see `swift-5-9-*.mdc` filename). Swift 6-only syntax remains a finding unless the project has moved to Swift 6.
-- **For Swift 6 projects:** Use `swift-6-brutal-audit.mdc` and `swift-6-development-standards.mdc`.
+- **Swift:** Audits **Swift 6** language-mode expectations (see `swift-6-*.mdc` filename). For Swift 5.9 projects use `swift-5-9-brutal-audit.mdc`.
 - **Platform:** Minimum OS is **project-defined** (Xcode deployment targets / SwiftPM `platforms`). Do not assume a fixed iOS version; verify Liquid Glass (or successor) APIs against the project's SDK and Apple documentation.
 
 ## Auditor Role & Behavior
@@ -30,9 +29,9 @@ You are the **Lead Architectural Auditor**. Your goal is to be critical, rigorou
 
 **Role:** Lead Architectural Auditor  
 **Context:** Phase [X] Implementation Review  
-**Version:** 2.1 (Swift 5.9; platform minimum from project; Swift Testing when supported by project SDK)
+**Version:** 1.0 (Swift 6; platform minimum from project; Swift Testing when supported by project SDK)
 
-We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't slipped back into "Vibe Coding" or created "AI Garbage." Analyze the current codebase against `.cursor/rules/swift-5-9-development-standards.mdc`, `.cursor/rules/general-llm-anti-patterns.mdc`, and `PRODUCT_SPECIFICATION.md` (if present).
+We have just finished Phase [X]. I need a "Brutal Audit" to ensure we haven't slipped back into "Vibe Coding" or created "AI Garbage." Analyze the current codebase against `.cursor/rules/swift-6-development-standards.mdc`, `.cursor/rules/general-llm-anti-patterns.mdc`, and `PRODUCT_SPECIFICATION.md` (if present).
 
 ---
 
@@ -120,7 +119,7 @@ Flag comments that:
 - Are 5+ lines explaining why "unsafe" code is "actually safe"
 - Repeat the same explanation in multiple files
 - Say "This pattern is recommended because..." for workarounds
-- Justify `nonisolated(unsafe)` usage
+- Justify `nonisolated(unsafe)` or blanket `@preconcurrency` usage
 
 **Rule:** If you need a paragraph to justify code, the code is wrong.
 
@@ -195,7 +194,7 @@ For queue operations, playback, and search:
 
 Check all test files:
 
-- Tests for `@MainActor` types MUST have `@MainActor` on test function/struct
+- Tests for `@MainActor` types MUST have `@MainActor` on test function/struct (Swift 6 **error** if missing)
 - ❌ `Thread.isMainThread` in async tests
 - ❌ `let result = try await voidReturningMethod()` (assigning Void to constant)
 
@@ -212,25 +211,33 @@ Check all test files:
 
 ---
 
-## 🔵 SECTION E: Swift 6 Readiness
+## 🔵 SECTION E: Swift 6 Concurrency Compliance
 
-### E1. Concurrency Warnings Audit
+### E1. Concurrency Errors and Warnings Audit
 
-Run build and count warnings related to:
+Run build and count **errors and warnings** related to:
 
 - `Sendable` conformance issues
 - Actor isolation boundary crossings
 - MainActor assumption violations
 - "Non-sendable type X cannot cross actor boundary"
+- Task-isolated value / `sending` misuse diagnostics
 
-**These warnings become ERRORS in Swift 6.** Track count for each phase.
+**In Swift 6 language mode these are blocking.** Target: **zero** at phase end.
 
-### E2. Forbidden Swift 5.9 Violations
+### E2. Escape Hatch Abuse
 
-Search for Swift 6-only keywords (we target Swift 5.9):
+Search for:
 
-- ❌ `sending` keyword
-- ❌ `consume` keyword
+- `@unchecked Sendable` without a one-line technical justification comment
+- `@preconcurrency` on types that are fully Swift-native and fixable
+- `sending` on Domain-facing APIs where Sendable DTOs should be used instead
+
+**Allow:** Justified `sending`/`consume` in Data/infra; `@preconcurrency` for legacy UIKit/Obj-C delegates.
+
+### E3. TaskLocal Macro Migration
+
+Search for `@TaskLocal` with typealias + implicit nil default — must use explicit default in Swift 6.
 
 ---
 
@@ -263,7 +270,7 @@ On a scale of 1-10 (1 = Pure Architecture, 10 = Vibe Coding Mess):
 | Concurrency Safety | /10 | |
 | Performance (Hot Paths) | /10 | |
 | Test Quality | /10 | |
-| Swift 6 Readiness | /10 | |
+| Concurrency Compliance | /10 | |
 | **OVERALL** | /10 | |
 
 ### G2. TOP 10 Files Requiring Immediate Refactoring
@@ -291,7 +298,7 @@ Rank by severity (blocking Phase [X+1]):
 | Dead/unreachable code | | |
 | Defensive comments (5+ lines) | | |
 | Duplicated code blocks (3+ times) | | |
-| Swift 6 warnings | | |
+| Concurrency errors/warnings | | |
 
 ### G4. Regression Baseline
 
@@ -324,7 +331,7 @@ Compare violation counts to previous audit (if available):
 **Action:** Run test suite and verify all tests pass.
 
 **Tool:** Use `run_terminal_cmd` to execute test suite:
-- Swift: `swift test`
+- Swift: `xcodebuild test` or `swift test` per project
 
 **Evidence Required:**
 - Test output showing pass/fail counts
@@ -388,7 +395,8 @@ End with: **"Ready for Phase [X+1]? YES/NO - If NO, list blockers."**
 8. **No Defensive Commenting** - Refactor instead of justify
 9. **Optimize Hot Paths** - No full collection fetches for single ops
 10. **State Management Separation** - State belongs in Domain layer
-11. **Proper Actor Isolation in Tests** - Match type isolation
+11. **Proper Actor Isolation in Tests** - Match type isolation (Swift 6 error)
 12. **Domain Types Are Isolation-Agnostic** - No `@MainActor` on Domain
 13. **Forbidden Async Patterns** - No `Thread.isMainThread` in async
-14. **Test File Checklist** - Verify isolation before writing tests
+14. **Zero Concurrency Diagnostics** - No ignored Sendable/isolation errors
+15. **Prefer DTOs Over `sending` at Domain** - `sending` for intentional infra transfer only

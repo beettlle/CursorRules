@@ -21,11 +21,17 @@ Apply this workflow when:
 
 The repository includes comprehensive brutal audit workflows:
 
-### Swift/iOS Projects
+### Swift/iOS Projects (Swift 5.9)
 
 - **File:** `swift-5-9-brutal-audit.mdc`
-- **Use when:** Working on Swift 5.9 projects (platform minimum is project-defined)
+- **Use when:** Swift 5.9 language mode (platform minimum is project-defined)
 - **Covers:** Architectural patterns, concurrency, performance, test quality, Swift 6 readiness, UI compliance
+
+### Swift/iOS Projects (Swift 6)
+
+- **File:** `swift-6-brutal-audit.mdc`
+- **Use when:** Swift 6 language mode (platform minimum is project-defined)
+- **Covers:** Architectural patterns, strict concurrency compliance, performance, test quality, UI compliance
 
 ### Python Projects
 
@@ -98,7 +104,8 @@ Both work together to ensure code quality throughout the development lifecycle.
 ## See Also
 
 - `RULE_COMPOSITION.md` - Standard section order and rule structure
-- `swift-5-9-brutal-audit.mdc` - Swift/iOS comprehensive audit
+- `swift-5-9-brutal-audit.mdc` - Swift 5.9/iOS comprehensive audit
+- `swift-6-brutal-audit.mdc` - Swift 6/iOS comprehensive audit
 - `python-3-brutal-audit.mdc` - Python comprehensive audit
 - `java-brutal-audit.mdc` - Java 17/21 comprehensive audit
 - `go-1-21-brutal-audit.mdc` - Go 1.21+ comprehensive audit

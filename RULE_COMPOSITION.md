@@ -63,6 +63,12 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 **Resolution:** Domain-specific `obsidian-vault-standards.mdc` and explicit user vault intent win; documentation-policy applies to repo/software docs, not PKM notes.
 
+### Example 4: Swift 5.9 vs Swift 6 Language Mode
+
+**Conflict:** Both `swift-5-9-development-standards.mdc` and `swift-6-development-standards.mdc` use `globs: ["**/*.swift"]`; 5.9 forbids `sending`/`consume` while 6 requires strict concurrency and allows those features.
+
+**Resolution:** Project declares one language mode in `AGENTS.md`, Xcode **Swift Language Version**, or SwiftPM `swiftLanguageMode`. When Swift 6 is declared, `swift-6-*.mdc` supersedes 5.9 compatibility constraints. Optionally omit or remove the unused version’s rules from the project’s `.cursor/rules/` copy.
+
 ## Rules vs Agent Skills
 
 | Layer | Location | Role |

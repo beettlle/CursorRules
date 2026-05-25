@@ -1,2 +1,3 @@
 For Swift projects, run: xcodebuild -scheme YourScheme build test or swift build && swift test (per project setup).
 For Swift: prefer value types; use async/await; keep business logic out of repositories.
+Match project Swift language mode: swift-5-9-*.mdc or swift-6-*.mdc. Swift 6: strict concurrency is compile-time enforced; zero concurrency errors before completion.

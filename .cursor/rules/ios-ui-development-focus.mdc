@@ -96,7 +96,7 @@ Modifier names and parameters are **SDK-specific**. When the project provides wr
 - ❌ Custom components that duplicate system functionality
 - ❌ Non-standard navigation patterns
 
-*For comprehensive HIG guidelines, see `swift-5-9-development-standards.mdc`*
+*For comprehensive HIG guidelines, see `swift-5-9-development-standards.mdc` or `swift-6-development-standards.mdc` (per project Swift language mode)*
 
 ## SwiftUI Best Practices
 
@@ -104,7 +104,7 @@ Modifier names and parameters are **SDK-specific**. When the project provides wr
 - See "🛑 ZERO TOLERANCE: UI Anti-Patterns" section for sheet requirements
 - **Integrate Liquid Glass materials into SwiftUI views and components**
 
-*For comprehensive SwiftUI guidelines, see `swift-5-9-development-standards.mdc`*
+*For comprehensive SwiftUI guidelines, see `swift-5-9-development-standards.mdc` or `swift-6-development-standards.mdc` (per project Swift language mode)*
 
 ## Layout Patterns for Media/Playback Screens
 

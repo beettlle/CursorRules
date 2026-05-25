@@ -190,7 +190,7 @@ When adding language-specific or domain-specific rules:
 2. **Focus on language or domain idioms**: Only include patterns specific to that language or artifact (e.g., `obsidian-vault-standards.mdc` for vault OFM/Bases/Canvas—not full syntax; link upstream skills)
 3. **Use language examples**: Code examples must be in the target language
 4. **Link to standards**: Reference official style guides (PEP 8, Swift API Guidelines, etc.)
-5. **Swift filename = Swift version**: Names like `swift-5-9-*.mdc` encode the **Swift language mode**; rule body must stay consistent with that version (forbidden keywords, concurrency notes).
+5. **Swift filename = Swift version**: Names like `swift-5-9-*.mdc` or `swift-6-*.mdc` encode the **Swift language mode**; rule body must stay consistent with that version (forbidden vs allowed keywords, concurrency enforcement). Projects pick one pair; see `RULE_COMPOSITION.md` Example 4.
 6. **No hard-coded Apple OS floors in shared rules**: Point to **Xcode/SwiftPM deployment targets** and `#available` / `@available`; teams needing a numeric minimum should add a **project-specific** `.mdc` or `AGENTS.md` snippet.
 
 ## Contributing Modelfiles

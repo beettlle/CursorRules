@@ -16,6 +16,7 @@ You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines
 ## Scope
 
 - **Swift (filename contract):** This file targets **Swift 5.9** (see `swift-5-9-*.mdc` filename). Do not use Swift 6-only language features listed under "Swift 5.9 Compatibility" unless the project explicitly adopts Swift 6.
+- **For Swift 6 language mode:** See `swift-6-development-standards.mdc` and `swift-6-brutal-audit.mdc`.
 - **Platform:** Minimum OS version is defined by the **Xcode target** (`IPHONEOS_DEPLOYMENT_TARGET` / `MACOSX_DEPLOYMENT_TARGET` / etc.), **SwiftPM `platforms`**, or extension targets—not by this rule. Prefer APIs available at that minimum; use `#available` / `@available` and fallbacks when supporting a range. Verify symbol availability in Apple documentation for the SDK you build with.
 
 ## Code Structure

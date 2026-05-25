@@ -129,7 +129,7 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 
 After completing a development phase, run the appropriate brutal audit from `.cursor/rules/`:
 
-- **Swift/iOS projects**: `swift-5-9-brutal-audit.mdc`
+- **Swift/iOS projects**: `swift-5-9-brutal-audit.mdc` (Swift 5.9) or `swift-6-brutal-audit.mdc` (Swift 6 language mode)
 - **Python projects**: `python-3-brutal-audit.mdc`
 - **Java projects**: `java-brutal-audit.mdc` (Java 17/21)
 - **Go projects**: `go-1-21-brutal-audit.mdc`

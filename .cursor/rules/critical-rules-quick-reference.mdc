@@ -159,7 +159,7 @@ No spaces; safe chars [a-zA-Z0-9_.-]; dates YYYY-MM-DD or YYYYMMDD; zero-pad ver
 
 After completing a development phase, run the appropriate brutal audit:
 
-- **Swift/iOS projects**: Use `swift-5-9-brutal-audit.mdc` for comprehensive architectural review
+- **Swift/iOS projects**: Use `swift-5-9-brutal-audit.mdc` (Swift 5.9) or `swift-6-brutal-audit.mdc` (Swift 6 language mode) for comprehensive architectural review
 - **Python projects**: Use `python-3-brutal-audit.mdc` for comprehensive architectural review
 - **Java projects**: Use `java-brutal-audit.mdc` for comprehensive architectural review (Java 17/21)
 - **Go projects**: Use `go-1-21-brutal-audit.mdc` for comprehensive architectural review
