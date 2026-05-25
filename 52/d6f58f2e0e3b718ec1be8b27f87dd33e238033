@@ -1,0 +1,52 @@
+RULE_COMPOSITION.md
+  s_af4bc2ed71d72b::t_b3f4e141f7b91f 66-71
+.cursor/rules/ios-build-automation.mdc
+  s_af4bc2ed71d72b::t_455456eae910bc 288
+  s_af4bc2ed71d72b::t_2b2e209ce582cd 299
+  s_af4bc2ed71d72b::t_1754fe0207d01a 209
+  s_af4bc2ed71d72b::t_bb697b0ffe5be1 278
+.cursor/rules/ios-ui-development-focus.mdc
+  s_af4bc2ed71d72b::t_839140f54d36bc 99
+  s_af4bc2ed71d72b::t_1da3927be250f4 107
+ollama/addenda/code-swift.txt
+  s_af4bc2ed71d72b::t_bfdff452c534d6 3
+.cursor/rules/swift-5-9-development-standards.mdc
+  s_af4bc2ed71d72b::t_6079d2f5a24a91 19
+.cursor/rules/critical-rules-quick-reference.mdc
+  s_af4bc2ed71d72b::t_e521bcc257f53a 162
+.cursor/rules/swift-6-development-standards.mdc
+  s_af4bc2ed71d72b::t_179deaf4f07f3a 1-232
+CONTRIBUTING.md
+  s_af4bc2ed71d72b::t_f416b3ea89e827 193
+.cursor/rules/audit-workflow.mdc
+  s_af4bc2ed71d72b::t_512794259e0ea1 107-108
+  s_af4bc2ed71d72b::t_676ecb7406f603 24,27,30-34
+AGENTS.md
+  s_af4bc2ed71d72b::t_df89f1003b3220 132
+.cursor/rules/swift-5-9-brutal-audit.mdc
+  s_af4bc2ed71d72b::t_d8954908da5358 16
+README.md
+  s_af4bc2ed71d72b::t_31dccc1e0b5523 101
+  s_af4bc2ed71d72b::t_4c7cd51d6d8820 51-52
+  s_af4bc2ed71d72b::t_8160aa0f6cd5b5 283-284
+  s_af4bc2ed71d72b::t_298da5f6b94777 45
+  s_af4bc2ed71d72b::t_cd31be298d7101 207,209-218
+.cursor/rules/swift-6-brutal-audit.mdc
+  s_af4bc2ed71d72b::t_173c1e78a3114b 1-402
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "52d6f58f2e0e3b718ec1be8b27f87dd33e238033",
+  "prompts": {},
+  "sessions": {
+    "s_af4bc2ed71d72b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "291a4d46-54c3-4d4a-8ecd-cd35102f973f",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
