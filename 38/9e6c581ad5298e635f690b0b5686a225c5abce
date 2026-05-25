@@ -1,0 +1,41 @@
+.cursor/rules/obsidian-integration.mdc
+  s_cccc61b56ccfb4::t_ed5ae831e0caa3 1-62
+AGENTS.md
+  s_cccc61b56ccfb4::t_cb38fda0cc17bc 147-148
+RULE_COMPOSITION.md
+  s_cccc61b56ccfb4::t_01631e6e64c107 19,23
+  s_cccc61b56ccfb4::t_e23b4676435f51 60-80
+README.md
+  s_cccc61b56ccfb4::t_38695612aa339d 102
+  s_cccc61b56ccfb4::t_ed0b3d53b95915 87
+  s_cccc61b56ccfb4::t_c159a8ac327aa8 58-59
+  s_cccc61b56ccfb4::t_bd7acfad9662d7 13
+  s_cccc61b56ccfb4::t_9632ac4f45057f 162-181
+  s_cccc61b56ccfb4::t_cbd7597d1da121 268-269
+CONTRIBUTING.md
+  s_cccc61b56ccfb4::t_4f3d7b222ab857 213
+  s_cccc61b56ccfb4::t_ecba8d42c63861 187,190
+.cursor/rules/documentation-policy.mdc
+  s_cccc61b56ccfb4::t_0e1ae141ba6576 32-45
+.cursor/rules/cursor-integration.mdc
+  s_cccc61b56ccfb4::t_41bc8c50f0f9ff 125-162,180-181,183
+.cursor/rules/obsidian-vault-standards.mdc
+  s_cccc61b56ccfb4::t_6372e32555e4c8 1-8,10,12-14,16,21-22,24-26,28,33-34,36-38,40,45-46,48-50,52-54,57-58,60-62,64,66,69-70,72-74,76,81-82,84-86,88,93-94,96-98,100,105-106,108-110,112,117-118,120-122,124,130
+  s_cccc61b56ccfb4::t_de537383900a2f 9,11,15,17-20,23,27,29-32,35,39,41-44,47,51,55-56,59,63,65,67-68,71,75,77-80,83,87,89-92,95,99,101-104,107,111,113-116,119,123,125-129,131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "389e6c581ad5298e635f690b0b5686a225c5abce",
+  "prompts": {},
+  "sessions": {
+    "s_cccc61b56ccfb4": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e65b9a9b-d649-4ddc-a740-1d0754581ddd",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
