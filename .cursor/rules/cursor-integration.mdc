@@ -122,6 +122,44 @@ This file contains Cursor IDE-specific optimizations for context window manageme
 
 ---
 
+## Category 4: Agent Skills vs Rules
+
+### 4.1 Skills Complement Rules (CRIT)
+
+**CRITICAL:** Use `.mdc` rules for universal anti-patterns and verification; use Agent Skills (`SKILL.md`) for domain syntax and workflows.
+
+| Concern | Rules (`.mdc`) | Skills (`SKILL.md`) |
+|---------|----------------|---------------------|
+| Purpose | Anti-patterns, false-claim prevention, globs | Authoritative format and step-by-step workflows |
+| Load | `alwaysApply` / `globs` in `.cursor/rules/` | `.cursor/skills/` or `npx skills add` per [Agent Skills spec](https://agentskills.io/specification) |
+| Example | `obsidian-vault-standards.mdc` | [obsidian-skills](https://github.com/kepano/obsidian-skills) |
+
+❌ Bad: Duplicating full obsidian-skills reference trees inside `.mdc` files
+✅ Good: Thin `.mdc` anti-patterns in CursorRules; install upstream skills for OFM/Bases/Canvas/CLI syntax
+⚠️ Why: Duplication drifts from source of truth and wastes context tokens
+🔧 Fix: Link install command; read skill when task needs domain syntax
+📍 See: `obsidian-integration.mdc`; `RULE_COMPOSITION.md` Rules vs Agent Skills
+
+**Detect:** Long syntax catalogs in rules files, obsidian edits without skill install pointer, vendored copy of external SKILL.md
+
+---
+
+## Category 5: Web Content Extraction
+
+### 5.1 Defuddle vs Raw Fetch (CRIT)
+
+**CRITICAL:** For standard web articles and docs, prefer clean markdown extraction over noisy HTML when Defuddle is available.
+
+❌ Bad: `WebFetch` on long article pages when user wants readable content for analysis
+✅ Good: `defuddle parse <url> --md` for articles; direct fetch for URLs ending in `.md`; install via obsidian-skills defuddle skill if needed
+⚠️ Why: Navigation and ads waste tokens and reduce coherence
+🔧 Fix: `npm install -g defuddle` when missing; see [defuddle](https://github.com/kepano/defuddle) and obsidian-skills defuddle `SKILL.md`
+📍 See: `general-llm-anti-patterns.mdc` section 7.2a
+
+**Detect:** Huge HTML dumps for blog/docs, fetch on `.md` URL instead of direct read, no `--md` when extracting article text
+
+---
+
 ## Custom Modes (Optional)
 
 Rules cannot influence Auto model selection. For task-based model/behavior switching: Cursor Settings > Chat > Custom Modes. Create modes (e.g., Debug, Architecture) with model preselection and custom instructions. Invoke via mode dropdown.
@@ -139,8 +177,10 @@ These patterns represent critical Cursor IDE optimization anti-patterns:
 5. **Rule Priority and Ordering** - Establish priority system
 6. **Memory File Organization** - Organize memories systematically
 7. **Memory vs. Rules** - Clear separation of concerns
+8. **Skills vs Rules** - Anti-patterns in `.mdc`; syntax/workflows in skills
+9. **Web extraction** - Defuddle for articles; direct fetch for `.md` URLs
 
-**Quick Ref:** Context: @ symbol usage, context size management, exhaustion prevention | Rules: Dependency documentation, priority system, conflict resolution | Memory: File organization, vs rules separation
+**Quick Ref:** Context: @ symbol usage, context size management, exhaustion prevention | Rules: Dependency documentation, priority system, conflict resolution | Memory: File organization, vs rules separation | Skills: upstream domain packs, no duplication
 
 **For universal patterns:** See `general-llm-anti-patterns.mdc` section 7.2a, 7.2b, 10.2, 10.7
 

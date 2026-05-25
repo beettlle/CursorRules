@@ -144,6 +144,8 @@ After completing a development phase, run the appropriate brutal audit from `.cu
 
 When contributing to CursorRules itself, see [CONTRIBUTING.md](CONTRIBUTING.md) and [RULE_COMPOSITION.md](RULE_COMPOSITION.md). Rules live in `.cursor/rules/`.
 
+**Obsidian vault rules:** `obsidian-vault-standards.mdc` (glob-scoped anti-patterns), `obsidian-integration.mdc` (CLI). Pair with upstream [obsidian-skills](https://github.com/kepano/obsidian-skills)—link only, do not vendor skill files in this repo.
+
 ## Project-Specific Sections
 
 <!-- Fill in for your project -->

@@ -29,6 +29,20 @@ alwaysApply: true
    - You may read and reference existing markdown files
    - Do not modify existing markdown files unless explicitly asked
 
+### Obsidian vault notes (scope exception)
+
+**Repo/software docs** (`README`, `CONTRIBUTING`, `docs/`, change summaries, PR writeups): this policy still applies — do not create unsolicited `.md`.
+
+**PKM vault notes** (user explicitly asks to create, edit, or template a note, daily note, or vault page): this policy does not block that work. Follow `obsidian-vault-standards.mdc` and installed [obsidian-skills](https://github.com/kepano/obsidian-skills) for OFM syntax.
+
+❌ Bad: Refusing "create a daily note" because documentation-policy forbids new `.md` files
+✅ Good: Create/edit vault note when user requested; reserve documentation-policy for repo docs unless user asked for vault content
+⚠️ Why: Vaults are note-first; conflating PKM with repo docs blocks legitimate user intent
+🔧 Fix: Check user intent (vault vs repo); domain-specific Obsidian rules override this policy for vault notes
+📍 See: `obsidian-vault-standards.mdc`; `RULE_COMPOSITION.md` conflict example 3
+
+**Detect:** Agent cites documentation-policy when user asked for a note, vault path or `.obsidian/` present but agent treats all `.md` as repo docs
+
 ## Inline Comments: Say Why and How
 
 When writing in-code comments: say **why** and **how**, not only what. Code alone is not documentation. Write comments as full sentences (capital letter, period); end-of-line comments may be short phrases. See `engineering-philosophy.mdc` section 2.6 (Always Say Why).

@@ -10,6 +10,7 @@ This repository provides a centralized collection of **Cursor Rules** (`.mdc` fi
 - [AGENTS.md for Non-Cursor Agents](#agentsmd-for-non-cursor-agents)
 - [Local Model Integrations](#local-model-integrations)
 - [Project-Specific Rules](#project-specific-rules)
+- [Obsidian Vault Projects](#obsidian-vault-projects)
 - [Core Principles](#core-principles-universal)
 - [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript, Rust)
 - [Extending](#extending)
@@ -54,6 +55,8 @@ The core rules live in `.cursor/rules/`.
 ├── javascript-3-brutal-audit.mdc       # JavaScript/TypeScript comprehensive phase audit
 ├── rust-development-standards.mdc      # Rust idioms, style, anti-patterns
 ├── rust-brutal-audit.mdc              # Rust comprehensive phase audit
+├── obsidian-vault-standards.mdc       # Obsidian OFM, Bases, Canvas anti-patterns (glob-scoped)
+├── obsidian-integration.mdc           # Obsidian CLI and plugin dev loop (on demand)
 └── ...                                 # Other rules: ai-ml-development-standards.mdc, aws-*.mdc (5), cursor-integration.mdc, engineering-philosophy.mdc. See .cursor/rules/ for the full list.
 ```
 
@@ -81,7 +84,7 @@ Use this prompt with your AI agent to generate a project-specific AGENTS.md:
 ```
 Read .cursor/rules/critical-rules-quick-reference.mdc and .cursor/rules/general-llm-anti-patterns.mdc.
 
-Then scan this project to detect primary languages (e.g., *.py, *.go, *.java, *.swift, *.ts, *.tsx, package.json, go.mod, etc.).
+Then scan this project to detect primary languages (e.g., *.py, *.go, *.java, *.swift, *.ts, *.tsx, package.json, go.mod, etc.) and Obsidian vault signals (*.base, *.canvas, .obsidian/).
 
 Produce an AGENTS.md with:
 
@@ -96,6 +99,7 @@ Produce an AGENTS.md with:
    - Swift/iOS: swift-5-9-development-standards.mdc, swift-5-9-brutal-audit.mdc
    - JavaScript/TypeScript: javascript-3-development-standards.mdc, javascript-3-brutal-audit.mdc
    - Rust: rust-development-standards.mdc, rust-brutal-audit.mdc
+   - Obsidian vault: obsidian-vault-standards.mdc, obsidian-integration.mdc; install obsidian-skills via `npx skills add https://github.com/kepano/obsidian-skills`
 
 4. **Project-Specific Sections**: Add placeholders or fill in from project files:
    - Dev environment tips (setup commands, build, run)
@@ -154,6 +158,26 @@ alwaysApply: true
 
 [Your project-specific rules here]
 ```
+
+## Obsidian Vault Projects
+
+Use CursorRules in an Obsidian vault the same way as in a code repo: copy `.cursor/` into the vault root (or workspace root that contains the vault).
+
+1. **Rules (this repo):** `obsidian-vault-standards.mdc` loads for `**/*.md`, `**/*.base`, `**/*.canvas` when those files are in context. It covers anti-patterns only (wikilinks, YAML bases, canvas JSON, false CLI claims)—not full syntax reference.
+
+2. **Skills (upstream, link only):** Install [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) for authoritative OFM, Bases, JSON Canvas, CLI, and Defuddle workflows:
+
+   ```bash
+   npx skills add https://github.com/kepano/obsidian-skills
+   ```
+
+   Or add skills to project `.cursor/skills/` per Cursor documentation. Do not copy skill trees into CursorRules.
+
+3. **CLI:** When using the Obsidian CLI, load `obsidian-integration.mdc` (Obsidian must be running). See [Obsidian CLI help](https://help.obsidian.md/cli).
+
+4. **Documentation policy:** `documentation-policy.mdc` still blocks unsolicited repo docs; it does not block user-requested vault notes. See the vault scope exception in that file.
+
+5. **Optional:** Add a project-specific `.mdc` for vault naming (daily note format, folder layout, tag conventions).
 
 ## Core Principles (Universal)
 
@@ -240,6 +264,8 @@ To add support for a new language (e.g., TypeScript/React):
     ```
 
 3. Define your specific rules, following the structure of existing files.
+
+For **domain packs** (e.g., Obsidian): add a thin glob-scoped `.mdc` for anti-patterns in this repo; link to upstream Agent Skills for syntax (see [Obsidian Vault Projects](#obsidian-vault-projects) and `RULE_COMPOSITION.md`).
 
 ## Phase-Based Audit Workflows
 

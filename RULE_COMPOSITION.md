@@ -16,11 +16,11 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 3. **Domain-specific rules** (`alwaysApply: false`, glob-based)
    - Load only when relevant
-   - Examples: `ai-ml-development-standards.mdc` for ML code
+   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base`, `**/*.canvas`, and vault `.md` (see rule scope: vault vs repo docs)
 
 4. **Integration rules** (`alwaysApply: false`)
    - Load when needed
-   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks)
+   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `obsidian-integration.mdc` for Obsidian CLI and vault operations
 
 ## Standard Section Order (per file)
 
@@ -56,6 +56,27 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 **Conflict:** Python rule says "use list comprehensions" but AI/ML rule says "use explicit loops for GPU code"
 
 **Resolution:** Domain-specific rule wins (more specific context)
+
+### Example 3: Documentation Policy vs Obsidian Vault
+
+**Conflict:** `documentation-policy.mdc` says do not create unsolicited `.md`; user asks to create a daily note in an Obsidian vault.
+
+**Resolution:** Domain-specific `obsidian-vault-standards.mdc` and explicit user vault intent win; documentation-policy applies to repo/software docs, not PKM notes.
+
+## Rules vs Agent Skills
+
+| Layer | Location | Role |
+|-------|----------|------|
+| CursorRules `.mdc` | `.cursor/rules/` | Universal and domain anti-patterns; verification; globs |
+| Agent Skills | `.cursor/skills/` or user install | Syntax, workflows, reference depth per [Agent Skills spec](https://agentskills.io/specification) |
+
+**Obsidian:** Install upstream skills (link only, do not vendor in CursorRules):
+
+```bash
+npx skills add https://github.com/kepano/obsidian-skills
+```
+
+Pair with `obsidian-vault-standards.mdc` and `obsidian-integration.mdc`. See `cursor-integration.mdc` Category 4.
 
 ## See Also
 

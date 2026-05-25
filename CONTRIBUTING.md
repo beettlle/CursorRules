@@ -184,10 +184,10 @@ Use tables for compact representation of multiple related rules:
 
 ## Language-Specific Rules
 
-When adding language-specific rules:
+When adding language-specific or domain-specific rules:
 
 1. **Reference universal rules**: Start with "For universal anti-patterns: See `general-llm-anti-patterns.mdc`"
-2. **Focus on language idioms**: Only include patterns specific to that language
+2. **Focus on language or domain idioms**: Only include patterns specific to that language or artifact (e.g., `obsidian-vault-standards.mdc` for vault OFM/Bases/Canvas—not full syntax; link upstream skills)
 3. **Use language examples**: Code examples must be in the target language
 4. **Link to standards**: Reference official style guides (PEP 8, Swift API Guidelines, etc.)
 5. **Swift filename = Swift version**: Names like `swift-5-9-*.mdc` encode the **Swift language mode**; rule body must stay consistent with that version (forbidden keywords, concurrency notes).
@@ -210,6 +210,7 @@ Before submitting a PR, verify:
 - [ ] Tables used for structured meta-rules
 - [ ] Language-specific rules reference universal rules
 - [ ] Frontmatter includes proper `description`, `globs`, and `alwaysApply`
+- [ ] Rules with `**/*.md` globs document vault vs repo doc scope (see `obsidian-vault-standards.mdc`, `documentation-policy.mdc`)
 - [ ] Rule has been tested on sample code (see Testing & Validation below)
 
 ## Testing & Validation
