@@ -16,11 +16,11 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 3. **Domain-specific rules** (`alwaysApply: false`, glob-based)
    - Load only when relevant
-   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base`, `**/*.canvas`, and vault `.md` (see rule scope: vault vs repo docs)
+   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base`, `**/*.canvas`, and vault `.md` (see rule scope: vault vs repo docs); `taskplane-task-authoring.mdc` for `PROMPT.md`, `STATUS.md`, and tasks-root paths (see [Cursor Rules](https://cursor.com/docs/rules) — Apply to Specific Files)
 
 4. **Integration rules** (`alwaysApply: false`)
    - Load when needed
-   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `obsidian-integration.mdc` for Obsidian CLI and vault operations
+   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing task packets (Apply Intelligently via `description`, or `@`-mention)
 
 ## Standard Section Order (per file)
 
@@ -68,6 +68,18 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 **Conflict:** Both `swift-5-9-development-standards.mdc` and `swift-6-development-standards.mdc` use `globs: ["**/*.swift"]`; 5.9 forbids `sending`/`consume` while 6 requires strict concurrency and allows those features.
 
 **Resolution:** Project declares one language mode in `AGENTS.md`, Xcode **Swift Language Version**, or SwiftPM `swiftLanguageMode`. When Swift 6 is declared, `swift-6-*.mdc` supersedes 5.9 compatibility constraints. Optionally omit or remove the unused version’s rules from the project’s `.cursor/rules/` copy.
+
+### Example 5: Documentation Policy vs Taskplane Task Packets
+
+**Conflict:** `documentation-policy.mdc` says do not create unsolicited `.md`; user asks to create `PROMPT.md` and `STATUS.md` for a staged task.
+
+**Resolution:** `taskplane-task-authoring.mdc` and explicit user task intent win; documentation-policy applies to repo/software docs, not orchestration artifacts under a tasks root.
+
+### Example 6: Task Author vs Task Worker
+
+**Conflict:** User says "create tasks for feature X" but the agent starts implementing code; or user says "implement TP-014" but the agent rewrites PROMPT scope.
+
+**Resolution:** Authoring requests → `taskplane-task-authoring.mdc` (packets only). Execution requests → `taskplane-worker-cursor.mdc` (PROMPT is contract). If both are needed, author first unless the user explicitly asks to implement in the same turn.
 
 ## Rules vs Agent Skills
 

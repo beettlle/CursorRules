@@ -146,6 +146,8 @@ When contributing to CursorRules itself, see [CONTRIBUTING.md](CONTRIBUTING.md) 
 
 **Obsidian vault rules:** `obsidian-vault-standards.mdc` (glob-scoped anti-patterns), `obsidian-integration.mdc` (CLI). Pair with upstream [obsidian-skills](https://github.com/kepano/obsidian-skills)—link only, do not vendor skill files in this repo.
 
+**Taskplane task packets:** `taskplane-task-authoring.mdc` (create `PROMPT.md` / `STATUS.md` packets; runner-agnostic), `taskplane-worker-cursor.mdc` (execute a packet in-editor). Templates: `.cursor/rules/taskplane/prompt-template.md`, `status-template.md`. See README Taskplane section and [Cursor Rules](https://cursor.com/docs/rules).
+
 ## Project-Specific Sections
 
 <!-- Fill in for your project -->

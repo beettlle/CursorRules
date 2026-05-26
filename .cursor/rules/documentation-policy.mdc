@@ -43,6 +43,20 @@ alwaysApply: true
 
 **Detect:** Agent cites documentation-policy when user asked for a note, vault path or `.obsidian/` present but agent treats all `.md` as repo docs
 
+### Taskplane task packets (scope exception)
+
+**Repo/software docs** (`README`, `CONTRIBUTING`, `docs/`, change summaries, PR writeups): this policy still applies — do not create unsolicited `.md`.
+
+**Task orchestration artifacts** (user explicitly asks to create, stage, or plan tasks; or work under a configured tasks root): `PROMPT.md`, `STATUS.md`, and area `CONTEXT.md` are execution contracts, not general documentation. Follow `taskplane-task-authoring.mdc` and templates in `.cursor/rules/taskplane/`.
+
+Do not refuse "create a task packet" or "write PROMPT.md for this feature" because documentation-policy forbids new `.md` files.
+
+Reserve documentation-policy for repo docs unless the user asked for task packets or vault notes.
+
+See `RULE_COMPOSITION.md` conflict example 5.
+
+**Detect:** Agent cites documentation-policy when user asked for task packets, tasks-root path present, but agent treats `PROMPT.md` as unsolicited repo docs
+
 ## Inline Comments: Say Why and How
 
 When writing in-code comments: say **why** and **how**, not only what. Code alone is not documentation. Write comments as full sentences (capital letter, period); end-of-line comments may be short phrases. See `engineering-philosophy.mdc` section 2.6 (Always Say Why).

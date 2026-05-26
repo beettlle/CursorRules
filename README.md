@@ -11,6 +11,7 @@ This repository provides a centralized collection of **Cursor Rules** (`.mdc` fi
 - [Local Model Integrations](#local-model-integrations)
 - [Project-Specific Rules](#project-specific-rules)
 - [Obsidian Vault Projects](#obsidian-vault-projects)
+- [Taskplane Task Packets](#taskplane-task-packets)
 - [Core Principles](#core-principles-universal)
 - [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript, Rust)
 - [Extending](#extending)
@@ -59,6 +60,9 @@ The core rules live in `.cursor/rules/`.
 ├── rust-brutal-audit.mdc              # Rust comprehensive phase audit
 ├── obsidian-vault-standards.mdc       # Obsidian OFM, Bases, Canvas anti-patterns (glob-scoped)
 ├── obsidian-integration.mdc           # Obsidian CLI and plugin dev loop (on demand)
+├── taskplane-task-authoring.mdc        # Task packet authoring (PROMPT.md, STATUS.md; glob + description)
+├── taskplane-worker-cursor.mdc        # Execute task packets in Cursor (Apply Intelligently)
+├── taskplane/                          # PROMPT and STATUS templates (@-referenced by authoring rule)
 └── ...                                 # Other rules: ai-ml-development-standards.mdc, aws-*.mdc (5), cursor-integration.mdc, engineering-philosophy.mdc. See .cursor/rules/ for the full list.
 ```
 
@@ -180,6 +184,43 @@ Use CursorRules in an Obsidian vault the same way as in a code repo: copy `.curs
 4. **Documentation policy:** `documentation-policy.mdc` still blocks unsolicited repo docs; it does not block user-requested vault notes. See the vault scope exception in that file.
 
 5. **Optional:** Add a project-specific `.mdc` for vault naming (daily note format, folder layout, tag conventions).
+
+## Taskplane Task Packets
+
+Use CursorRules to **author** structured task packets in Cursor and **execute** them in Cursor or hand them to any runner that understands file-based task contracts. Rules follow [Cursor Project Rules](https://cursor.com/docs/rules) types—not a separate domain-pack format.
+
+| Rule | [Cursor rule type](https://cursor.com/docs/rules) | Role |
+|------|---------------------------------------------------|------|
+| `taskplane-task-authoring.mdc` | Apply to Specific Files (`globs`) + `description` for intelligent apply | Create `PROMPT.md`, `STATUS.md`, update area `CONTEXT.md` |
+| `taskplane-worker-cursor.mdc` | Apply Intelligently (`description`) or `@taskplane-worker-cursor` | Implement work defined in an active packet |
+
+**Templates** (referenced with `@` from the authoring rule):
+
+```text
+.cursor/rules/taskplane/
+├── prompt-template.md
+└── status-template.md
+```
+
+**Typical workflow**
+
+1. In Cursor: ask Agent to create task packets for a feature (authoring rule). Packets land under your tasks root (e.g. `taskplane-tasks/` or `docs/task-management/`).
+2. Commit packets to git.
+3. Execute in Cursor (`@PROMPT.md`, worker rule) or with any compatible orchestrator. Packets are runner-agnostic; format aligns with [Taskplane task format](https://github.com/HenryLach/taskplane/blob/main/docs/reference/task-format.md) for teams using that project.
+
+**Custom tasks root:** Extend globs in a project-specific `.mdc`, for example:
+
+```markdown
+---
+description: "Project Taskplane conventions"
+globs: "docs/task-management/**, **/PROMPT.md"
+alwaysApply: false
+---
+
+Tasks root: `docs/task-management/`. Prefix: `APP`. Test command: `npm test`.
+```
+
+**Documentation policy:** `documentation-policy.mdc` does not block user-requested `PROMPT.md` / `STATUS.md` under a tasks root. See `RULE_COMPOSITION.md` example 5.
 
 ## Core Principles (Universal)
 
