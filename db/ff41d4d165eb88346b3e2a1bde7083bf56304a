@@ -1,0 +1,36 @@
+AGENTS.md
+  s_d007f8089b9641::t_d43c6d89a705f0 149-150
+RULE_COMPOSITION.md
+  s_d007f8089b9641::t_a5ddc25a78cea5 19,23
+  s_d007f8089b9641::t_2dc4a90a4f5256 72-83
+.cursor/rules/taskplane-worker-cursor.mdc
+  s_d007f8089b9641::t_28d8ea1923dad2 1-112
+.cursor/rules/taskplane/prompt-template.md
+  s_d007f8089b9641::t_ace30335d918e4 1-179
+.cursor/rules/taskplane/status-template.md
+  s_d007f8089b9641::t_590a16c3b3ccb7 1-96
+README.md
+  s_d007f8089b9641::t_041a4e7aa85554 63-65
+  s_d007f8089b9641::t_31092c0027adfa 14
+  s_d007f8089b9641::t_a683227796fd72 188-224
+.cursor/rules/documentation-policy.mdc
+  s_d007f8089b9641::t_89e0c86dd49187 46-59
+.cursor/rules/taskplane-task-authoring.mdc
+  s_d007f8089b9641::t_ed631e868bfc07 1-215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "dbff41d4d165eb88346b3e2a1bde7083bf56304a",
+  "prompts": {},
+  "sessions": {
+    "s_d007f8089b9641": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ebeab37b-e46e-41ea-a596-45dc6f3da8ac",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
