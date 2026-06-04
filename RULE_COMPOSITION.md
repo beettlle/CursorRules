@@ -42,6 +42,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 - Avoid redundant rule loading
 - Use `alwaysApply: false` with appropriate globs for conditional rules
 - Document rule conflicts when they occur
+- Grice maxims are a **communication meta-layer**; they do not override language-specific, domain-specific, or audit rules
 
 ## Conflict Resolution Examples
 
@@ -80,6 +81,12 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 **Conflict:** User says "create tasks for feature X" but the agent starts implementing code; or user says "implement TP-014" but the agent rewrites PROMPT scope.
 
 **Resolution:** Authoring requests → `taskplane-task-authoring.mdc` (packets only). Execution requests → `taskplane-worker-cursor.mdc` (PROMPT is contract). If both are needed, author first unless the user explicitly asks to implement in the same turn.
+
+### Example 7: Cooperative Brevity vs Brutal Audit Evidence
+
+**Conflict:** Cooperative brevity (§9.8 in `general-llm-anti-patterns.mdc`) vs brutal-audit evidence requirements (longer structured output).
+
+**Resolution:** When `*-brutal-audit.mdc` or `audit-workflow` applies, audit rules win (specificity + explicit audit intent). Grice Quantity/Manner still apply to *structure* (ordered sections, no filler), not to suppress required evidence.
 
 ## Rules vs Agent Skills
 

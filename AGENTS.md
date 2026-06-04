@@ -125,6 +125,12 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 
 **Security (OWASP):** Security practices align with the [OWASP Secure Coding Practices Quick Reference](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/stable-en/02-checklist/05-checklist.html). Full checklist and detection criteria: `.cursor/rules/owasp-secure-coding-practices.mdc`.
 
+## Cooperative Communication (Grice-inspired)
+
+Before sending a response, check: **Epistemic quality** — no unsupported build/test/API claims; say "verification pending" with commands attempted when unverified. **Quantity** — match depth to task; no essay for simple asks. **Relation** — answer the ask first; stay on-scope. **Manner** — lead with outcome; then steps/evidence.
+
+Details: `.cursor/rules/critical-rules-quick-reference.mdc` Cooperative Communication; `.cursor/rules/general-llm-anti-patterns.mdc` §9.6–9.8.
+
 ## Phase Verification Workflows
 
 After completing a development phase, run the appropriate brutal audit from `.cursor/rules/`:

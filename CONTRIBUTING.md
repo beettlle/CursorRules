@@ -12,6 +12,7 @@
 4. **Minimal But Complete Examples**: Code examples should be the smallest possible that still demonstrates the pattern.
 5. **Detection Over Explanation**: Focus on how to detect the problem, not lengthy explanations of why it's a problem.
 6. **Positive Framing**: Include "do X" rules alongside anti-patterns; show good examples.
+7. **Grice Mapping for Authors**: Quantity → density, no duplicate paragraphs; epistemic quality → no unverified claims in rules; Relation → one purpose per rule file; Manner → Bad/Good template, tables over prose. Grice Quantity/Manner also govern token discipline in rule authoring.
 
 ## Required Format Structure
 
@@ -212,6 +213,7 @@ Before submitting a PR, verify:
 - [ ] Frontmatter includes proper `description`, `globs`, and `alwaysApply`
 - [ ] Rules with `**/*.md` globs document vault vs repo doc scope (see `obsidian-vault-standards.mdc`, `documentation-policy.mdc`)
 - [ ] Rule has been tested on sample code (see Testing & Validation below)
+- [ ] Cooperative communication: new/changed prose satisfies Quantity, epistemic quality, Relation, Manner (cross-ref existing sections, no duplication)
 
 ## Testing & Validation
 

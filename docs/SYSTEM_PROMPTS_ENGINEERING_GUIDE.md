@@ -97,7 +97,7 @@ Keep code examples to 1-3 lines. If a pattern needs more, split it into multiple
 
 **When to Split vs Consolidate:** Split when rules address different concerns or apply to different contexts. Consolidate when rules are tightly related and always apply together. If a contribution is longer than existing similar rules, cut it in half, then cut it again.
 
-**Conditional Loading:** Use globs to load rules only when relevant (e.g., `**/*.py` for Python rules). Reserve always-on for universal anti-patterns and forbidden phrases. Document rule dependencies and load order.
+**Conditional Loading:** Use globs to load rules only when relevant (e.g., `**/*.py` for Python rules). Reserve always-on for universal anti-patterns and forbidden phrases. Document rule dependencies and load order. Cooperative communication maxims (Grice) apply to response prose; see §8 Grice mapping.
 
 ---
 
@@ -136,6 +136,15 @@ Avoid both over-calling (e.g., searching for common knowledge) and under-calling
 **Preference Handling:** Distinguish behavioral preferences (how to adapt output) from contextual preferences (user background). Apply preferences only when directly relevant to the task. Document when to apply and when not to.
 
 **Avoiding Meta-References:** Instruct the model to follow rules naturally without repeating, echoing, or mirroring the wording of the instructions. Avoid explicit or meta references in user-facing output.
+
+**Grice Mapping (Cooperative Communication):**
+
+| Maxim | CursorRules section | Common failure mode |
+|-------|---------------------|---------------------|
+| Epistemic quality | Forbidden Phrases; `general-llm-anti-patterns.mdc` §3.8–3.9, §4.1 | "Tests pass" without output |
+| Quantity | §0.5, §3.5, §9.8; token budget (§5) | Essay for simple ask; one-liner for audit |
+| Relation | §7.3, §9.7; `documentation-policy.mdc` | Unrequested docs; answering adjacent question |
+| Manner | §9.8; `critical-rules-quick-reference.mdc` Output Format | Buried lede; rule echo in chat |
 
 ---
 
