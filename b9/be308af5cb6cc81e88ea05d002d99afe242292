@@ -1,0 +1,51 @@
+ollama/cursorrules-refactor.Modelfile
+  s_71be89b95d44c0::t_064df9934dba12 22
+.cursor/rules/engineering-philosophy.mdc
+  s_71be89b95d44c0::t_829de139b3c282 240-253
+ollama/cursorrules-code.Modelfile
+  s_71be89b95d44c0::t_74c822359daecd 22
+.cursor/rules/taskplane-worker-cursor.mdc
+  s_71be89b95d44c0::t_1e6f84347d7535 98-99
+  s_71be89b95d44c0::t_f53582df51893e 85
+.cursor/rules/critical-rules-quick-reference.mdc
+  s_71be89b95d44c0::t_e763e4242527c6 197
+  s_71be89b95d44c0::t_31b88b77e8fa20 19-31
+AGENTS.md
+  s_71be89b95d44c0::t_8d90ebb8b678fd 128-133
+.cursor/rules/cursor-integration.mdc
+  s_71be89b95d44c0::t_cfad6db06b15ee 66-79
+.cursor/rules/general-llm-anti-patterns.mdc
+  s_71be89b95d44c0::t_e4d14b25bd8993 892-936
+  s_71be89b95d44c0::t_e92f7bf89d3743 1194
+CONTRIBUTING.md
+  s_71be89b95d44c0::t_c9b7102ef907fb 216
+  s_71be89b95d44c0::t_3aff12e587e377 15
+RULE_COMPOSITION.md
+  s_71be89b95d44c0::t_ea889c4363e6a9 85-90
+  s_71be89b95d44c0::t_00280d8ce0ed8a 45
+.cursor/rules/git-workflow-and-pr.mdc
+  s_71be89b95d44c0::t_ae98add16e1bc5 114-127
+docs/SYSTEM_PROMPTS_ENGINEERING_GUIDE.md
+  s_71be89b95d44c0::t_4c8cf40f10761c 140-148
+  s_71be89b95d44c0::t_e9225b9f0a8120 100
+ollama/cursorrules-review.Modelfile
+  s_71be89b95d44c0::t_7dc9cf02ee5dd5 22
+ollama/cursorrules-refine.Modelfile
+  s_71be89b95d44c0::t_138a8f475832c7 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "b9be308af5cb6cc81e88ea05d002d99afe242292",
+  "prompts": {},
+  "sessions": {
+    "s_71be89b95d44c0": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e18531e2-e22d-4418-9791-085225e4c5eb",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
