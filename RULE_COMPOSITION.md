@@ -8,7 +8,6 @@ This document explains how Cursor Rules are composed and how to resolve conflict
    - `critical-rules-quick-reference.mdc`
    - `general-llm-anti-patterns.mdc`
    - `documentation-policy.mdc`
-   - `stet-integration.mdc`
 
 2. **Language-specific rules** (`alwaysApply: false`, glob-based)
    - Load only for matching file types
@@ -16,11 +15,11 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 3. **Domain-specific rules** (`alwaysApply: false`, glob-based)
    - Load only when relevant
-   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base`, `**/*.canvas`, and vault `.md` (see rule scope: vault vs repo docs); `taskplane-task-authoring.mdc` for `PROMPT.md`, `STATUS.md`, and tasks-root paths (see [Cursor Rules](https://cursor.com/docs/rules) — Apply to Specific Files)
+   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base` and `**/*.canvas` (vault `.md` via intelligent apply, user mention, or `@` — see rule scope: vault vs repo docs); `taskplane-task-authoring.mdc` for `PROMPT.md`, `STATUS.md`, and tasks-root paths (see [Cursor Rules](https://cursor.com/docs/rules) — Apply to Specific Files)
 
 4. **Integration rules** (`alwaysApply: false`)
    - Load when needed
-   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing task packets (Apply Intelligently via `description`, or `@`-mention)
+   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `stet-integration.mdc` when the user asks to run stet, dismiss findings, or triage reviews (Apply Intelligently via `description`, or `@stet-integration`); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing task packets (Apply Intelligently via `description`, or `@`-mention)
 
 ## Standard Section Order (per file)
 
@@ -87,6 +86,12 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 **Conflict:** Cooperative brevity (§9.8 in `general-llm-anti-patterns.mdc`) vs brutal-audit evidence requirements (longer structured output).
 
 **Resolution:** When `*-brutal-audit.mdc` or `audit-workflow` applies, audit rules win (specificity + explicit audit intent). Grice Quantity/Manner still apply to *structure* (ordered sections, no filler), not to suppress required evidence.
+
+### Example 8: Java 17 vs Java 21
+
+**Conflict:** Both `java-17-development-standards.mdc` and `java-21-development-standards.mdc` use `globs: ["**/*.java"]`; 17 emphasizes `ExecutorService` patterns while 21 adds virtual-thread guidance.
+
+**Resolution:** Project declares one LTS in `AGENTS.md`, build config, or toolchain. When Java 21 is declared, `java-21-development-standards.mdc` supersedes 17-specific concurrency guidance. Optionally omit or remove the unused version's rules from the project's `.cursor/rules/` copy.
 
 ## Rules vs Agent Skills
 

@@ -62,6 +62,8 @@ The core rules live in `.cursor/rules/`.
 ├── obsidian-integration.mdc           # Obsidian CLI and plugin dev loop (on demand)
 ├── taskplane-task-authoring.mdc        # Task packet authoring (PROMPT.md, STATUS.md; glob + description)
 ├── taskplane-worker-cursor.mdc        # Execute task packets in Cursor (Apply Intelligently)
+├── git-workflow-and-pr.mdc            # Git commits, branches, rebase/merge, PR titles (on demand)
+├── stet-integration.mdc               # Stet CLI commands and dismiss reasons (on demand)
 ├── taskplane/                          # PROMPT and STATUS templates (@-referenced by authoring rule)
 └── ...                                 # Other rules: ai-ml-development-standards.mdc, aws-*.mdc (5), cursor-integration.mdc, engineering-philosophy.mdc. See .cursor/rules/ for the full list.
 ```
@@ -75,6 +77,26 @@ To use these rules in your project:
     ```bash
     cp -r /path/to/CursorRules/.cursor /path/to/your/project/
     ```
+
+### Prune rules for your project
+
+After copying, remove rules your project does not need. Keeping conflicting or unused rules wastes context and can produce contradictory guidance.
+
+| Family | Keep one | Remove the other |
+|--------|----------|------------------|
+| **Swift** | `swift-5-9-*` **or** `swift-6-*` | Declare the choice in `AGENTS.md` |
+| **Java** | `java-17-*` **or** `java-21-*` | Match your JDK/LTS |
+| **Obsidian** | Vault projects only | If not a vault: delete `obsidian-vault-standards.mdc` and `obsidian-integration.mdc` |
+| **Stet** | Optional | Loads on demand if kept; safe to delete if you do not use stet |
+
+Example (Swift 6 + Java 21, no Obsidian):
+
+```bash
+cd /path/to/your/project/.cursor/rules
+rm swift-5-9-development-standards.mdc swift-5-9-brutal-audit.mdc
+rm java-17-development-standards.mdc
+# Optional: rm obsidian-vault-standards.mdc obsidian-integration.mdc stet-integration.mdc
+```
 
 2. **Create a project-specific rules file** (see Project-Specific Rules below).
 3. **Restart Cursor** or reload the window to ensure the rules are indexed.

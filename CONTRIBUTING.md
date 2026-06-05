@@ -217,6 +217,8 @@ Before submitting a PR, verify:
 
 ## Testing & Validation
 
+Before opening a PR, run `python3 scripts/validate-rules.py` from the repository root. CI runs the same check on pull requests.
+
 After writing a rule, validate it before submitting:
 
 ### Format Validation
