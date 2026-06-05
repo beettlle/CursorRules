@@ -1,0 +1,33 @@
+.cursor/rules/java-21-development-standards.mdc
+  s_4d80c97f44f1d3::t_7280eba012fca1 535
+.cursor/rules/audit-workflow.mdc
+  s_4d80c97f44f1d3::t_90e9ec703cf431 74-87,90
+.cursor/rules/ai-ml-development-standards.mdc
+  s_4d80c97f44f1d3::t_2eaa4928cf3ce7 134
+.cursor/rules/javascript-3-development-standards.mdc
+  s_4d80c97f44f1d3::t_6535e24adbed32 421
+  s_4d80c97f44f1d3::t_a6d54321dfb220 408
+.cursor/rules/swift-5-9-development-standards.mdc
+  s_4d80c97f44f1d3::t_3e496e0507777f 168
+.cursor/rules/general-llm-anti-patterns.mdc
+  s_4d80c97f44f1d3::t_6e79ef34e19215 646
+  s_4d80c97f44f1d3::t_39d614accc78e7 677
+.cursor/rules/java-17-development-standards.mdc
+  s_4d80c97f44f1d3::t_a3d43f10add97a 510
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "3d00babd267fdbe44632d0cbfbb7a46d1eb8e464",
+  "prompts": {},
+  "sessions": {
+    "s_4d80c97f44f1d3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "65b6f14a-2137-4f70-b915-56b4f166b2cc",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
