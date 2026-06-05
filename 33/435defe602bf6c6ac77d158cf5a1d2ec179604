@@ -1,0 +1,49 @@
+CONTRIBUTING.md
+  s_4d80c97f44f1d3::t_aee2791b736dbe 220-221
+.cursor/rules/python-3-brutal-audit.mdc
+  s_4d80c97f44f1d3::t_35b9e389235c12 70,74
+  s_4d80c97f44f1d3::t_4760def005c303 27
+  s_4d80c97f44f1d3::t_52522e500f221a 171,176
+  s_4d80c97f44f1d3::t_6c24e1b13a838e 240,242,244-245,247,251,253,255
+  s_4d80c97f44f1d3::t_b954dc56c64f88 376
+  s_4d80c97f44f1d3::t_ad0195f0b393fb 163
+  s_4d80c97f44f1d3::t_140fcfb01649d5 100,106,108-110
+  s_4d80c97f44f1d3::t_502e3d65621e07 148
+  s_4d80c97f44f1d3::t_57a5a1be67c033 129,132,135,139
+  s_4d80c97f44f1d3::t_c3a54e4e7e5ba9 394
+RULE_COMPOSITION.md
+  s_4d80c97f44f1d3::t_0a24780ada20f3 18
+  s_4d80c97f44f1d3::t_c81d872491df49 90-95
+  s_4d80c97f44f1d3::t_6c688ab38aec63 22
+.github/workflows/validate-rules.yml
+  s_4d80c97f44f1d3::t_2119845d66ec85 1-15
+docs/review-quality.md
+  s_4d80c97f44f1d3::t_08bc1a32473f0c 1-62
+.cursor/rules/obsidian-vault-standards.mdc
+  s_4d80c97f44f1d3::t_a58ca53fdbcefc 3
+.cursor/rules/stet-integration.mdc
+  s_4d80c97f44f1d3::t_f483479f9b06cd 3
+README.md
+  s_4d80c97f44f1d3::t_f0823ffacb20a9 65-66
+  s_4d80c97f44f1d3::t_af58d8e9c52a72 81-100
+scripts/validate-rules.py
+  s_4d80c97f44f1d3::t_6b1a2c442df9e6 1-205
+.cursor/rules/taskplane-task-authoring.mdc
+  s_4d80c97f44f1d3::t_9df105502fd732 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "33435defe602bf6c6ac77d158cf5a1d2ec179604",
+  "prompts": {},
+  "sessions": {
+    "s_4d80c97f44f1d3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "65b6f14a-2137-4f70-b915-56b4f166b2cc",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
