@@ -12,6 +12,7 @@ This repository provides a centralized collection of **Cursor Rules** (`.mdc` fi
 - [Project-Specific Rules](#project-specific-rules)
 - [Obsidian Vault Projects](#obsidian-vault-projects)
 - [Taskplane Task Packets](#taskplane-task-packets)
+- [pi-spine Task Packets](#pi-spine-task-packets)
 - [Core Principles](#core-principles-universal)
 - [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript, Rust)
 - [Extending](#extending)
@@ -62,6 +63,9 @@ The core rules live in `.cursor/rules/`.
 ├── obsidian-integration.mdc           # Obsidian CLI and plugin dev loop (on demand)
 ├── taskplane-task-authoring.mdc        # Task packet authoring (PROMPT.md, STATUS.md; glob + description)
 ├── taskplane-worker-cursor.mdc        # Execute task packets in Cursor (Apply Intelligently)
+├── spine-task-authoring.mdc           # pi-spine packet authoring (SP-*, Contract, deps.json)
+├── spine-operator-cursor.mdc          # pi-spine batch operator CLI (Apply Intelligently)
+├── spine-worker-cursor.mdc            # Manual spine packet execution in Cursor (Apply Intelligently)
 ├── git-workflow-and-pr.mdc            # Git commits, branches, rebase/merge, PR titles (on demand)
 ├── stet-integration.mdc               # Stet CLI commands and dismiss reasons (on demand)
 ├── taskplane/                          # PROMPT and STATUS templates (@-referenced by authoring rule)
@@ -243,6 +247,32 @@ Tasks root: `docs/task-management/`. Prefix: `APP`. Test command: `npm test`.
 ```
 
 **Documentation policy:** `documentation-policy.mdc` does not block user-requested `PROMPT.md` / `STATUS.md` under a tasks root. See `RULE_COMPOSITION.md` example 5.
+
+## pi-spine Task Packets
+
+Use CursorRules to **author** spine-compatible packets, **operate** pi-spine batches from Cursor, or **manually implement** packets when no batch is running. Requires [pi-spine](https://github.com/beettlle/pi-spine) (`pi install npm:pi-spine`; `spine init` in the consumer repo).
+
+| Rule | [Cursor rule type](https://cursor.com/docs/rules) | Role |
+|------|---------------------------------------------------|------|
+| `spine-task-authoring.mdc` | Apply to Specific Files (`globs`) + `description` | Create `SP-*` packets, `dependencies.json`, Contract table |
+| `spine-operator-cursor.mdc` | Apply Intelligently (`description`) or `@spine-operator-cursor` | `spine` CLI: plan, batch, diagnose, gate, integrate |
+| `spine-worker-cursor.mdc` | Apply Intelligently (`description`) or `@spine-worker-cursor` | Manual in-Cursor implementation when batch inactive |
+
+**Templates:** Reuse `@.cursor/rules/taskplane/prompt-template.md` and `status-template.md`. Spine **Contract** table format is documented in `spine-task-authoring.mdc`.
+
+**Typical workflow**
+
+1. `spine init` in consumer repo; configure `.spine/spine-config.json`.
+2. In Cursor: author spine tasks (`spine-task-authoring.mdc`) under `spine-tasks/` (or configured `paths.tasksRoot`).
+3. Validate and plan: `spine tasks validate`, `spine plan pending`, `spine preflight`.
+4. Run batch: `spine batch start pending` (pi workers in lane worktrees—not Cursor Agent).
+5. Land: `spine gate approve` → `spine integrate`.
+
+**Spine vs Taskplane:** If `.spine/spine-config.json` exists and the user mentions spine / `SP-*`, prefer spine rules. Taskplane rules remain for runner-agnostic repos. See `RULE_COMPOSITION.md` examples 9–11.
+
+**Prune:** Delete `spine-*.mdc` from your project's `.cursor/rules/` copy if you do not use pi-spine.
+
+**Deep decomposition:** pi-spine ships `create-spine-tasks` skill—install via `pi install npm:pi-spine`; do not vendor into CursorRules.
 
 ## Core Principles (Universal)
 

@@ -154,6 +154,8 @@ When contributing to CursorRules itself, see [CONTRIBUTING.md](CONTRIBUTING.md) 
 
 **Taskplane task packets:** `taskplane-task-authoring.mdc` (create `PROMPT.md` / `STATUS.md` packets; runner-agnostic), `taskplane-worker-cursor.mdc` (execute a packet in-editor). Templates: `.cursor/rules/taskplane/prompt-template.md`, `status-template.md`. See README Taskplane section and [Cursor Rules](https://cursor.com/docs/rules).
 
+**pi-spine task packets:** `spine-task-authoring.mdc` (author `SP-*` packets with Contract + `dependencies.json`), `spine-operator-cursor.mdc` (operate `spine` CLI batches), `spine-worker-cursor.mdc` (manual in-Cursor execution when batch inactive). Pair with [pi-spine](https://github.com/beettlle/pi-spine) (`pi install npm:pi-spine`). See README pi-spine section and `RULE_COMPOSITION.md` examples 9–11. Declare spine vs Taskplane in consumer `AGENTS.md`.
+
 ## Project-Specific Sections
 
 <!-- Fill in for your project -->

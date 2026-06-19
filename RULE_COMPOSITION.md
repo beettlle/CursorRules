@@ -15,11 +15,11 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 3. **Domain-specific rules** (`alwaysApply: false`, glob-based)
    - Load only when relevant
-   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base` and `**/*.canvas` (vault `.md` via intelligent apply, user mention, or `@` — see rule scope: vault vs repo docs); `taskplane-task-authoring.mdc` for `PROMPT.md`, `STATUS.md`, and tasks-root paths (see [Cursor Rules](https://cursor.com/docs/rules) — Apply to Specific Files)
+   - Examples: `ai-ml-development-standards.mdc` for ML code; `obsidian-vault-standards.mdc` for `**/*.base` and `**/*.canvas` (vault `.md` via intelligent apply, user mention, or `@` — see rule scope: vault vs repo docs); `taskplane-task-authoring.mdc` for `PROMPT.md`, `STATUS.md`, and tasks-root paths; `spine-task-authoring.mdc` for `.spine/`, `spine-tasks/`, and `dependencies.json` (see [Cursor Rules](https://cursor.com/docs/rules) — Apply to Specific Files)
 
 4. **Integration rules** (`alwaysApply: false`)
    - Load when needed
-   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `stet-integration.mdc` when the user asks to run stet, dismiss findings, or triage reviews (Apply Intelligently via `description`, or `@stet-integration`); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing task packets (Apply Intelligently via `description`, or `@`-mention)
+   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `stet-integration.mdc` when the user asks to run stet, dismiss findings, or triage reviews (Apply Intelligently via `description`, or `@stet-integration`); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing generic task packets; `spine-operator-cursor.mdc` when operating pi-spine batches; `spine-worker-cursor.mdc` when manually implementing spine packets (Apply Intelligently via `description`, or `@`-mention)
 
 ## Standard Section Order (per file)
 
@@ -93,6 +93,24 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 **Resolution:** Project declares one LTS in `AGENTS.md`, build config, or toolchain. When Java 21 is declared, `java-21-development-standards.mdc` supersedes 17-specific concurrency guidance. Optionally omit or remove the unused version's rules from the project's `.cursor/rules/` copy.
 
+### Example 9: Spine vs Taskplane
+
+**Conflict:** Both `taskplane-task-authoring.mdc` and `spine-task-authoring.mdc` could apply; user says "create tasks for spine batch."
+
+**Resolution:** When `.spine/spine-config.json` exists and the user mentions spine / `spine batch` / `SP-*`, `spine-task-authoring.mdc` wins for authoring. Taskplane rules remain valid for repos without pi-spine. Declare choice in project `AGENTS.md`.
+
+### Example 10: Spine author vs operator vs worker
+
+**Conflict:** User says "start spine batch on SP-010" but the agent starts editing PROMPT; or user says "implement SP-010" during an active batch.
+
+**Resolution:** Batch/gate/integrate → `spine-operator-cursor.mdc`. Author packets → `spine-task-authoring.mdc`. Manual implementation → `spine-worker-cursor.mdc` only when batch inactive on that scope. If ambiguous, ask once.
+
+### Example 11: Documentation Policy vs pi-spine Authoring Artifacts
+
+**Conflict:** `documentation-policy.mdc` blocks unsolicited `.md`; user asks to create spine tasks including `{tasksRoot}/_explore/report.md`.
+
+**Resolution:** `spine-task-authoring.mdc` and explicit spine task intent win for orchestration artifacts under the tasks root. Repo docs (`docs/`, README) still require explicit user request. Do not hand-edit `.spine/runtime/**`.
+
 ## Rules vs Agent Skills
 
 | Layer | Location | Role |
@@ -107,6 +125,14 @@ npx skills add https://github.com/kepano/obsidian-skills
 ```
 
 Pair with `obsidian-vault-standards.mdc` and `obsidian-integration.mdc`. See `cursor-integration.mdc` Category 4.
+
+**pi-spine:** Install upstream package and skill (link only, do not vendor in CursorRules):
+
+```bash
+pi install npm:pi-spine
+```
+
+Pair with `spine-task-authoring.mdc`, `spine-operator-cursor.mdc`, and `spine-worker-cursor.mdc`. Deep decomposition uses pi-spine `create-spine-tasks` skill.
 
 ## See Also
 
