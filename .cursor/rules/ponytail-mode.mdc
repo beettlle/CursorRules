@@ -1,9 +1,6 @@
 ---
-description: "Lazy senior dev / YAGNI code discipline (ponytail mode). Use when user wants minimal diffs, mentions ponytail or YAGNI, or mirrors pi pix-optimizer /opt ponytail. Governs what gets built, not prose style."
-globs: ["**/*"]
-alwaysApply: false
+alwaysApply: true
 ---
-
 # Ponytail mode (code discipline)
 
 **Upstream:** `@xynogen/pix-optimizer` (`/opt ponytail`); ruleset from [ponytail](https://github.com/DietrichGebert/ponytail) (MIT). **Governs:** what code gets written. **Prose:** `caveman-mode.mdc` or `general-llm-anti-patterns.mdc` §9.8.

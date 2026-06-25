@@ -1,9 +1,6 @@
 ---
-description: "Terse token-efficient agent prose (caveman mode). Use when user wants brief answers, mentions caveman or token efficiency, or mirrors pi pix-optimizer /opt caveman. Not for brutal audits or security confirmations."
-globs: ["**/*"]
-alwaysApply: false
+alwaysApply: true
 ---
-
 # Caveman mode (output style)
 
 **Upstream:** `@xynogen/pix-optimizer` (`/opt caveman`). **Governs:** how the agent talks. **Code minimalism:** `ponytail-mode.mdc`.
