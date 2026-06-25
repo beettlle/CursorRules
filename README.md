@@ -13,6 +13,7 @@ This repository provides a centralized collection of **Cursor Rules** (`.mdc` fi
 - [Obsidian Vault Projects](#obsidian-vault-projects)
 - [Taskplane Task Packets](#taskplane-task-packets)
 - [pi-spine Task Packets](#pi-spine-task-packets)
+- [pix-optimizer (Caveman + Ponytail)](#pix-optimizer-caveman--ponytail)
 - [Core Principles](#core-principles-universal)
 - [Language Standards](#python-standards) (Python, iOS/Swift, Go, Java, JavaScript, Rust)
 - [Extending](#extending)
@@ -66,6 +67,8 @@ The core rules live in `.cursor/rules/`.
 ├── spine-task-authoring.mdc           # pi-spine packet authoring (SP-*, Contract, deps.json)
 ├── spine-operator-cursor.mdc          # pi-spine batch operator CLI (Apply Intelligently)
 ├── spine-worker-cursor.mdc            # Manual spine packet execution in Cursor (Apply Intelligently)
+├── caveman-mode.mdc                   # Terse output style; mirror pi pix-optimizer (Apply Intelligently)
+├── ponytail-mode.mdc                  # YAGNI / lazy-senior-dev code discipline; mirror pi pix-optimizer
 ├── git-workflow-and-pr.mdc            # Git commits, branches, rebase/merge, PR titles (on demand)
 ├── stet-integration.mdc               # Stet CLI commands and dismiss reasons (on demand)
 ├── taskplane/                          # PROMPT and STATUS templates (@-referenced by authoring rule)
@@ -273,6 +276,21 @@ Use CursorRules to **author** spine-compatible packets, **operate** pi-spine bat
 **Prune:** Delete `spine-*.mdc` from your project's `.cursor/rules/` copy if you do not use pi-spine.
 
 **Deep decomposition:** pi-spine ships `create-spine-tasks` skill—install via `pi install npm:pi-spine`; do not vendor into CursorRules.
+
+## pix-optimizer (Caveman + Ponytail)
+
+Use when running [pi](https://github.com/badlogic/pi-mono) with `pi-cursor-agent` and `@xynogen/pix-optimizer`. `pi-cursor-agent` strips optimizer system-prompt injections when project context exists — mirror behavior in Cursor IDE with these rules.
+
+| Rule | [Cursor rule type](https://cursor.com/docs/rules) | Role |
+|------|---------------------------------------------------|------|
+| `caveman-mode.mdc` | Apply Intelligently (`description`) or `@caveman-mode` | Terse prose; token-efficient explanations |
+| `ponytail-mode.mdc` | Apply Intelligently (`description`) or `@ponytail-mode` | YAGNI ladder; minimal code diffs |
+
+**pi install:** `pi install npm:@xynogen/pix-optimizer` — toggle in pi via `/opt caveman` / `/opt ponytail`.
+
+**Cursor mirror:** When `~/.pi/agent/optimizer.json` enables caveman/ponytail, set `alwaysApply: true` on both rules in your project's `.cursor/rules/` copy. RTK and TOON stay pi-only (shell rewriting, JSON tooling). See `RULE_COMPOSITION.md` examples 12–14.
+
+**Prune:** Delete both files if you do not use pix-optimizer or want default §9.8 brevity only.
 
 ## Core Principles (Universal)
 

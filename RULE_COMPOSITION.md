@@ -19,7 +19,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 4. **Integration rules** (`alwaysApply: false`)
    - Load when needed
-   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `stet-integration.mdc` when the user asks to run stet, dismiss findings, or triage reviews (Apply Intelligently via `description`, or `@stet-integration`); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing generic task packets; `spine-operator-cursor.mdc` when operating pi-spine batches; `spine-worker-cursor.mdc` when manually implementing spine packets (Apply Intelligently via `description`, or `@`-mention)
+   - Examples: `cursor-integration.mdc` for Cursor-specific optimizations; `git-workflow-and-pr.mdc` for Git commits, branches, rebase/merge, and PR titles/descriptions (load when doing Git/PR tasks); `stet-integration.mdc` when the user asks to run stet, dismiss findings, or triage reviews (Apply Intelligently via `description`, or `@stet-integration`); `obsidian-integration.mdc` for Obsidian CLI and vault operations; `taskplane-worker-cursor.mdc` when executing generic task packets; `spine-operator-cursor.mdc` when operating pi-spine batches; `spine-worker-cursor.mdc` when manually implementing spine packets; `caveman-mode.mdc` / `ponytail-mode.mdc` when mirroring pi `@xynogen/pix-optimizer` in Cursor IDE (Apply Intelligently via `description`, or `@caveman-mode` / `@ponytail-mode`)
 
 ## Standard Section Order (per file)
 
@@ -111,6 +111,24 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 **Resolution:** `spine-task-authoring.mdc` and explicit spine task intent win for orchestration artifacts under the tasks root. Repo docs (`docs/`, README) still require explicit user request. Do not hand-edit `.spine/runtime/**`.
 
+### Example 12: Caveman vs Brutal Audit / Security
+
+**Conflict:** `caveman-mode.mdc` compresses prose; user runs `*-brutal-audit.mdc` or asks for security confirmation.
+
+**Resolution:** Audit and security carve-outs win (specificity + explicit audit intent). Caveman governs ordinary chat; drop compression for required evidence, irreversible confirmations, and confused users. See `caveman-mode.mdc` Auto-clarity; `RULE_COMPOSITION.md` Example 7.
+
+### Example 13: Ponytail vs Engineering Philosophy
+
+**Conflict:** `ponytail-mode.mdc` and `engineering-philosophy.mdc` both push simplicity and deletion.
+
+**Resolution:** Complementary, not conflicting — ponytail is the **operational YAGNI ladder** for implementation turns; engineering-philosophy holds principles and showstopper policy. When both apply, follow ponytail ladder for diffs; never override ponytail safety carve-outs (validation, security, accessibility). User says "stop ponytail" → engineering-philosophy only.
+
+### Example 14: pix-optimizer (pi) vs Caveman/Ponytail (Cursor)
+
+**Conflict:** User runs pi with `pi-cursor-agent` and `@xynogen/pix-optimizer`; optimizer prompt injections are stripped when project context exists.
+
+**Resolution:** Mirror optimizer behavior in Cursor via `caveman-mode.mdc` + `ponytail-mode.mdc`. Set `alwaysApply: true` on both in the project copy when `~/.pi/agent/optimizer.json` enables them. RTK/TOON remain pi-only (command rewriting, JSON tooling).
+
 ## Rules vs Agent Skills
 
 | Layer | Location | Role |
@@ -133,6 +151,14 @@ pi install npm:pi-spine
 ```
 
 Pair with `spine-task-authoring.mdc`, `spine-operator-cursor.mdc`, and `spine-worker-cursor.mdc`. Deep decomposition uses pi-spine `create-spine-tasks` skill.
+
+**pix-optimizer:** Install upstream package (link only, do not vendor in CursorRules):
+
+```bash
+pi install npm:@xynogen/pix-optimizer
+```
+
+Pair with `caveman-mode.mdc` and `ponytail-mode.mdc` for Cursor IDE when `pi-cursor-agent` strips optimizer prompts. Toggle levels in pi via `/opt`; in Cursor via `@caveman-mode` / `@ponytail-mode` or project `alwaysApply`.
 
 ## See Also
 
