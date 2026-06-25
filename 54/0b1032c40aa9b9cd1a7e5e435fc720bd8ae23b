@@ -1,0 +1,24 @@
+RULE_COMPOSITION.md
+  s_776d6fd94227c2::t_29807786718990 155-162
+  s_776d6fd94227c2::t_961b3e94bad00b 22
+  s_776d6fd94227c2::t_316cef197482aa 114-131
+README.md
+  s_776d6fd94227c2::t_c9c5b6b839bf16 280-294
+  s_776d6fd94227c2::t_8d4fbaaf1db09c 70-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "540b1032c40aa9b9cd1a7e5e435fc720bd8ae23b",
+  "prompts": {},
+  "sessions": {
+    "s_776d6fd94227c2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019eff62-69b0-7ab8-b520-d7d0d09c9e31",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
