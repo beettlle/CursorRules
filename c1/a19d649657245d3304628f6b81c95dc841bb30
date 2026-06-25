@@ -1,0 +1,16 @@
+.cursor/rules/caveman-mode.mdc
+  h_2a17159c706ba1 2
+.cursor/rules/ponytail-mode.mdc
+  h_2a17159c706ba1 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "c1a19d649657245d3304628f6b81c95dc841bb30",
+  "prompts": {},
+  "humans": {
+    "h_2a17159c706ba1": {
+      "author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
