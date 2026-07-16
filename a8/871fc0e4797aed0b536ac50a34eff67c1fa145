@@ -1,0 +1,21 @@
+.cursor/rules/tufte-visualization.mdc
+  s_48254828a60ea1::t_58d8cbec576ae7 1-436
+README.md
+  s_48254828a60ea1::t_26263af5bb90fc 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a8871fc0e4797aed0b536ac50a34eff67c1fa145",
+  "prompts": {},
+  "sessions": {
+    "s_48254828a60ea1": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a9e3cb02-5a88-466b-ac91-ae051a15030e",
+        "model": "default"
+      },
+      "human_author": "Cesar Delgado <beettlle@gmail.com>"
+    }
+  }
+}
