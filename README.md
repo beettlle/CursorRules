@@ -49,6 +49,7 @@ The core rules live in `.cursor/rules/`.
 ├── ios-build-automation.mdc            # CI/CD and build automation rules
 ├── documentation-policy.mdc            # Rules for creating/editing documentation
 ├── owasp-secure-coding-practices.mdc   # OWASP-aligned secure coding checklist (input, output, auth, session, access, crypto, etc.)
+├── tufte-visualization.mdc             # Tufte-aligned analytical charts, tables, dashboards (glob-scoped)
 ├── audit-workflow.mdc                  # Phase completion verification workflow
 ├── swift-5-9-brutal-audit.mdc          # Swift 5.9/iOS comprehensive phase audit
 ├── swift-6-brutal-audit.mdc            # Swift 6/iOS comprehensive phase audit
