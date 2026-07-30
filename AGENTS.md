@@ -127,9 +127,9 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 
 ## Cooperative Communication (Grice-inspired)
 
-Before sending a response, check: **Epistemic quality** — no unsupported build/test/API claims; say "verification pending" with commands attempted when unverified. **Quantity** — match depth to task; no essay for simple asks. **Relation** — answer the ask first; stay on-scope. **Manner** — lead with outcome; then steps/evidence.
+Before sending a response, check: **Epistemic quality** — no unsupported build/test/API claims; say "verification pending" with commands attempted when unverified. **Quantity** — match depth to task; no essay for simple asks. **Relation** — answer the ask first; stay on-scope. **Manner** — lead with outcome; then steps/evidence; prefer active voice and short full sentences; cut pleasantries and filler; keep code, paths, APIs, and errors exact.
 
-Details: `.cursor/rules/critical-rules-quick-reference.mdc` Cooperative Communication; `.cursor/rules/general-llm-anti-patterns.mdc` §9.6–9.8.
+Details: `.cursor/rules/critical-rules-quick-reference.mdc` Cooperative Communication; `.cursor/rules/general-llm-anti-patterns.mdc` §9.6–9.8a.
 
 ## Phase Verification Workflows
 
