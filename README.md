@@ -46,6 +46,7 @@ The core rules live in `.cursor/rules/`.
 ├── swift-5-9-development-standards.mdc # Swift 5.9; Apple platform minimum from project target
 ├── swift-6-development-standards.mdc   # Swift 6 strict concurrency; platform from project target
 ├── ios-ui-development-focus.mdc        # UI/UX best practices
+├── ios-uikit-development-standards.mdc # UIKit: scenes, Observation, diffable lists, Auto Layout, deprecations
 ├── ios-build-automation.mdc            # CI/CD and build automation rules
 ├── documentation-policy.mdc            # Rules for creating/editing documentation
 ├── owasp-secure-coding-practices.mdc   # OWASP-aligned secure coding checklist (input, output, auth, session, access, crypto, etc.)
@@ -92,6 +93,7 @@ After copying, remove rules your project does not need. Keeping conflicting or u
 | **Swift** | `swift-5-9-*` **or** `swift-6-*` | Declare the choice in `AGENTS.md` |
 | **Java** | `java-17-*` **or** `java-21-*` | Match your JDK/LTS |
 | **Obsidian** | Vault projects only | If not a vault: delete `obsidian-vault-standards.mdc` and `obsidian-integration.mdc` |
+| **UIKit** | UIKit or mixed projects | SwiftUI-only: delete `ios-uikit-development-standards.mdc` |
 | **Stet** | Optional | Loads on demand if kept; safe to delete if you do not use stet |
 
 Example (Swift 6 + Java 21, no Obsidian):
@@ -129,7 +131,7 @@ Produce an AGENTS.md with:
    - Python: python-3-development-standards.mdc, python-3-brutal-audit.mdc
    - Go: go-1-21-development-standards.mdc, go-1-21-brutal-audit.mdc
    - Java: java-17-development-standards.mdc or java-21-development-standards.mdc, java-brutal-audit.mdc
-   - Swift/iOS: swift-5-9-development-standards.mdc + swift-5-9-brutal-audit.mdc **or** swift-6-development-standards.mdc + swift-6-brutal-audit.mdc (one language mode per project; declare in AGENTS.md)
+   - Swift/iOS: swift-5-9-development-standards.mdc + swift-5-9-brutal-audit.mdc **or** swift-6-development-standards.mdc + swift-6-brutal-audit.mdc (one language mode per project; declare in AGENTS.md); add ios-uikit-development-standards.mdc when the project imports UIKit
    - JavaScript/TypeScript: javascript-3-development-standards.mdc, javascript-3-brutal-audit.mdc
    - Rust: rust-development-standards.mdc, rust-brutal-audit.mdc
    - Obsidian vault: obsidian-vault-standards.mdc, obsidian-integration.mdc; install obsidian-skills via `npx skills add https://github.com/kepano/obsidian-skills`
@@ -310,6 +312,12 @@ Use **one** Swift language-mode pair per project (`swift-5-9-*.mdc` or `swift-6-
 - Swift 6 language mode with **strict concurrency** (data-race safety at compile time).
 - `sending`, region isolation, `@preconcurrency` for legacy interop; shared architecture cross-referenced from 5.9 rules.
 - Platform minimum is project-defined (no hardcoded OS version in shared rules).
+
+**UIKit** (`ios-uikit-development-standards.mdc`, UIKit or mixed projects):
+
+- Scene-based life cycle (required for iOS 27 SDK builds); scene/trait context instead of `UIScreen.main` and key-window lookups.
+- `@Observable` models with `updateProperties()` / automatic observation tracking; diffable data sources, cell registrations, content configurations.
+- Auto Layout, `keyboardLayoutGuide`, size-class adaptivity, `UIButton.Configuration`, Dynamic Type; deprecated API replacement table. Availability table maps each API to `#available` fallbacks.
 
 ## Go Standards
 

@@ -1,2 +1,3 @@
 For Swift projects, run: xcodebuild -scheme YourScheme build test or swift build && swift test (per project setup).
 For Swift: extract view helpers; keep domain logic in pure Swift; simplify optional handling.
+For UIKit: replace didSet-driven view sync with @Observable + updateProperties(); replace index-path data sources with diffable snapshots; replace device/orientation checks with size classes.
