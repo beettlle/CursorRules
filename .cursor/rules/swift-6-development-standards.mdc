@@ -185,6 +185,8 @@ The compiler may allow sending non-`Sendable` values when they are **disconnecte
 
 📍 **UI/HIG:** `ios-ui-development-focus.mdc` (Liquid Glass per **project deployment target and SDK**).
 
+📍 **UIKit screens:** `ios-uikit-development-standards.mdc` (overrides SwiftUI-purist persona for UIKit code; see `RULE_COMPOSITION.md` Example 12).
+
 ---
 
 ## Testing (Swift 6 Delta)

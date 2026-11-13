@@ -1,1 +1,2 @@
 For Swift: SwiftData @Model passed to Domain layer (use DTOs), Presentation importing SwiftData/MusicKit directly, @MainActor on Domain types, fake actor pattern (nonisolated(unsafe) or MainActor.run in actor), state modified in async Task without snapshot before await.
+For UIKit: UIScreen.main/keyWindow/windows usage, missing scene manifest, addSubview(child.view) without addChild, self captured strongly in UIAction/registration closures, reloadData() after single-item change, deprecated cell textLabel/imageView, traitCollectionDidChange overrides.

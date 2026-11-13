@@ -111,6 +111,12 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 **Resolution:** `spine-task-authoring.mdc` and explicit spine task intent win for orchestration artifacts under the tasks root. Repo docs (`docs/`, README) still require explicit user request. Do not hand-edit `.spine/runtime/**`.
 
+### Example 12: SwiftUI Purist Persona vs UIKit Project
+
+**Conflict:** `swift-*-development-standards.mdc` persona says "SwiftUI purist" and `ios-ui-development-focus.mdc` shows SwiftUI patterns; the project builds screens in UIKit.
+
+**Resolution:** For UIKit code (`import UIKit`, `UIViewController`/`UIView` subclasses), `ios-uikit-development-standards.mdc` wins for UI patterns (domain-specific). Swift standards still govern language mode, layers, and concurrency. HIG rules in `ios-ui-development-focus.mdc` apply to both frameworks. Do not rewrite UIKit screens in SwiftUI unless asked. SwiftUI-only projects delete the UIKit rule.
+
 ## Rules vs Agent Skills
 
 | Layer | Location | Role |
