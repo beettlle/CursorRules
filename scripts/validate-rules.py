@@ -10,6 +10,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RULES_DIR = REPO_ROOT / ".cursor" / "rules"
 LARGE_FILE_LINES = 250
+# Platform cap for Cursor rules/skills; soft target leaves edit headroom.
+MAX_RULE_BYTES = 32768  # 32 KiB hard max
+SOFT_RULE_BYTES = 28672  # 28 KiB soft target
 
 # Example/placeholder rule names that may be cited but need not exist.
 MDC_PLACEHOLDERS = frozenset(
@@ -124,6 +127,15 @@ def check_large_files(path: Path, text: str, reporter: Reporter) -> None:
     line_count = text.count("\n") + (1 if text and not text.endswith("\n") else 0)
     if line_count > LARGE_FILE_LINES:
         reporter.warn(f"{rel}: {line_count} lines exceeds {LARGE_FILE_LINES}-line review threshold")
+    size = path.stat().st_size
+    if size > MAX_RULE_BYTES:
+        reporter.error(
+            f"{rel}: {size} bytes exceeds {MAX_RULE_BYTES}-byte (32 KiB) hard limit; split into a pack"
+        )
+    elif size > SOFT_RULE_BYTES:
+        reporter.warn(
+            f"{rel}: {size} bytes exceeds {SOFT_RULE_BYTES}-byte (28 KiB) soft target; consider splitting"
+        )
 
 
 def check_version_pair_collisions(rule_files: list[Path], reporter: Reporter) -> None:

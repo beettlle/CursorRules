@@ -4,6 +4,18 @@
 
 **Every token counts.** These rules files are loaded into the LLM's context window. Verbose contributions waste tokens and reduce the number of rules that can be active simultaneously.
 
+### Per-file size limit (platform)
+
+| Limit | Bytes | Rule |
+|-------|-------|------|
+| **Hard max** | **32,768 (32 KiB)** | Each `.cursor/rules/*.mdc` must stay at or under this size (common rules/skills platform cap). |
+| **Soft target** | **28,672 (28 KiB)** | Leave headroom for later edits. |
+
+**When approaching the limit:** Split into a **pack** with the same `alwaysApply` / same `globs`. Do not truncate or delete rules to fit. Pack naming:
+
+- Language/domain: `name.mdc` + `name-continued.mdc` (identical globs).
+- Large always-on packs: numbered range suffixes, e.g. `general-llm-anti-patterns-04-06.mdc` (Categories 4–6). Preserve section numbers across parts.
+
 ### Core Principles
 
 1. **Density Over Verbosity**: Every sentence must carry maximum information density.
@@ -13,6 +25,7 @@
 5. **Detection Over Explanation**: Focus on how to detect the problem, not lengthy explanations of why it's a problem.
 6. **Positive Framing**: Include "do X" rules alongside anti-patterns; show good examples.
 7. **Grice Mapping for Authors**: Quantity → density, no duplicate paragraphs; epistemic quality → no unverified claims in rules; Relation → one purpose per rule file; Manner → Bad/Good template, tables over prose. Grice Quantity/Manner also govern token discipline in rule authoring.
+8. **Split before truncate**: Prefer pack splits over cutting Bad/Good/Why/Fix/Detect bodies.
 
 ## Required Format Structure
 
@@ -41,7 +54,7 @@ For task-aware behavior (debugging, architecture, coding), add compact tables or
 - **❌ Bad / ✅ Good**: Use inline code blocks for examples. Keep examples to 1-3 lines maximum.
 - **⚠️ Why**: Single sentence. Focus on impact, not theory.
 - **🔧 Fix**: Single sentence. Action-oriented.
-- **📍 See**: Use cross-references like `general-llm-anti-patterns.mdc section 1.1` or `critical-rules-quick-reference.mdc section 1` instead of repeating content.
+- **📍 See**: Use cross-references like `general-llm-anti-patterns.mdc` section 1.1` or `critical-rules-quick-reference.mdc section 1` instead of repeating content.
 - **Detect**: Comma-separated phrases, not full sentences. Maximum 5-7 items.
 
 ## What NOT to Do
@@ -187,16 +200,18 @@ Use tables for compact representation of multiple related rules:
 
 When adding language-specific or domain-specific rules:
 
-1. **Reference universal rules**: Start with "For universal anti-patterns: See `general-llm-anti-patterns.mdc`"
+1. **Reference universal rules**: Start with "For universal anti-patterns: See the `general-llm-anti-patterns` pack" (cite the owning part for section numbers ≥4).
 2. **Focus on language or domain idioms**: Only include patterns specific to that language or artifact (e.g., `obsidian-vault-standards.mdc` for vault OFM/Bases/Canvas—not full syntax; link upstream skills)
 3. **Use language examples**: Code examples must be in the target language
 4. **Link to standards**: Reference official style guides (PEP 8, Swift API Guidelines, etc.)
 5. **Swift filename = Swift version**: Names like `swift-5-9-*.mdc` or `swift-6-*.mdc` encode the **Swift language mode**; rule body must stay consistent with that version (forbidden vs allowed keywords, concurrency enforcement). Projects pick one pair; see `RULE_COMPOSITION.md` Example 4.
 6. **No hard-coded Apple OS floors in shared rules**: Point to **Xcode/SwiftPM deployment targets** and `#available` / `@available`; teams needing a numeric minimum should add a **project-specific** `.mdc` or `AGENTS.md` snippet.
+7. **Stay under 32 KiB**: If a language standards file grows past the soft target, add `*-continued.mdc` with the same globs instead of growing the core file.
+
 
 ## Contributing Modelfiles
 
-Modelfiles live in `ollama/`; base files are language-agnostic. Language addenda go in `ollama/addenda/`. Keep anti-pattern lists in Modelfiles and addenda aligned with `general-llm-anti-patterns.mdc` and language-specific rules. When adding/updating anti-patterns in `.mdc` files, update the corresponding Modelfile or addendum if the same patterns appear there. Addenda format: plain text to append to SYSTEM block; concise, detection-focused. Follow density guidelines (see Token Budget Guidelines).
+Modelfiles live in `ollama/`; base files are language-agnostic. Language addenda go in `ollama/addenda/`. Keep anti-pattern lists in Modelfiles and addenda aligned with the `general-llm-anti-patterns` pack and language-specific rules. When adding/updating anti-patterns in `.mdc` files, update the corresponding Modelfile or addendum if the same patterns appear there. Addenda format: plain text to append to SYSTEM block; concise, detection-focused. Follow density guidelines (see Token Budget Guidelines).
 
 ## Review Checklist
 
@@ -211,6 +226,7 @@ Before submitting a PR, verify:
 - [ ] Tables used for structured meta-rules
 - [ ] Language-specific rules reference universal rules
 - [ ] Frontmatter includes proper `description`, `globs`, and `alwaysApply`
+- [ ] Each changed `.mdc` is ≤32 KiB (prefer ≤28 KiB); split into a pack if needed
 - [ ] Rules with `**/*.md` globs document vault vs repo doc scope (see `obsidian-vault-standards.mdc`, `documentation-policy.mdc`)
 - [ ] Rule has been tested on sample code (see Testing & Validation below)
 - [ ] Cooperative communication: new/changed prose satisfies Quantity, epistemic quality, Relation, Manner (cross-ref existing sections, no duplication)
@@ -262,19 +278,21 @@ After writing a rule, validate it before submitting:
 
 ## Token Budget Guidelines
 
+- **Per-file hard max**: ≤32,768 bytes (32 KiB); soft target ≤28 KiB (see Per-file size limit above)
 - **Quick Reference File**: Target <100 lines total
 - **Category Section**: Target <50 lines per anti-pattern
 - **Code Example**: Maximum 3 lines
 - **Detection Criteria**: Maximum 7 items, comma-separated
 - **Why/Fix**: One sentence each
 
-**Remember**: If your contribution is longer than existing similar rules, it's probably too verbose. Cut it in half, then cut it again.
+**Remember**: If your contribution is longer than existing similar rules, it's probably too verbose. Cut it in half, then cut it again. If the *file* is over the size limit after densifying, split the pack—do not drop rules.
 
 ## Examples of Excellent Contributions
 
 Study these files for density and structure:
 - `critical-rules-quick-reference.mdc` - Maximum density
-- `general-llm-anti-patterns.mdc` sections 1.1-1.7 - Perfect format
+- `general-llm-anti-patterns.mdc` sections 1.1–1.7 (pack part 1) - Perfect format
+- `general-llm-anti-patterns-04-06.mdc` / `-07-09.mdc` / `-10-12.mdc` - Same format across pack parts
 - `documentation-policy.mdc` - Concise and complete
 
 These files represent the target density and structure for all contributions.

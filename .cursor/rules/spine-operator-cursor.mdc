@@ -7,7 +7,7 @@ alwaysApply: false
 
 Operate **pi-spine** batches from Cursor: validate, plan, start, monitor, recover, gate, and integrate. Cursor is the **operator console**—batch workers are **pi** sessions in lane worktrees, not Cursor Agent.
 
-**Related:** `@spine-task-authoring.mdc` for packets; `@spine-worker-cursor.mdc` for manual implementation when no batch runs. Verification: `general-llm-anti-patterns.mdc` §3.8–3.9. Normative spec: [pi-spine PRD](https://github.com/beettlle/pi-spine/blob/main/docs/PRD.md).
+**Related:** `@spine-task-authoring.mdc` for packets; `@spine-worker-cursor.mdc` for manual implementation when no batch runs. Verification: `general-llm-anti-patterns.mdc` § 3.8–3.9. Normative spec: [pi-spine PRD](https://github.com/beettlle/pi-spine/blob/main/docs/PRD.md).
 
 Manual activation: `@spine-operator-cursor` when the agent does not auto-select this rule.
 
@@ -87,7 +87,7 @@ When recovery fails or the same diagnosis repeats after following `suggestedComm
 | Journal excerpt | `spine journal` or relevant runtime journal lines |
 | Expected vs actual | One line each |
 
-If triage is ambiguous, ask the user once before filing. See `general-llm-anti-patterns.mdc` §7.3.
+If triage is ambiguous, ask the user once before filing. See `general-llm-anti-patterns-07-09.mdc` § 7.3.
 
 ## v1 boundaries
 
@@ -116,7 +116,7 @@ If triage is ambiguous, ask the user once before filing. See `general-llm-anti-p
 ✅ Good: Show command + output or state **verification pending**
 ⚠️ Why: False confidence; violates trust
 🔧 Fix: Run `spine status --diagnose`; cite output
-📍 See: `general-llm-anti-patterns.mdc` §3.8–3.9
+📍 See: `general-llm-anti-patterns.mdc` § 3.8–3.9
 **Detect:** batch done/running/failed without evidence
 
 ### Skip diagnose after detached ops (CRIT)
@@ -157,7 +157,7 @@ If triage is ambiguous, ask the user once before filing. See `general-llm-anti-p
 ✅ Good: Triage → search [pi-spine issues](https://github.com/beettlle/pi-spine/issues) → file with `spine doctor` + `spine status --diagnose` + journal excerpt
 ⚠️ Why: Engine bugs need upstream fixes; workarounds drift and hide root cause
 🔧 Fix: Collect checklist from **Upstream bug reports**; ask user if triage unclear
-📍 See: **Upstream bug reports** above; `general-llm-anti-patterns.mdc` §7.3
+📍 See: **Upstream bug reports** above; `general-llm-anti-patterns-07-09.mdc` § 7.3
 **Detect:** repeated recovery loop, same diagnosis after `suggestedCommand`, unexplained spine CLI crash
 
 ## Taskplane coexistence

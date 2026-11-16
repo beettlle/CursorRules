@@ -8,7 +8,7 @@ This project uses CursorRules—a collection of development standards and anti-p
 
 ## File and Directory Naming
 
-No spaces in file or directory names; use underscores, hyphens, or language-appropriate case. Use only safe characters (letters, digits, underscore, hyphen). Dates in names: YYYY-MM-DD or YYYYMMDD. Zero-pad version suffixes (v01, v02). One convention per project; if the project already has one, keep it. For non-source assets (docs, exports, logs), optional pattern: subject_date_code with dashes in subject and underscores between parts. Source file naming per language: Python snake_case modules; Java one public class per file, filename = class name; Go lowercase + underscores; Swift PascalCase; Rust snake_case for modules and files; JavaScript/TypeScript follow project or use kebab-case. Full rules: `.cursor/rules/general-llm-anti-patterns.mdc` Category 12.
+No spaces in file or directory names; use underscores, hyphens, or language-appropriate case. Use only safe characters (letters, digits, underscore, hyphen). Dates in names: YYYY-MM-DD or YYYYMMDD. Zero-pad version suffixes (v01, v02). One convention per project; if the project already has one, keep it. For non-source assets (docs, exports, logs), optional pattern: subject_date_code with dashes in subject and underscores between parts. Source file naming per language: Python snake_case modules; Java one public class per file, filename = class name; Go lowercase + underscores; Swift PascalCase; Rust snake_case for modules and files; JavaScript/TypeScript follow project or use kebab-case. Full rules: `.cursor/rules/general-llm-anti-patterns-10-12.mdc` Category 12.
 
 ## Top 15 Universal Anti-Patterns
 
@@ -52,35 +52,35 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 ❌ Bad: Multi-step search workaround when direct lookup API exists
 ✅ Good: Verify framework documentation, use official APIs
 ⚠️ Why: Fragile code, security risk (slopsquatting), build failures
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 4.1
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 4.1
 
 ### 7. Hardcoded Secrets
 
 ❌ Bad: `apiKey = "sk-live-1234567890abcdef"` in source code
 ✅ Good: `apiKey = process.env.API_KEY` (environment variables)
 ⚠️ Why: Security vulnerability, credential exposure, compliance violations
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 5.1
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 5.1
 
 ### 8. Missing Input Validation
 
 ❌ Bad: `database.query("SELECT * FROM users WHERE id = " + userInput)`
 ✅ Good: Validate input, use parameterized queries
 ⚠️ Why: SQL injection, XSS, command injection, system compromise
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 5.2
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 5.2
 
 ### 9. Silent Failures
 
 ❌ Bad: `try { op() } catch { pass }` (swallows errors)
 ✅ Good: Handle specific errors or explicitly propagate with context
 ⚠️ Why: Hidden bugs, difficult debugging, silent data loss
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 5.3
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 5.3
 
 ### 10. Test-Implementation Mismatch
 
 ❌ Bad: Mock returns different types/behavior than real implementation
 ✅ Good: Mocks match real API signatures and behavior exactly
 ⚠️ Why: False confidence, integration failures, production bugs
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 6.1
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 6.1
 
 ### 11. Warning Dismissal Anti-Pattern
 
@@ -110,7 +110,7 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 ✅ Good: Verify package exists in registry, check maintainer, check download stats, verify owner
 ⚠️ Why: Security risk (slopsquatting), attackers register packages with LLM-hallucinated names, build failures
 🔧 Fix: Always verify packages exist, check package registry before importing, verify maintainer identity
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 4.2d
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 4.2d
 
 **Detect:** Import statements without verification, plausible-sounding but unverified packages, no package registry checks
 
@@ -119,7 +119,7 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 ❌ Bad: Example code used verbatim without adaptation
 ✅ Good: Adapt examples to project patterns, verify examples match requirements
 ⚠️ Why: Example code may not fit project patterns, introduces inconsistencies
-📍 See: `.cursor/rules/general-llm-anti-patterns.mdc` section 4.4
+📍 See: `.cursor/rules/general-llm-anti-patterns-04-06.mdc` section 4.4
 
 **Detect:** Example code used verbatim, example code not adapted to project patterns, copy-paste without modification
 
@@ -129,7 +129,7 @@ No spaces in file or directory names; use underscores, hyphens, or language-appr
 
 Before sending a response, check: **Epistemic quality** — no unsupported build/test/API claims; say "verification pending" with commands attempted when unverified. **Quantity** — match depth to task; no essay for simple asks. **Relation** — answer the ask first; stay on-scope. **Manner** — lead with outcome; then steps/evidence; prefer active voice and short full sentences; cut pleasantries and filler; keep code, paths, APIs, and errors exact.
 
-Details: `.cursor/rules/critical-rules-quick-reference.mdc` Cooperative Communication; `.cursor/rules/general-llm-anti-patterns.mdc` §9.6–9.8a.
+Details: `.cursor/rules/critical-rules-quick-reference.mdc` Cooperative Communication; `.cursor/rules/general-llm-anti-patterns-07-09.mdc` § 9.6–9.8a.
 
 ## Phase Verification Workflows
 
@@ -148,7 +148,7 @@ After completing a development phase, run the appropriate brutal audit from `.cu
 
 ## For Contributors (CursorRules repository)
 
-When contributing to CursorRules itself, see [CONTRIBUTING.md](CONTRIBUTING.md) and [RULE_COMPOSITION.md](RULE_COMPOSITION.md). Rules live in `.cursor/rules/`.
+When contributing to CursorRules itself, see [CONTRIBUTING.md](CONTRIBUTING.md) and [RULE_COMPOSITION.md](RULE_COMPOSITION.md). Rules live in `.cursor/rules/`. Each `.mdc` must be ≤32 KiB (prefer ≤28 KiB); large topics use packs (`*-continued.mdc` or `general-llm-anti-patterns-04-06.mdc`-style parts).
 
 **Obsidian vault rules:** `obsidian-vault-standards.mdc` (glob-scoped anti-patterns), `obsidian-integration.mdc` (CLI). Pair with upstream [obsidian-skills](https://github.com/kepano/obsidian-skills)—link only, do not vendor skill files in this repo.
 

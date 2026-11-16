@@ -35,21 +35,31 @@ This project codifies architectural, performance, and security standards into sy
 
 The core rules live in `.cursor/rules/`.
 
+**Rule file size limit:** Each `.mdc` must be ≤ **32 KiB** (32,768 bytes; soft target ≤28 KiB). Large topics are split into packs (same `alwaysApply` / same `globs`) rather than one monolith. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ```text
 .cursor/rules/
 ├── critical-rules-quick-reference.mdc  # Top 15 universal rules for fast context loading
-├── general-llm-anti-patterns.mdc       # Comprehensive guide to LLM behavioral smells
-├── python-3-development-standards.mdc  # Python-specific standards (PEP 8, Zen of Python)
-├── go-1-21-development-standards.mdc   # Go-specific standards (Effective Go, Uber Style Guide)
-├── java-17-development-standards.mdc   # Java 17 LTS (Effective Java, ExecutorService, Records)
-├── java-21-development-standards.mdc   # Java 21 LTS (Effective Java, Virtual Threads, Records)
-├── swift-5-9-development-standards.mdc # Swift 5.9; Apple platform minimum from project target
+├── general-llm-anti-patterns.mdc       # Pack part 1: Categories 0–3
+├── general-llm-anti-patterns-04-06.mdc # Pack part 2: Categories 4–6
+├── general-llm-anti-patterns-07-09.mdc # Pack part 3: Categories 7–9
+├── general-llm-anti-patterns-10-12.mdc # Pack part 4: Categories 10–12 + Summary
+├── python-3-development-standards.mdc  # Python pack core (PEP 8, Zen)
+├── python-3-development-standards-continued.mdc  # Python pack continued
+├── go-1-21-development-standards.mdc   # Go pack core
+├── go-1-21-development-standards-continued.mdc   # Go pack continued
+├── java-17-development-standards.mdc   # Java 17 LTS pack core
+├── java-17-development-standards-continued.mdc   # Java 17 pack continued
+├── java-21-development-standards.mdc   # Java 21 LTS pack core
+├── java-21-development-standards-continued.mdc   # Java 21 pack continued
+├── swift-5-9-development-standards.mdc # Swift 5.9 pack core
+├── swift-5-9-development-standards-continued.mdc # Swift 5.9 testing/TDD/process
 ├── swift-6-development-standards.mdc   # Swift 6 strict concurrency; platform from project target
 ├── ios-ui-development-focus.mdc        # UI/UX best practices
 ├── ios-uikit-development-standards.mdc # UIKit: scenes, Observation, diffable lists, Auto Layout, deprecations
 ├── ios-build-automation.mdc            # CI/CD and build automation rules
 ├── documentation-policy.mdc            # Rules for creating/editing documentation
-├── owasp-secure-coding-practices.mdc   # OWASP-aligned secure coding checklist (input, output, auth, session, access, crypto, etc.)
+├── owasp-secure-coding-practices.mdc   # OWASP-aligned secure coding checklist
 ├── tufte-visualization.mdc             # Tufte-aligned analytical charts, tables, dashboards (glob-scoped)
 ├── audit-workflow.mdc                  # Phase completion verification workflow
 ├── swift-5-9-brutal-audit.mdc          # Swift 5.9/iOS comprehensive phase audit
@@ -57,7 +67,8 @@ The core rules live in `.cursor/rules/`.
 ├── python-3-brutal-audit.mdc           # Python comprehensive phase audit
 ├── java-brutal-audit.mdc               # Java 17/21 comprehensive phase audit
 ├── go-1-21-brutal-audit.mdc            # Go 1.21+ comprehensive phase audit
-├── javascript-3-development-standards.mdc  # JavaScript/TypeScript standards
+├── javascript-3-development-standards.mdc  # JS/TS pack core
+├── javascript-3-development-standards-continued.mdc  # JS/TS pack continued
 ├── javascript-3-brutal-audit.mdc       # JavaScript/TypeScript comprehensive phase audit
 ├── rust-development-standards.mdc      # Rust idioms, style, anti-patterns
 ├── rust-brutal-audit.mdc              # Rust comprehensive phase audit
@@ -100,8 +111,8 @@ Example (Swift 6 + Java 21, no Obsidian):
 
 ```bash
 cd /path/to/your/project/.cursor/rules
-rm swift-5-9-development-standards.mdc swift-5-9-brutal-audit.mdc
-rm java-17-development-standards.mdc
+rm swift-5-9-development-standards.mdc swift-5-9-development-standards-continued.mdc swift-5-9-brutal-audit.mdc
+rm java-17-development-standards.mdc java-17-development-standards-continued.mdc
 # Optional: rm obsidian-vault-standards.mdc obsidian-integration.mdc stet-integration.mdc
 ```
 
@@ -117,7 +128,8 @@ Cursor reads `.cursor/rules/`; Aider, Gemini CLI, Zed, and similar tools read `A
 Use this prompt with your AI agent to generate a project-specific AGENTS.md:
 
 ```
-Read .cursor/rules/critical-rules-quick-reference.mdc and .cursor/rules/general-llm-anti-patterns.mdc.
+Read .cursor/rules/critical-rules-quick-reference.mdc and the general-llm-anti-patterns pack
+(general-llm-anti-patterns.mdc, general-llm-anti-patterns-04-06.mdc, general-llm-anti-patterns-07-09.mdc, general-llm-anti-patterns-10-12.mdc).
 
 Then scan this project to detect primary languages (e.g., *.py, *.go, *.java, *.swift, *.ts, *.tsx, package.json, go.mod, etc.) and Obsidian vault signals (*.base, *.canvas, .obsidian/).
 
@@ -127,12 +139,12 @@ Produce an AGENTS.md with:
 
 2. **Universal Anti-Patterns**: Include the Top 15 universal anti-patterns from critical-rules-quick-reference.mdc (Bad/Good/Why format)
 
-3. **Language-Specific References**: Based on detected languages, add a section referencing the appropriate .cursor/rules/ files:
-   - Python: python-3-development-standards.mdc, python-3-brutal-audit.mdc
-   - Go: go-1-21-development-standards.mdc, go-1-21-brutal-audit.mdc
-   - Java: java-17-development-standards.mdc or java-21-development-standards.mdc, java-brutal-audit.mdc
-   - Swift/iOS: swift-5-9-development-standards.mdc + swift-5-9-brutal-audit.mdc **or** swift-6-development-standards.mdc + swift-6-brutal-audit.mdc (one language mode per project; declare in AGENTS.md); add ios-uikit-development-standards.mdc when the project imports UIKit
-   - JavaScript/TypeScript: javascript-3-development-standards.mdc, javascript-3-brutal-audit.mdc
+3. **Language-Specific References**: Based on detected languages, add a section referencing the appropriate .cursor/rules/ packs (core + continued where split):
+   - Python: python-3-development-standards.mdc (+ -continued.mdc), python-3-brutal-audit.mdc
+   - Go: go-1-21-development-standards.mdc (+ -continued.mdc), go-1-21-brutal-audit.mdc
+   - Java: java-17 or java-21 development-standards pack (core + continued), java-brutal-audit.mdc
+   - Swift/iOS: swift-5-9-development-standards.mdc (+ -continued.mdc) + swift-5-9-brutal-audit.mdc **or** swift-6-development-standards.mdc + swift-6-brutal-audit.mdc (one language mode per project; declare in AGENTS.md); add ios-uikit-development-standards.mdc when the project imports UIKit
+   - JavaScript/TypeScript: javascript-3-development-standards.mdc (+ -continued.mdc), javascript-3-brutal-audit.mdc
    - Rust: rust-development-standards.mdc, rust-brutal-audit.mdc
    - Obsidian vault: obsidian-vault-standards.mdc, obsidian-integration.mdc; install obsidian-skills via `npx skills add https://github.com/kepano/obsidian-skills`
 
@@ -279,19 +291,19 @@ Use CursorRules to **author** spine-compatible packets, **operate** pi-spine bat
 
 ## Core Principles (Universal)
 
-The `general-llm-anti-patterns.mdc` file is language-agnostic and enforces:
+The `general-llm-anti-patterns` pack (four always-on `.mdc` files, Categories 0–12) is language-agnostic and enforces:
 
 - **Zero-Hallucination Policy**: Verify every API call; no "imaginary" libraries.
 - **No Ghost Layers**: Services must add value, not just pass calls through.
 - **Performance-First**: No database or network calls inside loops; bounded loops and queues with fail-fast.
 - **Security**: No hardcoded secrets; strict input validation.
 - **Code Quality**: No commented-out dead code; no "Shut Up, Compiler" warning suppressions; split compound conditions and state invariants positively; smallest scope; explicit options at call site (not library defaults).
-- **Testing**: Test positive and negative space (valid and invalid data, boundaries, valid→invalid transitions); see `general-llm-anti-patterns.mdc` 6.2.
+- **Testing**: Test positive and negative space (valid and invalid data, boundaries, valid→invalid transitions); see `general-llm-anti-patterns-04-06.mdc` 6.2.
 - **Documentation**: Comments explain why and how; commit body carries "why" (PR description is not stored in git).
 
 ## Python Standards
 
-The `python-3-development-standards.mdc` file enforces:
+The `python-3-development-standards` pack (`*.mdc` + `*-continued.mdc`) enforces:
 
 - **PEP 8 & PEP 20** compliance.
 - **Modern Python**: usage of `@dataclass`, `pathlib`, and type hints (`PEP 484`).
@@ -302,7 +314,7 @@ The `python-3-development-standards.mdc` file enforces:
 
 Use **one** Swift language-mode pair per project (`swift-5-9-*.mdc` or `swift-6-*.mdc`); list the choice in project `AGENTS.md`. See `RULE_COMPOSITION.md` Example 4.
 
-**Swift 5.9** (`swift-5-9-development-standards.mdc`):
+**Swift 5.9** pack (`swift-5-9-development-standards.mdc` + `*-continued.mdc`):
 
 - Swift 5.9 language mode; platform minimum is project-defined.
 - Architecture: UI, Domain, Data layers; Swift 6 readiness tracked in audit Section E.
@@ -321,7 +333,7 @@ Use **one** Swift language-mode pair per project (`swift-5-9-*.mdc` or `swift-6-
 
 ## Go Standards
 
-The `go-1-21-development-standards.mdc` file enforces:
+The `go-1-21-development-standards` pack (`*.mdc` + `*-continued.mdc`) enforces:
 
 - **Effective Go** and Uber Go Style Guide compliance.
 - **Error handling**: Explicit error checks; wrap errors with `%w` for context.
@@ -331,7 +343,7 @@ The `go-1-21-development-standards.mdc` file enforces:
 
 ## Java Standards
 
-The `java-17-development-standards.mdc` and `java-21-development-standards.mdc` files enforce:
+The `java-17-development-standards` and `java-21-development-standards` packs (each: core + `*-continued.mdc`) enforce:
 
 - **Effective Java** principles and Google Java Style Guide.
 - **Modern Java**: Records for immutable DTOs, pattern matching, sealed classes, switch expressions.
@@ -341,7 +353,7 @@ The `java-17-development-standards.mdc` and `java-21-development-standards.mdc` 
 
 ## JavaScript/TypeScript Standards
 
-The `javascript-3-development-standards.mdc` file enforces:
+The `javascript-3-development-standards` pack (`*.mdc` + `*-continued.mdc`) enforces:
 
 - **Modern ES6+**: `const`/`let` over `var`; async/await over callbacks; strict mode always.
 - **Type safety**: Prefer TypeScript or JSDoc for types.

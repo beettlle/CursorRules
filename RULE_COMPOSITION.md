@@ -6,12 +6,16 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 1. **Always-on rules** (`alwaysApply: true`)
    - `critical-rules-quick-reference.mdc`
-   - `general-llm-anti-patterns.mdc`
+   - General LLM anti-patterns pack (all parts; section numbers preserved across files):
+     - `general-llm-anti-patterns.mdc` (Categories 0–3)
+     - `general-llm-anti-patterns-04-06.mdc` (Categories 4–6)
+     - `general-llm-anti-patterns-07-09.mdc` (Categories 7–9)
+     - `general-llm-anti-patterns-10-12.mdc` (Categories 10–12 + Summary)
    - `documentation-policy.mdc`
 
 2. **Language-specific rules** (`alwaysApply: false`, glob-based)
    - Load only for matching file types
-   - Examples: `python-3-development-standards.mdc` for `**/*.py`
+   - Large language packs are split into **core + continued** siblings with identical globs (e.g. `python-3-development-standards.mdc` + `python-3-development-standards-continued.mdc` for `**/*.py`)
 
 3. **Domain-specific rules** (`alwaysApply: false`, glob-based)
    - Load only when relevant
@@ -67,7 +71,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 **Conflict:** Both `swift-5-9-development-standards.mdc` and `swift-6-development-standards.mdc` use `globs: ["**/*.swift"]`; 5.9 forbids `sending`/`consume` while 6 requires strict concurrency and allows those features.
 
-**Resolution:** Project declares one language mode in `AGENTS.md`, Xcode **Swift Language Version**, or SwiftPM `swiftLanguageMode`. When Swift 6 is declared, `swift-6-*.mdc` supersedes 5.9 compatibility constraints. Optionally omit or remove the unused version’s rules from the project’s `.cursor/rules/` copy.
+**Resolution:** Project declares one language mode in `AGENTS.md`, Xcode **Swift Language Version**, or SwiftPM `swiftLanguageMode`. When Swift 6 is declared, `swift-6-*.mdc` supersedes 5.9 compatibility constraints. Optionally omit or remove the unused version’s rules (including `swift-5-9-development-standards-continued.mdc`) from the project’s `.cursor/rules/` copy.
 
 ### Example 5: Documentation Policy vs Taskplane Task Packets
 
@@ -83,7 +87,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 ### Example 7: Cooperative Brevity vs Brutal Audit Evidence
 
-**Conflict:** Cooperative brevity (§9.8 in `general-llm-anti-patterns.mdc`) vs brutal-audit evidence requirements (longer structured output).
+**Conflict:** Cooperative brevity (§9.8 in `general-llm-anti-patterns-07-09.mdc`) vs brutal-audit evidence requirements (longer structured output).
 
 **Resolution:** When `*-brutal-audit.mdc` or `audit-workflow` applies, audit rules win (specificity + explicit audit intent). Grice Quantity/Manner still apply to *structure* (ordered sections, no filler), not to suppress required evidence.
 
@@ -91,7 +95,7 @@ This document explains how Cursor Rules are composed and how to resolve conflict
 
 **Conflict:** Both `java-17-development-standards.mdc` and `java-21-development-standards.mdc` use `globs: ["**/*.java"]`; 17 emphasizes `ExecutorService` patterns while 21 adds virtual-thread guidance.
 
-**Resolution:** Project declares one LTS in `AGENTS.md`, build config, or toolchain. When Java 21 is declared, `java-21-development-standards.mdc` supersedes 17-specific concurrency guidance. Optionally omit or remove the unused version's rules from the project's `.cursor/rules/` copy.
+**Resolution:** Project declares one LTS in `AGENTS.md`, build config, or toolchain. When Java 21 is declared, the `java-21-development-standards` pack (`*.mdc` + `*-continued.mdc`) supersedes 17-specific concurrency guidance. Optionally omit or remove the unused version's core + continued rules from the project's `.cursor/rules/` copy.
 
 ### Example 9: Spine vs Taskplane
 
@@ -144,5 +148,5 @@ Pair with `spine-task-authoring.mdc`, `spine-operator-cursor.mdc`, and `spine-wo
 
 - `cursor-integration.mdc` - Cursor-specific rule composition strategies
 - `git-workflow-and-pr.mdc` - Git/PR workflow; overlaps with audit-workflow only in "verify before claiming done" (this rule governs Git/PR text; audit governs phase verification)
-- `general-llm-anti-patterns.mdc` section 7.2b - Context window exhaustion prevention
+- `general-llm-anti-patterns-07-09.mdc` section 7.2b - Context window exhaustion prevention
 - CONTRIBUTING.md - Rule authoring guidelines

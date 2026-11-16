@@ -141,7 +141,7 @@ Avoid both over-calling (e.g., searching for common knowledge) and under-calling
 
 | Maxim | CursorRules section | Common failure mode |
 |-------|---------------------|---------------------|
-| Epistemic quality | Forbidden Phrases; `general-llm-anti-patterns.mdc` §3.8–3.9, §4.1 | "Tests pass" without output |
+| Epistemic quality | Forbidden Phrases; `general-llm-anti-patterns.mdc` § 3.8–3.9, §4.1 | "Tests pass" without output |
 | Quantity | §0.5, §3.5, §9.8; token budget (§5) | Essay for simple ask; one-liner for audit |
 | Relation | §7.3, §9.7; `documentation-policy.mdc` | Unrequested docs; answering adjacent question |
 | Manner | §9.8; `critical-rules-quick-reference.mdc` Output Format | Buried lede; rule echo in chat |
